@@ -143,9 +143,9 @@ SimpleDateFormat f=new SimpleDateFormat("yyyy/MM/dd");
                     <div class="btn-group">
                         <a class="btn dropdown-toggle" data-toggle="dropdown" href="#"><i class=" icon-list-alt"></i> Order <span class="caret"></span></a>
                         <ul class="dropdown-menu">
-                            <li <c:if test="${param.sort == null || param.sort == 'uploadDate' }">class="active"</c:if> ><a href="/<sec:authentication property="principal.username"/>/file-list?page=${page.number + 1}&sort=uploadDate"><i class="icon-calendar"></i> by Date</a></li>
-                            <li <c:if test="${param.sort == 'type'}">class="active"</c:if> >      <a href="/<sec:authentication property="principal.username"/>/file-list?page=${page.number + 1}&sort=type"><i class="icon-file"></i> by Type</a></li>
-                            <li <c:if test="${param.sort == 'owner'}">class="active"</c:if> >     <a href="/<sec:authentication property="principal.username"/>/file-list?page=${page.number + 1}&sort=owner"><i class="icon-user"></i> by Owner</a></li>
+                            <li <c:if test="${param.sort == null || param.sort == 'uploadDate' }">class="active"</c:if> ><a href="/<sec:authentication property="principal.username"/>/file-list?page=${page.number + 1}&sort=uploadDate&type=${param.type}"><i class="icon-calendar"></i> by Date</a></li>
+                            <li <c:if test="${param.sort == 'type'}">class="active"</c:if> >      <a href="/<sec:authentication property="principal.username"/>/file-list?page=${page.number + 1}&sort=type&type=${param.type}"><i class="icon-file"></i> by Type</a></li>
+                            <li <c:if test="${param.sort == 'owner'}">class="active"</c:if> >     <a href="/<sec:authentication property="principal.username"/>/file-list?page=${page.number + 1}&sort=owner&type=${param.type}"><i class="icon-user"></i> by Owner</a></li>
                             <!-- 下拉菜单链接 -->
                         </ul>
                     </div>
@@ -226,7 +226,7 @@ SimpleDateFormat f=new SimpleDateFormat("yyyy/MM/dd");
                     	<%// 如果当前而是第一页,则disable上一页%>
                     	<c:if test="${page.number == 0}"><li class="disabled"><a>«</a></li></c:if>
                     	<%// 如果有下一页,则显示上一页  %> 
-                    	<c:if test="${page.number != 0}"><li><a href="/<sec:authentication property="principal.username"/>/file-list?page=${page.number}&sort=${param.sort}">«</a></li></c:if>
+                    	<c:if test="${page.number != 0}"><li><a href="/<sec:authentication property="principal.username"/>/file-list?page=${page.number}&sort=${param.sort}&type=${param.type}">«</a></li></c:if>
 
                     	<%// 总页数少于等于5页,直接显示 %>
                     	<c:if test="${page.totalPages <= 5}">
@@ -255,7 +255,7 @@ SimpleDateFormat f=new SimpleDateFormat("yyyy/MM/dd");
                    		
                			<c:forEach begin="${begin}" end="${end}" varStatus="status">
                				<li <c:if test="${status.index == page.number}"> class="active"</c:if> >
-               					<a href="/<sec:authentication property="principal.username"/>/file-list?page=${status.index + 1}&sort=${param.sort}">${status.index + 1}</a>
+               					<a href="/<sec:authentication property="principal.username"/>/file-list?page=${status.index + 1}&sort=${param.sort}&type=${param.type}">${status.index + 1}</a>
                				</li>
                			</c:forEach>
                			
@@ -267,7 +267,7 @@ SimpleDateFormat f=new SimpleDateFormat("yyyy/MM/dd");
                         <%// 如果当前而是末页,则disable下一页 %>
                     	<c:if test="${page.number == (page.totalPages - 1)}"><li class="disabled"><a>»</a></li></c:if>
                     	<%// 如果有下一页,则显示<<  %>
-                    	<c:if test="${page.number < (page.totalPages - 1)}"><li><a href="/<sec:authentication property="principal.username"/>/file-list?page=${page.number + 2}&sort=${param.sort}">»</a></li></c:if>
+                    	<c:if test="${page.number < (page.totalPages - 1)}"><li><a href="/<sec:authentication property="principal.username"/>/file-list?page=${page.number + 2}&sort=${param.sort}&type=${param.type}">»</a></li></c:if>
                     </ul>
                 </div>
             </div>
@@ -282,13 +282,13 @@ SimpleDateFormat f=new SimpleDateFormat("yyyy/MM/dd");
             <div class="well sidebar-nav">
                 <ul class="nav nav-list" >
                     <li class="nav-header">File Type</li>
-                    <li class="active"><a href="#"><i class="icon-file"></i> All File</a></li>
-                    <li><a href="#"><i class="icon-book"></i> Text</a></li>
-                    <li><a href="#"><i class="icon-film"></i> Video</a></li>
-                    <li><a href="#"><i class="icon-music"></i> Audio</a></li>
-                    <li><a href="#"><i class="icon-picture"></i> Image</a></li>
-                    <li><a href="#"><i class="icon-lock"></i> Bag</a></li>
-                    <li><a href="#"><i class="icon-file"></i> Other</a></li>
+                    <li <c:if test="${param.type == null || param.type == ''}">class="active"</c:if> ><a href="/<sec:authentication property="principal.username"/>/file-list?page=${page.number+1}&sort=${param.sort}"><i class="icon-file"></i> All File</a></li>
+                    <li <c:if test="${param.type == 'Text'}">class="active"</c:if> ><a href="/<sec:authentication property="principal.username"/>/file-list?page=${page.number+1}&sort=${param.sort}&type=Text"><i class="icon-book"></i> Text</a></li>
+                    <li <c:if test="${param.type == 'Video'}">class="active"</c:if> ><a href="/<sec:authentication property="principal.username"/>/file-list?page=${page.number+1}&sort=${param.sort}&type=Video"><i class="icon-film"></i> Video</a></li>
+                    <li <c:if test="${param.type == 'Audio'}">class="active"</c:if> ><a href="/<sec:authentication property="principal.username"/>/file-list?page=${page.number+1}&sort=${param.sort}&type=Audio"><i class="icon-music"></i> Audio</a></li>
+                    <li <c:if test="${param.type == 'Image'}">class="active"</c:if> ><a href="/<sec:authentication property="principal.username"/>/file-list?page=${page.number+1}&sort=${param.sort}&type=Image"><i class="icon-picture"></i> Image</a></li>
+                    <li <c:if test="${param.type == 'Bag'}">class="active"</c:if> ><a href="/<sec:authentication property="principal.username"/>/file-list?page=${page.number+1}&sort=${param.sort}&type=Bag"><i class="icon-lock"></i> Bag</a></li>
+                    <li <c:if test="${param.type == 'Other'}">class="active"</c:if> ><a href="/<sec:authentication property="principal.username"/>/file-list?page=${page.number+1}&sort=${param.sort}&type=Other"><i class="icon-file"></i> Other</a></li>
                     <li class="divider"></li>
                     <li class="nav-header">File Owner</li>
                     <li><a href="#"><i class="icon-user"></i> Mine</a></li>

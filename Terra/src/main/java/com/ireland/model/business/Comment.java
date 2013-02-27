@@ -1,9 +1,13 @@
 package com.ireland.model.business;
 
+import java.util.Date;
+
 import javax.validation.constraints.NotNull;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+
+import com.ireland.utils.MyDateTime;
 
 /***
  * 评论
@@ -33,6 +37,8 @@ public class Comment
 	@NotNull
 	private String content;
 
+	//评论时间
+	private Date date;
 	
 	/**
 	 * 价值系数
@@ -85,6 +91,21 @@ public class Comment
 	public void setContent(String content)
 	{
 		this.content = content;
+	}
+
+
+	public Date getDate()
+	{
+		if(date!= null && !(date instanceof MyDateTime))
+			this.date = new MyDateTime(date.getTime());
+		
+		return date;
+	}
+
+
+	public void setDate(Date date)
+	{
+		this.date = date;
 	}
 
 

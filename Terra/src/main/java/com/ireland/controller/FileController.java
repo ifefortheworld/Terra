@@ -118,20 +118,26 @@ public class FileController
 	public String filelist(@PathVariable("username") String username, 
 						   @RequestParam(value="page",required=false)Integer pageNumber,
 						   @RequestParam(value="sort",required=false)String sort,
+						   @RequestParam(value="type",required=false)String type,
 						   Model model)
 	{
 		//默认按上传日期倒序,取出前10条文件
-
+		
+		//清除如&sort=,这类无效参数
+		if(sort != null && sort.isEmpty()) sort = null;
+		if(type != null && type.isEmpty()) type = null;
+		
 		//默认第1页
 		if(pageNumber == null) pageNumber = 1;
 				
 		//默认按uploadDate排序
 		if(sort == null) sort ="uploadDate";
 		
-		Page<TerraFile> page = terraFileDao.findAll(Criteria.where("owner").is(username), new PageRequest(pageNumber - 1, 10, Direction.DESC,sort));
-		
+		Page<TerraFile> page = (type == null) ? terraFileDao.findAll(Criteria.where("owner").is(username), new PageRequest(pageNumber - 1, 10, Direction.DESC,sort))
+											  : terraFileDao.findAll(Criteria.where("owner").is(username).and("type").is(type), new PageRequest(pageNumber - 1, 10, Direction.DESC,sort));
 		//统计未分享的数量
-		Long unsharedCnt = terraFileDao.count("isShared", Boolean.FALSE);
+		Long unsharedCnt = (type == null)? terraFileDao.count("isShared", Boolean.FALSE)
+										 : terraFileDao.count(Criteria.where("isShared").is(Boolean.FALSE).and("type").is(type));
 		
 		model.addAttribute("page",page);
 		model.addAttribute("files",page.iterator());
@@ -150,7 +156,17 @@ public class FileController
 	{
 		TerraFile file = terraFileDao.findOne(id);
 		
+		//查询此文件最有价值的评论(按votes倒序的第1条)
+		Page<Comment> coment = commentDao.findAll(Criteria.where("fileId").is(id), new PageRequest(0, 1, Direction.DESC, "votes"));
+		Comment valComment = coment.hasContent() ? coment.iterator().next() : null;
+		
+		//(按时间由新到旧)查询文件的前5条评论
+		Page<Comment> page = commentDao.findAll(Criteria.where("fileId").is(id), new PageRequest(0, 5, Direction.DESC, "date"));
+		
 		model.addAttribute("file",file);
+		model.addAttribute("page",page);
+		model.addAttribute("comments",page.iterator());
+		model.addAttribute("valComment",valComment);
 		
 		return "files/update";
 	}
@@ -230,7 +246,10 @@ public class FileController
 	{
 		User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		
+		//发表者
 		comment.setOwner(user.getUsername());
+		//评论时间
+		comment.setDate(new Date());
 
 		commentDao.insert(comment);
 		

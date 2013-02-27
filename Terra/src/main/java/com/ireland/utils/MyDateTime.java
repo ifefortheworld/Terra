@@ -3,26 +3,26 @@ package com.ireland.utils;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class MyDate extends Date
+public class MyDateTime extends Date
 {
-	private static SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd");
+	private static SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd HH:mm");
 	
-	public MyDate()
+	public MyDateTime()
 	{
 		super();
 	}
 
-	public MyDate(Date date)
+	public MyDateTime(Date date)
 	{
 		super(date.getTime());
 	}
 	
-	public MyDate(long date)
+	public MyDateTime(long date)
 	{
 		super(date);
 	}
 	
-	//yyyy/MM/dd
+	//yyyy/MM/dd HH:mm
 	@Override
 	public String toString()
 	{

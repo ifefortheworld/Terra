@@ -185,9 +185,10 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
                     <button class="btn btn-primary" type="button" style="float: right;margin-bottom: 10px" id="publishBtn">Publish</button>
                     <div class="clearfix"></div>
                     <div class="alert alert-info">
-                        <strong>Comments!</strong> The file have <span class="label label-warning">5</span>. Comments!
+                        <strong>Comments!</strong> The file have <span class="label label-warning">${page.totalElements}</span>. Comments!
                     </div>
                     <div class="content">
+                    	<c:if test="${valComment != null }">
                         <div class="well">
                             <h4 style="margin: 0">The Most Valuable Comment!</h4>
                             <div class="divider" style="border-top: 1px solid #ddd;margin-top: 10px;margin-bottom: 10px"></div>
@@ -196,90 +197,45 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
                                     <img src="img/Hen.png" class="media-object" data-src="holder.js/64x64">
                                 </a>
                                 <div class="media-body">
-                                    <h4 class="media-heading" style="float: left;margin-right: 20px">@Hen</h4>
-                                    <label  style="float: left;margin-right: 20px"> 2013/10/3 05:04</label>
-                                    <a href="#" style="float: left;margin-right: 20px"><span class="label label-warning"><i class="icon-thumbs-up icon-white"></i> 30</span></a>
+                                    <h4 class="media-heading" style="float: left;margin-right: 20px">@${valComment.owner}</h4>
+                                    <label  style="float: left;margin-right: 20px">${valComment.date}</label>
+                                    <a href="#" style="float: left;margin-right: 20px" id="${valComment.id}" class="voter"><span class="label label-warning"><i class="icon-thumbs-up icon-white"></i> <span id="num_${valComment.id}">${valComment.votes}</span></span></a>
                                     <div class="clearfix"></div>
                                     <div class="divider" style="border-top: 1px dashed #ddd;margin-top: 10px;margin-bottom: 10px"></div>
                                     <div class="media">
-                                        <p>This is very good!</p>
+                                        <p>${valComment.content}</p>
                                     </div>
                                     <a href="#" style="float: right"><i class="icon-hand-right"></i> Quote</a>
                                 </div>
                             </div>
                         </div>
+                        <div class="divider" style="border-top: 1px solid #fff;margin-top: 10px;margin-bottom: 10px"></div>
+                        </c:if>
+                        
+                        <c:forEach var="comment" items="${comments}">
+                        <c:if test="${comment.id != valComment.id}">
                         <div class="media">
                             <a class="pull-left" href="#">
                                 <img src="img/Hen.png" class="media-object" data-src="holder.js/64x64">
                             </a>
                             <div class="media-body">
-                                <h4 class="media-heading" style="float: left;margin-right: 20px">@Hen</h4>
-                                <label  style="float: left;margin-right: 20px"> 2013/10/3 05:04</label>
-                                <a href="#" style="float: left;margin-right: 20px"><span class="label label-warning"><i class="icon-thumbs-up icon-white"></i> 30</span></a>
+                                <h4 class="media-heading" style="float: left;margin-right: 20px">@${comment.owner}</h4>
+                                <label  style="float: left;margin-right: 20px">${comment.date}</label>
+                                <a href="#" style="float: left;margin-right: 20px" id="${comment.id}" class="voter"><span class="label label-warning"><i class="icon-thumbs-up icon-white"></i> <span id="num_${comment.id}">${comment.votes}</span></span></a>
                                 <div class="clearfix"></div>
                                 <div class="divider" style="border-top: 1px dashed #f5f5f5;margin-top: 10px;margin-bottom: 10px"></div>
                                 <div class="media">
-                                    <p>This is very good!</p>
+                                    <p>${comment.content}</p>
                                 </div>
                                 <a href="#" style="float: right"><i class="icon-hand-right"></i> Quote</a>
                                 <div class="clearfix"></div>
                             </div>
                         </div>
                         <div class="divider" style="border-top: 1px solid #fff;margin-top: 10px;margin-bottom: 10px"></div>
-                        <div class="media">
-                            <a class="pull-left" href="#">
-                                <img src="img/Elephant.png" class="media-object" data-src="holder.js/64x64">
-                            </a>
-                            <div class="media-body">
-                                <h4 class="media-heading" style="float: left;margin-right: 20px">@Elephant</h4>
-                                <label  style="float: left;margin-right: 20px"> 2013/10/3 05:04</label>
-                                <a href="#" style="float: left;margin-right: 20px"><span class="label label-warning"><i class="icon-thumbs-up icon-white"></i> 30</span></a>
-                                <div class="clearfix"></div>
-                                <div class="divider" style="border-top: 1px dashed #f5f5f5;margin-top: 10px;margin-bottom: 10px"></div>
-                                <div class="media">
-                                    <p>Like a shit!</p>
-                                </div>
-                                <a href="#" style="float: right"><i class="icon-hand-right"></i> Quote</a>
-                                <div class="clearfix"></div>
-                            </div>
-                        </div>
-                        <div class="divider" style="border-top: 1px solid #fff;margin-top: 10px;margin-bottom: 10px"></div>
-                        <div class="media">
-                            <a class="pull-left" href="#">
-                                <img src="img/Monkey.png" class="media-object" data-src="holder.js/64x64">
-                            </a>
-                            <div class="media-body">
-                                <h4 class="media-heading" style="float: left;margin-right: 20px">@Monkey</h4>
-                                <label  style="float: left;margin-right: 20px"> 2013/10/3 05:04</label>
-                                <a href="#" style="float: left;margin-right: 20px"><span class="label label-warning"><i class="icon-thumbs-up icon-white"></i> 30</span></a>
-                                <div class="clearfix"></div>
-                                <div class="divider" style="border-top: 1px dashed #f5f5f5;margin-top: 10px;margin-bottom: 10px"></div>
-                                <div class="media">
-                                    <p>Too Bad!!!!!!</p>
-                                </div>
-                                <a href="#" style="float: right"><i class="icon-hand-right"></i> Quote</a>
-                                <div class="clearfix"></div>
-                            </div>
-                        </div>
-                        <div class="divider" style="border-top: 1px solid #fff;margin-top: 10px;margin-bottom: 10px"></div>
-                        <div class="media">
-                            <a class="pull-left" href="#">
-                                <img src="img/Penguin.png" class="media-object" data-src="holder.js/64x64">
-                            </a>
-                            <div class="media-body">
-                                <h4 class="media-heading" style="float: left;margin-right: 20px">@Penguin</h4>
-                                <label  style="float: left;margin-right: 20px"> 2013/10/3 05:04</label>
-                                <a href="#" style="float: left;margin-right: 20px"><span class="label label-warning"><i class="icon-thumbs-up icon-white"></i> 30</span></a>
-                                <div class="clearfix"></div>
-                                <div class="divider" style="border-top: 1px dashed #f5f5f5;margin-top: 10px;margin-bottom: 10px"></div>
-                                <div class="media">
-                                    <p>Not Bad!</p>
-                                </div>
-                                <a href="#" style="float: right"><i class="icon-hand-right"></i> Quote</a>
-                                <div class="clearfix"></div>
-                            </div>
-                        </div>
-                        <div class="divider" style="border-top: 1px solid #fff;margin-top: 10px;margin-bottom: 10px"></div>
+                        </c:if>
+                        </c:forEach>
+                        
+                        
                         <a href="" style="float: right">More...</a>
                         <div class="clearfix"></div>
                     </div>
@@ -370,11 +326,36 @@ function publish()
 						if(result.status == "SUCCESS")
 							alert("发表成功");
 						$("#content").val("");
-						//window.location = result.Location;
+						window.location.reload();
 					},
 					"json");
 }
+</script>
+<script type="text/javascript">
+$(".voter").click(function(){
+	var comment_id = $(this).attr("id");
+	
+	$.post(
+			"/comments/inc",
+			{
+				"comment_id" : comment_id
+			},
 
+			function(result) {
+				//if(result.status != "SUCCESS")
+					//alert("vote fail!");
+					
+				//window.location.reload();
+			},
+			"json");
+	
+	<%//不等结果返回,直接显示+1了%>
+	var num = $("#num_"+comment_id).html();
+	num++;
+	$("#num_"+comment_id).html(num);
+	
+	return false;
+});
 </script>
 </body>
 </html>
