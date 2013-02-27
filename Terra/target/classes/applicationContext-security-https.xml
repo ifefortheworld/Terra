@@ -1,0 +1,276 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns="http://www.springframework.org/schema/security"
+  xmlns:beans="http://www.springframework.org/schema/beans"
+  xmlns:context="http://www.springframework.org/schema/context"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+           http://www.springframework.org/schema/security
+           http://www.springframework.org/schema/security/spring-security-3.1.xsd
+           http://www.springframework.org/schema/context
+       	   http://www.springframework.org/schema/context/spring-context-3.1.xsd">
+    
+   
+    <!-- FilterChainProxy -->
+    
+    <!-- 一个 <http/>标签表示 一个 SecurityFilterChain(DefaultSecurityFilterChain)-->
+    
+    <http pattern="/users/**" security="none"></http>
+    <http pattern="*.do" security="none"></http>
+    
+    <!-- 静态资源免检 -->
+   	<http pattern="/resources/**" security="none"></http>
+   	
+   
+   	<!-- 临时 -->  
+    <http pattern="/table/save" security="none"></http>
+     <http pattern="/table/test/table.do" security="none"></http>
+     <http pattern="/table/save.do" security="none"></http>
+     
+    <!-- security="none" 的本质是 其 SecurityFilterChain 的filters属性 为空-->
+    
+    <http pattern="/manager/**" security="none" />
+    <http pattern="/access-denied" security="none"/>
+    <http pattern="/error.jsp" security="none"></http>
+    
+    
+ 
+    
+    
+    
+    <!-- logout success页面免检查 -->
+    <!-- 
+    <http pattern="/logoutsuccess" security="none"></http> -->
+    
+   
+   
+   	
+   	
+   	<!-- 自定义认证入口点AuthenticationEntryPoint 4 ExceptionTranslationFilter -->
+   	   	<!-- FOR AuthenticationException 或   AnonymousAuthentication情况下抛出的AccessDeniedException-->
+   	   	
+   	<beans:bean id="authenticationEntryPoint" 
+   		class="org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint">
+   		
+   		<beans:constructor-arg name="loginFormUrl" value="/login.jsp"/>
+   		
+   		<!-- 登录页面强制使用HTTPS --> 
+   		<beans:property name="forceHttps" value="true"/>
+   		
+   	</beans:bean>
+   
+   
+    
+    
+    <!-- 省略了pattern 过滤链会匹配所有请求: If omitted, the filter chain will match all requests. -->
+	<http auto-config="true" use-expressions="true" entry-point-ref="authenticationEntryPoint">
+	
+	
+		<!-- ________________________________ intercept-url _________________________________ -->
+		
+		
+		
+		
+		<!-- 注册页面 -->
+    	<intercept-url pattern="/register.jsp" access="permitAll" requires-channel="https"/>
+		
+		<!-- 注册链接 -->
+		<intercept-url pattern="/newPassport.do" access="permitAll" requires-channel="https"/>
+		
+		
+		
+		
+		<!-- 登录页面 -->
+					   							  <!-- WebExpressionVoter -->
+		<intercept-url pattern="/login.jsp" access="permitAll" requires-channel="https" />
+		
+		<!-- 登录链接 -->
+													     <!-- ChannelProcessingFilter -->
+		<intercept-url pattern="/j_spring_security_check"  method="POST" requires-channel="https"/>
+		
+
+		
+		
+
+		
+		<!-- 退出链接 -->
+		<!-- 只能使用DELETE方法来Logout -->
+		<intercept-url pattern="/j_spring_security_passport" method="DELETE"/>
+		
+		
+		<intercept-url pattern="/onlineusers/**" access="hasRole('ROLE_ADMIN')"/>
+		
+		<!-- 临时设置权限为permitAll -->
+		<!-- <intercept-url pattern="/ws/table/save" access="hasRole('ROLE_SUPERVISOR')" method="POST"/> -->
+		<intercept-url pattern="/table/save" access="permitAll" method="POST"/>
+		
+		
+									    <!-- WebExpressionVoter -->
+		<intercept-url pattern="/**" access="hasAnyRole('ROLE_SUPERVISOR','ROLE_ADMIN')" requires-channel="http"/>
+		
+		
+		
+		
+		
+		<!-- ________________________________ Filters _________________________________ -->
+				
+		
+		
+		<!-- 使HTTP HTTPS共享Session -->
+		<custom-filter ref="shareSessionInHTTPSFilter" after="CHANNEL_FILTER"/>
+		
+	
+		<!-- AuthenticationIPCheckFilter 保证原始IP才能访问 -->
+		<custom-filter ref="authenticationIPCheckFilter" after="SECURITY_CONTEXT_FILTER"/>
+	
+		
+		<!--LOGOUT_FILTER: 由 LogoutFilter 处理 -->
+		<logout invalidate-session="true"   
+				logout-url="/j_spring_security_passport" 
+				success-handler-ref="restLogoutSuccessHandler"/> <!-- default: /j_spring_security_logout -->
+		
+		<!-- logout-success-url="/ws/home"   不能和 success-handler-ref 同时使用 -->
+		
+		<!--invalidate-session="true" 由SecurityContextLogoutHandler处理: 使当前Session失效 并清理SecurityContextHolder -->
+		
+		<!--logout-success-url="/ws/home" 由 SimpleUrlLogoutSuccessHandler来处理: 简单重定向到这个url-->
+		
+		
+		
+		
+		<!--FORM_LOGIN_FILTER: 由 UsernamePasswordAuthenticationFilter 处理 : 处理的目标: /j_spring_security_check-->
+		<form-login login-page="/home" 
+				
+				login-processing-url="/j_spring_security_check"
+				
+				username-parameter="j_username"
+				password-parameter="j_password"
+				
+				authentication-success-handler-ref="restAuthenticationSuccessHandler"
+				authentication-failure-handler-ref="restAuthenticationFailureHandler" 
+				
+				/> 
+		
+		
+		<!--ANONYMOUS_FILTER: AnonymousAuthenticationFilter -->
+		<anonymous granted-authority="ROLE_ANONYMOUS"/>
+		
+		
+		
+		<!-- SESSION_MANAGEMENT_FILTER: SessionManagementFilter-->
+		<session-management session-fixation-protection="migrateSession">
+			
+			<!-- 超出最大数量后,并发控制:对于最早的Session,在SessionRegistry中使其对应的SessionInformation标记为expired  -->
+			<!-- 由SessionRegistry存放 user与其Sessions的关系,Set<principal:Object,SessionIdSet> -->
+			<concurrency-control max-sessions="1" expired-url="/home"/>
+			
+		</session-management>
+	
+	
+		<!-- EXCEPTION_TRANSLATION_FILTER: ExceptionTranslationFilter -->
+		<access-denied-handler error-page="/access-denied"/>
+		
+		
+		
+		
+	</http>
+	
+	
+    
+    <beans:bean id="restLogoutSuccessHandler" class="com.cscw.security.authentication.logout.RESTLogoutSuccessHandler">
+    	<beans:property name="logoutSuccessUrl" value="/edusupervisor/home"/>
+    </beans:bean>
+   
+
+   	
+
+   	
+   	
+   	<!-- ProviderManager -->
+   	<authentication-manager alias="authenticationManager">
+  
+   	
+   		<!-- DaoAuthenticationProvider -->
+   		<authentication-provider user-service-ref="userDetailsService" >
+   			
+   			<password-encoder ref="passwordEncoder">
+   			
+   				<salt-source ref="saltSource"/>
+   				
+   			</password-encoder>
+   		
+   		</authentication-provider>
+   	
+   	</authentication-manager>
+   	
+   	
+   	
+   	<context:component-scan base-package="com.cscw.security"/>
+
+
+	<!-- SHA-1 ShaPasswordEncoder -->
+	<beans:bean id="passwordEncoder" class="org.springframework.security.authentication.encoding.ShaPasswordEncoder"></beans:bean>
+   
+   
+    <!--
+    FilterSecurityInterceptor的默认的AccessDecisionManager是: AffirmativeBased(只要有一个Voter通过,就可以访问)
+    
+    而 AffirmativeBased的默认的AccessDecisionVoter: RoleVoter 和  AuthenticatedVoter
+     
+    
+     -->
+</beans:beans>
+
+<!-- 
+position 0 of 10 in additional filter chain; firing Filter: 'ChannelProcessingFilter'
+															'ShareSessionInHTTPSFilter'
+															
+															'ConcurrentSessionFilter'
+position 1 of 10 in additional filter chain; firing Filter: 'SecurityContextPersistenceFilter'
+															'AuthenticationIPCheckFilter'
+															
+position 2 of 10 in additional filter chain; firing Filter: 'LogoutFilter'
+position 3 of 10 in additional filter chain; firing Filter: 'UsernamePasswordAuthenticationFilter'
+position 4 of 10 in additional filter chain; firing Filter: 'BasicAuthenticationFilter'
+position 5 of 10 in additional filter chain; firing Filter: 'RequestCacheAwareFilter'
+position 6 of 10 in additional filter chain; firing Filter: 'SecurityContextHolderAwareRequestFilter'
+position 7 of 10 in additional filter chain; firing Filter: 'AnonymousAuthenticationFilter'
+position 8 of 10 in additional filter chain; firing Filter: 'SessionManagementFilter'
+position 9 of 10 in additional filter chain; firing Filter: 'ExceptionTranslationFilter'
+position10 of 10 in additional filter chain; firing Filter: 'FilterSecurityInterceptor'
+
+
+
+1:'SecurityContextPersistenceFilter' 
+	流程:  
+	1:先从SecurityContextRepository中取出已存在的SecurityContext,若不存在,返回一下空的SecurityContext(此时并未将SecurityContext放进SecurityContextRepository中)
+	2:先将SecurityContext存在到SecurityContextHolder中(绑定到线程)
+	3:执行FilterChain的其它过滤器
+	4:FilterChain返回,此时请求执行完毕,然后将SecurityContext保存到HttpSessionSecurityContextRepository
+	(实质将SecurityContext(内含UsernamePasswordAuthenticationToken)放回Session中)
+
+
+ConcurrentSessionControlStrategy:	
+
+1:用Session注册表:SessionRegistry来维护user与其所有的Sessions
+的关系(Set<principal:Object,SessionIdSet:String>)
+
+2:同时用SessionRegistry来存放Session与其信息的关系
+<sessionId:String,SessionInformation>
+
+3:当用户并发登录成功后,则根据SessionRegistry里SessionInformation
+的Session"新鲜度"..将最旧的Session"使之失效":即使其SessionInformation
+标记为expired
+
+
+ConcurrentSessionFilter
+
+1:从SessionRegistry中取出Session的信息(SessionInformation)
+2:如果Session未过期(在SessionInformation中未被标记expired),则更新其SessionInformation的最后访问时间
+3:如果Session已过期(在SessionInformation中被标记expired),
+	1调用LogoutHandler使Session失效,2如果配置了expiredUrl,则重定向到expiredUrl,否则简单返回错误信息
+	
+	
+
+
+ -->

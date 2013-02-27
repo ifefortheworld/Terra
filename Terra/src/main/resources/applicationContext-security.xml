@@ -1,0 +1,313 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:sec="http://www.springframework.org/schema/security"
+  xmlns:context="http://www.springframework.org/schema/context"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans
+          http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+          http://www.springframework.org/schema/security
+          http://www.springframework.org/schema/security/spring-security-3.1.xsd
+          http://www.springframework.org/schema/context
+       	  http://www.springframework.org/schema/context/spring-context-3.2.xsd">
+    
+   	<!-- Scans the classpath of this application for @Components to deploy as beans -->
+    <context:component-scan base-package="com.ireland.security"/>
+ 
+<!-- PS:如果一个功能没在用Authority在数据里配置,则默认可以直接访问这个功能 -->
+<!-- 4 Test -->
+ 
+     <sec:http pattern="/refreshSecurityConfig" security="none"/>
+
+<!-- END 4 Test -->
+
+     
+ 
+ 
+ 
+ <!-- 配置SecurityFilterChain -->
+    
+    <!-- 一个 <http/>标签表示 一个 SecurityFilterChain(DefaultSecurityFilterChain)-->
+    
+
+    <!-- 静态资源免检 -->
+    <sec:http pattern="/css/**" security="none"/>
+    <sec:http pattern="/js/**" security="none"/>
+    <sec:http pattern="/img/**" security="none"/>
+    
+    
+    
+    <!-- 登录页面 -->
+    <sec:http pattern="/login" security="none"/>
+    
+    
+    <sec:http pattern="/register" security="none"/>
+    
+    
+    <!-- 403禁止访问 -->
+    <sec:http pattern="/403" security="none"/>
+    
+    
+    <!-- 404 -->
+    <sec:http pattern="/404" security="none"/>
+
+    
+    
+    
+    <!-- 省略了pattern 过滤链会匹配所有请求: If omitted, the filter chain will match all requests. -->
+    <sec:http auto-config="true" use-expressions="true" entry-point-ref="authenticationEntryPoint">
+			
+		<!-- use-expressions="true" :  SecurityExpressionRoot -->
+	
+		
+		<!-- 没有配置 intercept-urls,FILTER_SECURITY_INTERCEPTOR 不过滤任何请求 -->
+		
+		
+		<!-- ________________________________ Filters _________________________________ -->
+				
+		
+		<!-- ChannelProcessingFilter 使用sec:intercept-url pattern="/url" method="GET" requires-channel="http"作为SecurityMetadataSource -->
+	
+	
+		
+		<!--LOGOUT_FILTER: 由 LogoutFilter 处理 -->
+		<sec:logout invalidate-session="true"   
+				logout-url="/j_spring_security_logout" 
+				success-handler-ref="restLogoutSuccessHandler"/> <!-- default: /j_spring_security_logout -->
+		
+		
+		<!-- logout-success-url="/index"   不能和 success-handler-ref 同时使用 -->
+		
+		<!--invalidate-session="true" 由SecurityContextLogoutHandler处理: 使当前Session失效 并清理SecurityContextHolder -->
+		
+		<!--logout-success-url="/index" 由 SimpleUrlLogoutSuccessHandler来处理: 简单重定向到这个url-->
+		
+		
+		
+		<!--FORM_LOGIN_FILTER: 由 UsernamePasswordAuthenticationFilter 处理 : 处理的目标: /j_spring_security_check-->
+		<sec:form-login login-page="/" 
+				
+				login-processing-url="/j_spring_security_check"
+				
+				username-parameter="j_username"
+				password-parameter="j_password"
+				
+				authentication-success-handler-ref="restAuthenticationSuccessHandler"
+				authentication-failure-handler-ref="restAuthenticationFailureHandler" 
+				
+				/> 
+		
+		<!--ANONYMOUS_FILTER: AnonymousAuthenticationFilter -->
+		<sec:anonymous granted-authority="ROLE_ANONYMOUS"/>
+		
+		
+		
+		<!-- SESSION_MANAGEMENT_FILTER: SessionManagementFilter-->
+		<sec:session-management session-fixation-protection="migrateSession">
+			
+			<!-- 超出最大数量后,并发控制:对于最早的Session,在SessionRegistry中使其对应的SessionInformation标记为expired  -->
+			<!-- 由SessionRegistry存放 user与其Sessions的关系,Set<principal:Object,SessionIdSet> -->
+		<!-- 	<sec:concurrency-control max-sessions="1" expired-url="/index"/> -->
+			
+		</sec:session-management>
+	
+	
+		<!-- EXCEPTION_TRANSLATION_FILTER: ExceptionTranslationFilter -->
+		<sec:access-denied-handler error-page="/403"/>
+		
+		
+		<!-- 放置自定义的FilterSecurityInterceptor 来替代默认的 FILTER_SECURITY_INTERCEPTOR, 后面的FILTER_SECURITY_INTERCEPTOR不会起作用  -->
+		<sec:custom-filter ref="refreshableFilterSecurityInterceptor" before="FILTER_SECURITY_INTERCEPTOR" />
+		
+		
+		<!-- FilterSecurityInterceptor 使用 <sec:intercept-url pattern="" access="" requires-channel=""/>作为SecurityMetadataSource  -->
+		<!-- FilterSecurityInterceptor 使用了 intercept-url 的 pattern, access 和  method 属性 -->
+		<!-- FILTER_SECURITY_INTERCEPTOR:  FilterSecurityInterceptor -->
+		
+		
+			<!-- DateWebSecurityExpressionHandler -->
+			<sec:expression-handler ref="urlTemplateWebSecurityExpressionHandler"/>
+			
+			
+		
+		
+	</sec:http>
+
+<!--END 配置SecurityFilterChain -->
+
+	
+	
+	<!-- 自定义认证入口点AuthenticationEntryPoint 4 ExceptionTranslationFilter -->
+   	<!-- FOR AuthenticationException 或   AnonymousAuthentication情况下抛出的AccessDeniedException-->   	
+   	<bean id="authenticationEntryPoint" 
+   		class="com.ireland.security.web.authentication.UrlMatchLoginUrlAuthenticationEntryPoint">
+   		
+   		<!-- 默认的登录地址 -->
+   		<constructor-arg name="loginFormUrl" value="/login"/>
+   		
+   		<!-- 登录页面强制使用HTTPS --> 
+   		<!-- <property name="forceHttps" value="true"/> -->
+   		
+   		
+   		<!-- 特定URL模式的登录地址(这里是wap的登录地址) -->
+   		<property name="patternLoginUrlMap">
+ 			<map>
+          	</map>
+         </property>
+   		
+   	</bean>
+   
+	
+	
+	<!-- WebExpressionVoter SpEL投票器 -->
+   	<bean id="webExpressionVoter" class="org.springframework.security.web.access.expression.WebExpressionVoter">
+   		<property name="expressionHandler" ref="urlTemplateWebSecurityExpressionHandler"/>
+   	</bean>
+   
+   	<!-- AccessDecisionManager: unanimousBased 一致性-访问决策管理器 --> 
+   	<bean id="unanimousBased" class="org.springframework.security.access.vote.UnanimousBased">
+   	
+   		<constructor-arg name="decisionVoters">
+   			<list>
+   				<ref bean="webExpressionVoter"/>
+   			</list>
+   		</constructor-arg>
+   	</bean>
+   	
+	
+	<!-- 可刷新元数据的 FILTER_SECURITY_INTERCEPTOR -->
+	<bean id="refreshableFilterSecurityInterceptor" class="com.ireland.security.web.access.intercept.RefreshableFilterSecurityInterceptor">
+		
+		<!-- 每一个Authority功能模块就是一个安全配置 SecurityMetadata -->
+		<constructor-arg name="securityMetadataProvider" ref="authorityService"/>
+		
+		<constructor-arg name="expressionHandler" ref="urlTemplateWebSecurityExpressionHandler"/>
+		
+   		<property name="authenticationManager" ref="authenticationManager"/>
+   		 
+   		<property name="accessDecisionManager" ref="unanimousBased"/>
+   		 		 
+   	</bean>
+     
+	
+	
+	
+	<!-- for URL访问授权  <sec:authorize url="/url"> -->
+	<!-- 给URL访问授权配置自定义的 SecurityInterceptor-->
+<!-- 	<bean id="webInvocationPrivilegeEvaluator" class="org.springframework.security.web.access.DefaultWebInvocationPrivilegeEvaluator">
+		<constructor-arg name="securityInterceptor" ref="refreshableFilterSecurityInterceptor"/>
+	</bean> -->
+	
+	
+	
+    
+    <bean id="restLogoutSuccessHandler" class="com.ireland.security.authentication.logout.RestLogoutSuccessHandler">
+    	<property name="logoutSuccessUrl" value="/"/>
+    </bean>
+   
+   
+     <!-- ProviderManager 认证管理器-->
+   	<sec:authentication-manager alias="authenticationManager">
+  
+   	
+   		<!-- DaoAuthenticationProvider -->
+   		<sec:authentication-provider ref="daoAuthenticationProvider" />
+   	
+   	</sec:authentication-manager>
+   	
+   	
+   	<!-- DaoAuthenticationProvider 认证提供者 -->
+   	<bean id="daoAuthenticationProvider" 
+   	      class="org.springframework.security.authentication.dao.DaoAuthenticationProvider">
+   	      
+   	      <property name="userDetailsService" ref="userDetailsService"/>
+   	      
+   	      <property name="passwordEncoder" ref="passwordEncoder"/>
+   	      
+   	      <property name="saltSource" ref="saltSource"/>
+   	      
+   	      <property name="hideUserNotFoundExceptions" value="false"/> <!-- 不用隐藏"用户不存在的信息"! -->
+   	      
+   	</bean>
+   	
+
+   	
+   	
+   	
+
+
+	<!-- SHA-1 ShaPasswordEncoder -->
+	<bean id="passwordEncoder" class="org.springframework.security.authentication.encoding.ShaPasswordEncoder"></bean>
+   
+   
+     
+    <!-- MethodSecurityInterceptor  -->
+    <sec:global-method-security pre-post-annotations="enabled"> </sec:global-method-security>
+  
+    
+</beans>
+
+
+<!-- 
+
+position 1 of 11 in additional filter chain; firing Filter:  'SecurityContextPersistenceFilter'
+
+position 2 of 11 in additional filter chain; firing Filter:  'LogoutFilter'
+
+position 3 of 11 in additional filter chain; firing Filter:  'UsernamePasswordAuthenticationFilter'
+
+position 4 of 11 in additional filter chain; firing Filter:  'BasicAuthenticationFilter'
+ 
+position 5 of 11 in additional filter chain; firing Filter:  'RequestCacheAwareFilter'
+
+position 6 of 11 in additional filter chain; firing Filter:  'SecurityContextHolderAwareRequestFilter'
+
+position 7 of 11 in additional filter chain; firing Filter:  'AnonymousAuthenticationFilter'
+
+position 8 of 11 in additional filter chain; firing Filter:  'SessionManagementFilter'
+
+position 9 of 11 in additional filter chain; firing Filter:  'ExceptionTranslationFilter'
+
+position 10 of 11 in additional filter chain; firing Filter: 'RefreshableFilterSecurityInterceptor'
+
+position 11 of 11 in additional filter chain; firing Filter: 'FilterSecurityInterceptor'
+
+
+
+1:'SecurityContextPersistenceFilter' 
+	流程:  
+	1:先从SecurityContextRepository中取出已存在的SecurityContext,若不存在,返回一下空的SecurityContext(此时并未将SecurityContext放进SecurityContextRepository中)
+	2:先将SecurityContext存在到SecurityContextHolder中(绑定到线程)
+	3:执行FilterChain的其它过滤器
+	4:FilterChain返回,此时请求执行完毕,然后将SecurityContext保存到HttpSessionSecurityContextRepository
+	(实质将SecurityContext(内含UsernamePasswordAuthenticationToken)放回Session中)
+
+
+ConcurrentSessionControlStrategy:	
+
+1:用Session注册表:SessionRegistry来维护user与其所有的Sessions
+的关系(Set<principal:Object,SessionIdSet:String>)
+
+2:同时用SessionRegistry来存放Session与其信息的关系
+<sessionId:String,SessionInformation>
+
+3:当用户并发登录成功后,则根据SessionRegistry里SessionInformation
+的Session"新鲜度"..将最旧的Session"使之失效":即使其SessionInformation
+标记为expired
+
+
+ConcurrentSessionFilter
+
+1:从SessionRegistry中取出Session的信息(SessionInformation)
+2:如果Session未过期(在SessionInformation中未被标记expired),则更新其SessionInformation的最后访问时间
+3:如果Session已过期(在SessionInformation中被标记expired),
+	1调用LogoutHandler使Session失效,2如果配置了expiredUrl,则重定向到expiredUrl,否则简单返回错误信息
+	
+	
+	
+	
+    	FilterSecurityInterceptor的默认的AccessDecisionManager是: AffirmativeBased(只要有一个Voter通过,就可以访问)
+    
+    	而 AffirmativeBased的默认的AccessDecisionVoter: RoleVoter 和  AuthenticatedVoter
+    -->
+
+
