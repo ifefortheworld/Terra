@@ -1,0 +1,7 @@
+
+rockmongo-1.1 added.  Please make note of these MongoDB credentials again:
+
+   RockMongo User    : admin
+   RockMongo Password: bEN8zX6rNW7Z
+
+URL: https://Terra-jluzh.rhcloud.com/rockmongo/

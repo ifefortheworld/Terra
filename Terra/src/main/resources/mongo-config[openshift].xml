@@ -35,12 +35,12 @@ DataAccessException hierarchy for data access classes annoated with the @Reposit
 	
 	<bean id="userCredentials" class="org.springframework.data.authentication.UserCredentials">
 		<constructor-arg name="username" value="admin"/>
-		<constructor-arg name="password" value="YI4EdhaNtyH4"/>
+		<constructor-arg name="password" value="bEN8zX6rNW7Z"/>
 	</bean>
 	
 	<bean id="mongoTemplate" class="org.springframework.data.mongodb.core.MongoTemplate">
 	  <constructor-arg name="mongo" ref="mongo" />
-	  <constructor-arg name="databaseName" value="dms" />
+	  <constructor-arg name="databaseName" value="Terra" />
 	  <constructor-arg name="userCredentials" ref="userCredentials"/>
 	  	  
 	</bean>
