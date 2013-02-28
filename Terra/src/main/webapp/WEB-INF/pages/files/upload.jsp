@@ -63,7 +63,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
                 <a class="brand" href="#">Terra</a>
                 <div class="nav-collapse collapse">
                     <ul class="nav">
-                        <li class="active"><a href="#"> Home</a></li>
+                        <li class="active"><a href="/myspace/"> Home</a></li>
                         <!--<li><a href="#"> Upload </a></li>-->
                         <li class="dropdown">
                             <a href="#" class="dropdown-toggle"  data-toggle="dropdown">Platform <b class="caret"></b></a>
