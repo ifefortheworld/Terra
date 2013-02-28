@@ -144,6 +144,8 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
                     <textarea class="input-block-level" rows="2" placeholder="Tag..." id="tags"></textarea>
                     <button class="btn" type="button" style="float: right;margin-bottom: 10px">Auto</button>
                     <div class="clearfix"></div>
+                    <h2>File</h2>
+                    <input class="input-block-level" type="file" name="file" id="file">
                 </div>
             </div>
             <div class="span2">
@@ -202,7 +204,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 <script src="js/jquery-latest.js"></script>
 <script src="js/bootstrap.min.js"></script>
 <script type="text/javascript">
-	$("#uploadBtn").click(function(){upload();return false;});
+	$("#uploadBtn").click(function(){XHRUpload();return false;});
 	
 	function upload()
 	{
@@ -214,18 +216,59 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 						"type" : $("#type").val(),
 						"detail" : $("#detail").val(),
 						"_tags" : $("#tags").val()
-								
 					},
 
 					function(result) {
 						if(result.status == "SUCCESS")
+						{
 							alert("上传成功");
-							
-						window.location = result.Location;
+							window.location = result.Location;
+						}
 					},
 					"json");
 	}
 	
-</script>
+
+   function $id(id) { return document.getElementById(id);}
+   
+   var xhr = null;
+   
+   function XHRUpload()
+   {   	  
+   	  var formData = new FormData();
+   	  formData.append("isShared",$("#isShared").val());
+   	  formData.append("name",$("#name").val());
+   	  formData.append("type",$("#type").val());
+   	  formData.append("detail",$("#detail").val());
+   	  formData.append("_tags",$("#tags").val());
+   	  formData.append("file",$id('file').files[0]);
+   	  
+   	  xhr = new XMLHttpRequest();  
+   	  xhr.upload.onprogress = _onprogress;
+   	  
+   	  xhr.onload = _onload;
+   	   	  
+   	  xhr.open("POST", "/files/upload_", true);
+   	  
+   	  xhr.send(formData);
+   }
+   
+   function _onprogress(evt) 
+   {
+   		//$("progress").innerHTML = Math.round(evt.loaded / evt.total * 100) + "%";
+   		//$("uploadProgress").max = evt.total;
+   		//$("uploadProgress").value = evt.loaded;
+   }
+   
+   function _onload(evt){
+   		var result = JSON.parse(evt.target.responseText);
+		if(result.status == "SUCCESS")
+		{
+			alert("上传成功");
+			window.location = result.Location;
+		}
+   }
+   
+   </script>
 </body>
 </html>

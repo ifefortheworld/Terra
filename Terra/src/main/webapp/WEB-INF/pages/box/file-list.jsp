@@ -150,9 +150,9 @@ SimpleDateFormat f=new SimpleDateFormat("yyyy/MM/dd");
                         </ul>
                     </div>
                     <div class="btn-group">
-                        <a class="btn" href="#"><i class="icon-th-large"></i> Check</a>
+                        <a class="btn" href="#" id="btn-check"><i class="icon-th-large"></i> Check</a>
                         <a class="btn" href="/files/upload"><i class="icon-arrow-up"></i> Upload</a>
-                        <a class="btn" href="#"><i class="icon-remove"></i> Delete</a>
+                        <a class="btn" href="#" id="btn-remove"><i class="icon-remove"></i> Delete</a>
                         <a class="btn" href="#"><i class="icon-refresh"></i> Refresh</a>
                     </div>
                     <a class="btn" href="#"><i class="icon-cog"></i> Setting</a>
@@ -182,7 +182,7 @@ SimpleDateFormat f=new SimpleDateFormat("yyyy/MM/dd");
                     <tr>
                         <td>
                             <label class="checkbox">
-                                <input type="checkbox">
+                                <input type="checkbox" id="${file.id}" class="_checkbox">
                             </label>
                         </td>
                         <td>
@@ -321,5 +321,55 @@ SimpleDateFormat f=new SimpleDateFormat("yyyy/MM/dd");
 <script src="/js/jquery-latest.js"></script>
 <script src="/js/bootstrap.min.js"></script>
 <script src="/js/filesTbRefresh.js"></script>
+<script type="text/javascript">
+<%//numberElementsOnPage: 当前页的实际元素数量%>
+var numberElementsOnPage = ${page.numberOfElements};
+
+$("#btn-check").click(function(){
+	var cntChecked = 0;
+	
+	$("._checkbox:checked").each(function(){
+		cntChecked++;
+	});
+	
+	if(cntChecked == numberElementsOnPage)
+		$("._checkbox").prop("checked",false);
+	else		
+		$("._checkbox").prop("checked",true);
+	
+	return false;
+});
+
+$("#btn-remove").click(function(){
+	var files = new Array();
+	
+	$("._checkbox:checked").each(function(){
+		files.push($(this).attr("id"));
+	});
+	
+	if(files.length == 0)
+	{
+		alert("请选择要删除的文件!");
+		return false;
+	}
+	
+	
+	$.post(
+		"/files/delete",
+		{
+			"files" : files.join(',')
+		},
+
+		function(result) {
+			if(result.status == "SUCCESS")
+				alert("删除成功!");
+			window.location.reload();
+		},
+		"json"
+	);
+	
+	return false;
+});
+</script>
 </body>
 </html>

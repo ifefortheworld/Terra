@@ -5,6 +5,7 @@ import java.util.Date;
 import javax.validation.constraints.NotNull;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.ireland.utils.MyDateTime;
@@ -25,11 +26,13 @@ public class Comment
 	/**
 	 * 评论者的名称
 	 */
+	@Indexed
 	private String owner;
 	
 	/**
 	 * 被评论文件的id
 	 */
+	@Indexed
 	private String fileId;
 	/**
 	 * 内容

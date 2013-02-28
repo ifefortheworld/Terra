@@ -10,6 +10,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.servlet.http.Part;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +36,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
@@ -183,7 +185,8 @@ public class FileController
 	 */
 	@RequestMapping(value = "/files/upload_",method=RequestMethod.POST,produces="application/json;charset=UTF-8")
 	@ResponseBody
-	public Map<String,String> uploadFile(@Valid TerraFile file,@RequestParam("_tags")String _tags)
+	public Map<String,String> uploadFile(@Valid TerraFile file,@RequestParam("_tags")String _tags,
+																@RequestPart(value="file",required=false) Part partFile)
 	{
 		User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		
@@ -258,5 +261,26 @@ public class FileController
 		return res;
 	}
 
+	/**
+	 * 批量删除文件,及其所有评论
+	 * 
+	 */
+	@RequestMapping(value = "/files/delete",method=RequestMethod.POST,produces="application/json;charset=UTF-8")
+	@ResponseBody
+	public Map<String,Object> deleteFiles(@RequestParam("files") String fileIdList)
+	{		
+		String[] fileIds = fileIdList.split(",");
+		
+		for(String id : fileIds)
+		{
+			terraFileDao.delete(id);           //删除文件
+			commentDao.delete("fileId", id);   //删除文件的所有评论
+		}
+		
+		Map<String,Object> res = new HashMap<String,Object>();
+		res.put("status", "SUCCESS");
+		res.put("cnt",fileIds.length);
+		return res;
+	}
 
 }

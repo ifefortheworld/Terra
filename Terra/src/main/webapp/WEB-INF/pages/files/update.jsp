@@ -242,7 +242,13 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
                 </div>
             </div>
             <div class="span2">
-                <img src="img/ico-260px-text.png" class="img-rounded" data-src="holder.js/64x64" style="margin-bottom: 20px">
+            	<c:if test="${file.type == 'Text'}"><img src="/img/ico-260px-text.png" class="img-rounded" data-src="holder.js/64x64" style="margin-bottom: 20px"></c:if>
+            	<c:if test="${file.type == 'Video'}"><img src="/img/ico-260px-video.png" class="img-rounded" data-src="holder.js/64x64" style="margin-bottom: 20px"></c:if>
+            	<c:if test="${file.type == 'Audio'}"><img src="/img/ico-260px-audio.png" class="img-rounded" data-src="holder.js/64x64" style="margin-bottom: 20px"></c:if>
+            	<c:if test="${file.type == 'Image'}"><img src="/img/ico-260px-image.png" class="img-rounded" data-src="holder.js/64x64" style="margin-bottom: 20px"></c:if>
+            	<c:if test="${file.type == 'Bag'}"><img src="/img/ico-260px-bag.png" class="img-rounded" data-src="holder.js/64x64" style="margin-bottom: 20px"></c:if>
+            	<c:if test="${file.type == 'Other'}"><img src="/img/ico-260px-other.png" class="img-rounded" data-src="holder.js/64x64" style="margin-bottom: 20px"></c:if>
+                
                 <img src="img/tag-mostvaluable.png" class="img-rounded" data-src="holder.js/64x64" style="margin-bottom: 20px">
                 <button class="btn btn-info" type="button" style="width: 100%;margin-bottom: 10px">Change</button>
                 <button class="btn btn-danger" type="button" style="width: 100%;margin-bottom: 10px">Download</button>
@@ -347,7 +353,8 @@ $(".voter").click(function(){
 					
 				//window.location.reload();
 			},
-			"json");
+			"json"
+	);
 	
 	<%//不等结果返回,直接显示+1了%>
 	var num = $("#num_"+comment_id).html();
