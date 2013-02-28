@@ -66,7 +66,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
                 <a class="brand" href="#">Terra</a>
                 <div class="nav-collapse collapse">
                     <ul class="nav">
-                        <li class="active"><a href="#"> Home</a></li>
+                        <li class="active"><a href="/myspace"> Home</a></li>
                         <!--<li><a href="#"> Upload </a></li>-->
                         <li class="dropdown">
                             <a href="#" class="dropdown-toggle"  data-toggle="dropdown">Platform <b class="caret"></b></a>
@@ -88,11 +88,16 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
                         </li>
                     </ul>
                     <ul class="nav pull-right">
-                        <li><a href="/<sec:authentication property="principal.username"/>/file-list" > @<sec:authentication property="principal.username"/></a></li>
+                        <li><a href="/myspace/file-list"> @<sec:authentication property="principal.username"/></a></li>
                         <li class="dropdown">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown"> My Box <b class="caret"></b></a>
                             <ul class="dropdown-menu">
-                                <li><a href="#"><i class="icon-user"></i> Sign in</a></li>
+                            	<sec:authorize access="!hasAuthority('index')">
+                                	<li><a href="/"><i class="icon-user"></i> Sign in</a></li>
+                                </sec:authorize>
+                                <sec:authorize access="hasAuthority('index')">
+                                	<li><a href="/j_spring_security_logout"><i class="icon-user"></i> Sign out</a></li>
+                                </sec:authorize>
                                 <li class="divider"></li>
                                 <li><a href="#"><i class="icon-file"></i> Files</a></li>
                                 <li><a href="#"><i class="icon-bookmark"></i> Columns</a></li>
@@ -256,7 +261,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
                 <c:if test="${user.username != file.owner}">
                 <button class="btn btn-success" type="button" style="width: 100%;margin-bottom: 10px">Favorite</button>
                 </c:if>
-                <a href="${file.fileUrl}">
+                <a href="${file.fileUrl}" id="downBtn">
                 <button class="btn btn-danger" type="button" style="width: 100%;margin-bottom: 10px">Download</button>
                 </a>
                 <div class="well" style="background: none">
@@ -276,7 +281,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
                             </div>
                         </li>
                         <li>
-                            <label><i class=" icon-arrow-down"></i> Downs <span class="label label-important">${file.downsCnt}</span></label>
+                            <label><i class=" icon-arrow-down"></i> Downs <span class="label label-important" id="downsCnt">${file.downsCnt}</span></label>
                             <div class="progress progress-danger progress-striped">
                                 <div class="bar" style="width: ${file.downsCnt}%"></div>
                             </div>
@@ -319,32 +324,55 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 <script src="/js/jquery-latest.js"></script>
 <script src="/js/bootstrap.min.js"></script>
 <script type="text/javascript">
-$("#publishBtn").click(function(){publish();return false;});
-
-function publish()
-{
+$("#publishBtn").click(function(){
 	if($("#content").val() == "")
 	{
 		alert("评论不能为空!");
 		return;
 	}
 	
-		$.post(
-					"/files/${file.id}/coments",
-					{
-						"content" : $("#content").val(),
-					},
+	$.post(
+			"/files/${file.id}/coments",
+			{
+				"content" : $("#content").val(),
+			},
 
-					function(result) {
-						if(result.status == "SUCCESS")
-							alert("发表成功");
-						$("#content").val("");
-						window.location.reload();
-					},
-					"json");
-}
-</script>
-<script type="text/javascript">
+			function(result) {
+				if(result.status == "SUCCESS")
+					alert("发表成功");
+				$("#content").val("");
+				window.location.reload();
+			},
+			"json"
+	);
+	
+	return false;
+});
+
+$("#downBtn").click(function(){
+	var file_id = "${file.id}";
+	
+	$.post(
+			"/files/downsCnt/inc",
+			{
+				"file_id" : file_id
+			},
+
+			function(result) {
+				if(result.status == "SUCCESS"){
+				}
+			},
+			"json"
+	);
+	
+	<%//不等结果返回,直接显示+1了%>
+	var num = $("#downsCnt").html();
+	num++;
+	$("#downsCnt").html(num);
+	
+	return true;
+});
+
 $(".voter").click(function(){
 	var comment_id = $(this).attr("id");
 	
@@ -357,8 +385,6 @@ $(".voter").click(function(){
 			function(result) {
 				//if(result.status != "SUCCESS")
 					//alert("vote fail!");
-					
-				//window.location.reload();
 			},
 			"json"
 	);

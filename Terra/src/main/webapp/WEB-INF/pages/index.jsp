@@ -52,7 +52,7 @@ SimpleDateFormat f=new SimpleDateFormat("yyyy/MM/dd");
                 <a class="brand" href="#">Terra</a>
                 <div class="nav-collapse collapse">
                     <ul class="nav">
-                        <li class="active"><a href="#"> Home</a></li>
+                        <li class="active"><a href="/myspace"> Home</a></li>
                         <!--<li><a href="#"> Upload </a></li>-->
                         <li class="dropdown">
                             <a href="#" class="dropdown-toggle"  data-toggle="dropdown">Platform <b class="caret"></b></a>
@@ -76,7 +76,7 @@ SimpleDateFormat f=new SimpleDateFormat("yyyy/MM/dd");
                     <ul class="nav pull-right">
                     	
                     	<sec:authorize access="hasAuthority('index')">
-                    	<li><a href="/<sec:authentication property="principal.username"/>/file-list" > @<sec:authentication property="principal.username"/></a></li>
+                    	<li><a href="/myspace/file-list" > @<sec:authentication property="principal.username"/></a></li>
                     	</sec:authorize>
                     	
                     	<sec:authorize access="!hasAuthority('index')">

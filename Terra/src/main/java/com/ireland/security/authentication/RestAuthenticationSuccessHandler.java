@@ -67,7 +67,7 @@ public class RestAuthenticationSuccessHandler implements AuthenticationSuccessHa
 		
 		String username = ((UserDetails) authentication.getPrincipal()).getUsername();
 		
-		response.setHeader("Location", basePath+"/"+username+"/file-list");
+		response.setHeader("Location", basePath+"/myspace/file-list");
         //redirectStrategy.sendRedirect(request, response, "/");
 
 		

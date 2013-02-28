@@ -118,13 +118,14 @@ public class FileController
 	 * pageNumber: 1~n
 	 */
 
-	@RequestMapping(value = "/{username}/file-list")
-	public String filelist(@PathVariable("username") String username, 
+	@RequestMapping(value = {"/myspace/file-list","/myspace"})
+	public String filelist( 
 						   @RequestParam(value="page",required=false)Integer pageNumber,
 						   @RequestParam(value="sort",required=false)String sort,
 						   @RequestParam(value="type",required=false)String type,
 						   Model model)
 	{
+		User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		//默认按上传日期倒序,取出前10条文件
 		
 		//清除如&sort=,这类无效参数
@@ -137,8 +138,8 @@ public class FileController
 		//默认按uploadDate排序
 		if(sort == null) sort ="uploadDate";
 		
-		Page<TerraFile> page = (type == null) ? terraFileDao.findAll(Criteria.where("owner").is(username), new PageRequest(pageNumber - 1, 10, Direction.DESC,sort))
-											  : terraFileDao.findAll(Criteria.where("owner").is(username).and("type").is(type), new PageRequest(pageNumber - 1, 10, Direction.DESC,sort));
+		Page<TerraFile> page = (type == null) ? terraFileDao.findAll(Criteria.where("owner").is(user.getUsername()), new PageRequest(pageNumber - 1, 10, Direction.DESC,sort))
+											  : terraFileDao.findAll(Criteria.where("owner").is(user.getUsername()).and("type").is(type), new PageRequest(pageNumber - 1, 10, Direction.DESC,sort));
 		//统计未分享的数量
 		Long unsharedCnt = (type == null)? terraFileDao.count("isShared", Boolean.FALSE)
 										 : terraFileDao.count(Criteria.where("isShared").is(Boolean.FALSE).and("type").is(type));
@@ -186,12 +187,21 @@ public class FileController
 		
 		TerraFile file = terraFileDao.findOne(id);
 		
+//评论---------------------------------------------------------------------------------		
 		//查询此文件最有价值的评论(按votes倒序的第1条)
 		Page<Comment> coment = commentDao.findAll(Criteria.where("fileId").is(id), new PageRequest(0, 1, Direction.DESC, "votes"));
 		Comment valComment = coment.hasContent() ? coment.iterator().next() : null;
 		
 		//(按时间由新到旧)查询文件的前5条评论
 		Page<Comment> page = commentDao.findAll(Criteria.where("fileId").is(id), new PageRequest(0, 5, Direction.DESC, "date"));
+//评论END---------------------------------------------------------------------------------
+		
+//------正在浏览别人的文件,使文件的浏览数+1
+		if(file.getOwner() != user.getUsername())
+		{	
+			file.setViewsCnt(file.getViewsCnt()+1);
+			terraFileDao.inc(file.getId(), "viewsCnt", 1);
+		}
 		
 		model.addAttribute("file",file);
 		model.addAttribute("page",page);
@@ -334,6 +344,23 @@ public class FileController
 		Map<String,Object> res = new HashMap<String,Object>();
 		res.put("status", "SUCCESS");
 		res.put("cnt",fileIds.length);
+		return res;
+	}
+	
+	
+	/**
+	 * 为down下载统计: /files/downsCnt/inc
+	 * 
+	 */
+	@RequestMapping(value = "/files/downsCnt/inc",method=RequestMethod.POST,produces="application/json;charset=UTF-8")
+	@ResponseBody
+	public Map<String,String> downsCntInc(@RequestParam("file_id")String id)
+	{
+		//使数据库的downsCnt 加1
+		terraFileDao.inc(id, "downsCnt", 1);
+	    		
+		Map<String,String> res = new HashMap<String,String>();
+		res.put("status", "SUCCESS");
 		return res;
 	}
 

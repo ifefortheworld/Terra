@@ -75,7 +75,7 @@ SimpleDateFormat f=new SimpleDateFormat("yyyy/MM/dd");
                 <a class="brand" href="#">Terra</a>
                 <div class="nav-collapse collapse">
                     <ul class="nav">
-                        <li class="active"><a href="#"> Home</a></li>
+                        <li class="active"><a href="/myspace"> Home</a></li>
                         <!--<li><a href="#"> Upload </a></li>-->
                         <li class="dropdown">
                             <a href="#" class="dropdown-toggle"  data-toggle="dropdown">Platform <b class="caret"></b></a>
@@ -97,15 +97,15 @@ SimpleDateFormat f=new SimpleDateFormat("yyyy/MM/dd");
                         </li>
                     </ul>
                     <ul class="nav pull-right">
-                        <li><a href="/<sec:authentication property="principal.username"/>/file-list" > @<sec:authentication property="principal.username"/></a></li>
+                        <li><a href="/myspace/file-list"> @<sec:authentication property="principal.username"/></a></li>
                         <li class="dropdown">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown"> My Box <b class="caret"></b></a>
                             <ul class="dropdown-menu">
                             	<sec:authorize access="!hasAuthority('index')">
-                                	<li><a href="#"><i class="icon-user"></i> Sign in</a></li>
+                                	<li><a href="/"><i class="icon-user"></i> Sign in</a></li>
                                 </sec:authorize>
                                 <sec:authorize access="hasAuthority('index')">
-                                	<li><a href="#"><i class="icon-user"></i> Sign out</a></li>
+                                	<li><a href="/j_spring_security_logout"><i class="icon-user"></i> Sign out</a></li>
                                 </sec:authorize>
                                 <li class="divider"></li>
                                 <li><a href="#"><i class="icon-file"></i> Files</a></li>
@@ -143,15 +143,15 @@ SimpleDateFormat f=new SimpleDateFormat("yyyy/MM/dd");
                     <div class="btn-group">
                         <a class="btn dropdown-toggle" data-toggle="dropdown" href="#"><i class=" icon-list-alt"></i> Order <span class="caret"></span></a>
                         <ul class="dropdown-menu">
-                            <li <c:if test="${param.sort == null || param.sort == 'uploadDate' }">class="active"</c:if> ><a href="/<sec:authentication property="principal.username"/>/file-list?page=${page.number + 1}&sort=uploadDate&type=${param.type}"><i class="icon-calendar"></i> by Date</a></li>
-                            <li <c:if test="${param.sort == 'type'}">class="active"</c:if> >      <a href="/<sec:authentication property="principal.username"/>/file-list?page=${page.number + 1}&sort=type&type=${param.type}"><i class="icon-file"></i> by Type</a></li>
-                            <li <c:if test="${param.sort == 'owner'}">class="active"</c:if> >     <a href="/<sec:authentication property="principal.username"/>/file-list?page=${page.number + 1}&sort=owner&type=${param.type}"><i class="icon-user"></i> by Owner</a></li>
+                            <li <c:if test="${param.sort == null || param.sort == 'uploadDate' }">class="active"</c:if> ><a href="/myspace/file-list?page=${page.number + 1}&sort=uploadDate&type=${param.type}"><i class="icon-calendar"></i> by Date</a></li>
+                            <li <c:if test="${param.sort == 'type'}">class="active"</c:if> >      <a href="/myspace/file-list?page=${page.number + 1}&sort=type&type=${param.type}"><i class="icon-file"></i> by Type</a></li>
+                            <li <c:if test="${param.sort == 'owner'}">class="active"</c:if> >     <a href="/myspace/file-list?page=${page.number + 1}&sort=owner&type=${param.type}"><i class="icon-user"></i> by Owner</a></li>
                             <!-- 下拉菜单链接 -->
                         </ul>
                     </div>
                     <div class="btn-group">
                         <a class="btn" href="#" id="btn-check"><i class="icon-th-large"></i> Check</a>
-                        <a class="btn" href="/files/upload"><i class="icon-arrow-up"></i> Upload</a>
+                        <a class="btn" href="/file/upload"><i class="icon-arrow-up"></i> Upload</a>
                         <a class="btn" href="#" id="btn-remove"><i class="icon-remove"></i> Delete</a>
                         <a class="btn" href="#"><i class="icon-refresh"></i> Refresh</a>
                     </div>
@@ -193,7 +193,7 @@ SimpleDateFormat f=new SimpleDateFormat("yyyy/MM/dd");
                         	<c:if test="${file.type == 'Bag'}">  <i class="icon-lock"></i></c:if>
                         	<c:if test="${file.type == 'Other'}"><i class="icon-file"></i></c:if>
                         </td>
-                        <td><a href="/files/${file.id}/update">${file.name}</a></td>
+                        <td><a href="/files/${file.id}">${file.name}</a></td>
                         <%-- <td>${file.id}</td> --%>
                         <td>${file.owner}</td>
                         <td>${file.uploadDate}</td>
@@ -205,7 +205,7 @@ SimpleDateFormat f=new SimpleDateFormat("yyyy/MM/dd");
                         	<span class="badge badge-warning">Unshared</span>
                         </c:if>
                         </td>
-                        <td><a href="/files/${file.id}/update">
+                        <td><a href="/files/${file.id}">
                             <button class="btn btn-mini btn-info">Detail</button>
                             </a>
                         </td>
@@ -227,7 +227,7 @@ SimpleDateFormat f=new SimpleDateFormat("yyyy/MM/dd");
                     	<%// 如果当前而是第一页,则disable上一页%>
                     	<c:if test="${page.number == 0}"><li class="disabled"><a>«</a></li></c:if>
                     	<%// 如果有下一页,则显示上一页  %> 
-                    	<c:if test="${page.number != 0}"><li><a href="/<sec:authentication property="principal.username"/>/file-list?page=${page.number}&sort=${param.sort}&type=${param.type}">«</a></li></c:if>
+                    	<c:if test="${page.number != 0}"><li><a href="/myspace/file-list?page=${page.number}&sort=${param.sort}&type=${param.type}">«</a></li></c:if>
 
                     	<%// 总页数少于等于5页,直接显示 %>
                     	<c:if test="${page.totalPages <= 5}">
@@ -256,7 +256,7 @@ SimpleDateFormat f=new SimpleDateFormat("yyyy/MM/dd");
                    		
                			<c:forEach begin="${begin}" end="${end}" varStatus="status">
                				<li <c:if test="${status.index == page.number}"> class="active"</c:if> >
-               					<a href="/<sec:authentication property="principal.username"/>/file-list?page=${status.index + 1}&sort=${param.sort}&type=${param.type}">${status.index + 1}</a>
+               					<a href="/myspace/file-list?page=${status.index + 1}&sort=${param.sort}&type=${param.type}">${status.index + 1}</a>
                				</li>
                			</c:forEach>
                			
@@ -268,7 +268,7 @@ SimpleDateFormat f=new SimpleDateFormat("yyyy/MM/dd");
                         <%// 如果当前而是末页,则disable下一页 %>
                     	<c:if test="${page.number == (page.totalPages - 1)}"><li class="disabled"><a>»</a></li></c:if>
                     	<%// 如果有下一页,则显示<<  %>
-                    	<c:if test="${page.number < (page.totalPages - 1)}"><li><a href="/<sec:authentication property="principal.username"/>/file-list?page=${page.number + 2}&sort=${param.sort}&type=${param.type}">»</a></li></c:if>
+                    	<c:if test="${page.number < (page.totalPages - 1)}"><li><a href="/myspace/file-list?page=${page.number + 2}&sort=${param.sort}&type=${param.type}">»</a></li></c:if>
                     </ul>
                 </div>
             </div>
@@ -276,20 +276,20 @@ SimpleDateFormat f=new SimpleDateFormat("yyyy/MM/dd");
         </div>
         <div class="span2">
             <ul class="nav nav-tabs nav-stacked">
-                <li><a href="/files/upload"><i class="tab-logo-ico icon-arrow-up"></i> Upload</a></li>
+                <li><a href="/file/upload"><i class="tab-logo-ico icon-arrow-up"></i> Upload</a></li>
                 <li><a href="#"><i class="tab-logo-ico icon-search"></i> Search</a></li>
                 <li><a href="#"><i class="tab-logo-ico icon-list"></i> Statistics</a></li>
             </ul>
             <div class="well sidebar-nav">
                 <ul class="nav nav-list" >
                     <li class="nav-header">File Type</li>
-                    <li <c:if test="${param.type == null || param.type == ''}">class="active"</c:if> ><a href="/<sec:authentication property="principal.username"/>/file-list?page=${page.number+1}&sort=${param.sort}"><i class="icon-file"></i> All File</a></li>
-                    <li <c:if test="${param.type == 'Text'}">class="active"</c:if> ><a href="/<sec:authentication property="principal.username"/>/file-list?page=${page.number+1}&sort=${param.sort}&type=Text"><i class="icon-book"></i> Text</a></li>
-                    <li <c:if test="${param.type == 'Video'}">class="active"</c:if> ><a href="/<sec:authentication property="principal.username"/>/file-list?page=${page.number+1}&sort=${param.sort}&type=Video"><i class="icon-film"></i> Video</a></li>
-                    <li <c:if test="${param.type == 'Audio'}">class="active"</c:if> ><a href="/<sec:authentication property="principal.username"/>/file-list?page=${page.number+1}&sort=${param.sort}&type=Audio"><i class="icon-music"></i> Audio</a></li>
-                    <li <c:if test="${param.type == 'Image'}">class="active"</c:if> ><a href="/<sec:authentication property="principal.username"/>/file-list?page=${page.number+1}&sort=${param.sort}&type=Image"><i class="icon-picture"></i> Image</a></li>
-                    <li <c:if test="${param.type == 'Bag'}">class="active"</c:if> ><a href="/<sec:authentication property="principal.username"/>/file-list?page=${page.number+1}&sort=${param.sort}&type=Bag"><i class="icon-lock"></i> Bag</a></li>
-                    <li <c:if test="${param.type == 'Other'}">class="active"</c:if> ><a href="/<sec:authentication property="principal.username"/>/file-list?page=${page.number+1}&sort=${param.sort}&type=Other"><i class="icon-file"></i> Other</a></li>
+                    <li <c:if test="${param.type == null || param.type == ''}">class="active"</c:if> ><a href="/myspace/file-list?page=${page.number+1}&sort=${param.sort}"><i class="icon-file"></i> All File</a></li>
+                    <li <c:if test="${param.type == 'Text'}">class="active"</c:if> ><a href="/myspace/file-list?page=${page.number+1}&sort=${param.sort}&type=Text"><i class="icon-book"></i> Text</a></li>
+                    <li <c:if test="${param.type == 'Video'}">class="active"</c:if> ><a href="/myspace/file-list?page=${page.number+1}&sort=${param.sort}&type=Video"><i class="icon-film"></i> Video</a></li>
+                    <li <c:if test="${param.type == 'Audio'}">class="active"</c:if> ><a href="/myspace/file-list?page=${page.number+1}&sort=${param.sort}&type=Audio"><i class="icon-music"></i> Audio</a></li>
+                    <li <c:if test="${param.type == 'Image'}">class="active"</c:if> ><a href="/myspace/file-list?page=${page.number+1}&sort=${param.sort}&type=Image"><i class="icon-picture"></i> Image</a></li>
+                    <li <c:if test="${param.type == 'Bag'}">class="active"</c:if> ><a href="/myspace/file-list?page=${page.number+1}&sort=${param.sort}&type=Bag"><i class="icon-lock"></i> Bag</a></li>
+                    <li <c:if test="${param.type == 'Other'}">class="active"</c:if> ><a href="/myspace/file-list?page=${page.number+1}&sort=${param.sort}&type=Other"><i class="icon-file"></i> Other</a></li>
                     <li class="divider"></li>
                     <li class="nav-header">File Owner</li>
                     <li><a href="#"><i class="icon-user"></i> Mine</a></li>

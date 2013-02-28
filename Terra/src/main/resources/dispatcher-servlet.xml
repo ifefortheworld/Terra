@@ -83,11 +83,11 @@
 	<mvc:view-controller path="/403" view-name="system/404"/>
 	
 	<!-- 用户 -->
-	<mvc:view-controller path="/login" view-name="user/login"/>
+	<!-- <mvc:view-controller path="/login" view-name="user/login"/> -->
 	<mvc:view-controller path="/register" view-name="user/register"/>
 	<mvc:view-controller path="/changepassword" view-name="user/changePasswordPage"/>
 	
-	<mvc:view-controller path="/files/upload" view-name="files/upload"/>
+	<mvc:view-controller path="/file/upload" view-name="files/upload"/>
 
 
 

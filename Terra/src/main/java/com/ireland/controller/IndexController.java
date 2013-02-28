@@ -108,7 +108,7 @@ public class IndexController
 
 	//
 
-	@RequestMapping(value = "/")
+	@RequestMapping(value = {"/","/login"})
 	public String index(Model model)
 	{
 		Page<Tag>  page = tagDao.findAll(new PageRequest(0, 100, Direction.DESC, "fileCnt"));
