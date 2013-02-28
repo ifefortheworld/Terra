@@ -75,6 +75,17 @@ public class TerraFile
 	 */
 	private Boolean isShared;
 
+	
+	/**
+	 * 文件的下载路径
+	 */
+	private String fileUrl;
+	
+	/**
+	 * 文件的原始名
+	 */
+	private String fileOriginalName;
+	
 	/**
 	 * 浏览数
 	 */
@@ -185,6 +196,26 @@ public class TerraFile
 	public void setIsShared(Boolean isShared)
 	{
 		this.isShared = isShared;
+	}
+
+	public String getFileUrl()
+	{
+		return fileUrl;
+	}
+
+	public void setFileUrl(String fileUrl)
+	{
+		this.fileUrl = fileUrl;
+	}
+
+	public String getFileOriginalName()
+	{
+		return fileOriginalName;
+	}
+
+	public void setFileOriginalName(String fileOriginalName)
+	{
+		this.fileOriginalName = fileOriginalName;
 	}
 
 	public int getViewsCnt()

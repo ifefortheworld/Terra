@@ -209,8 +209,9 @@ SimpleDateFormat f=new SimpleDateFormat("yyyy/MM/dd");
                             <button class="btn btn-mini btn-info">Detail</button>
                             </a>
                         </td>
-                        <td>
+                        <td><a href="${file.fileUrl}">
                             <button class="btn btn-mini btn-danger">Download</button>
+                            </a>
                         </td>
                     </tr>
                     

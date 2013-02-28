@@ -1,10 +1,12 @@
 package com.ireland.controller;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -153,8 +155,9 @@ public class FileController
 	/**
 	 * 查询本人的文件
 	 */
+	@Deprecated
 	@RequestMapping(value = "/files/{id}/update")
-	public String getOrdersTable(@PathVariable("id") String id,Model model)
+	public String getOwnFile(@PathVariable("id") String id,Model model)
 	{
 		TerraFile file = terraFileDao.findOne(id);
 		
@@ -173,6 +176,31 @@ public class FileController
 		return "files/update";
 	}
 	
+	/**
+	 * 本人或游客浏览文件
+	 */
+	@RequestMapping(value = "/files/{id}")
+	public String getFileDetails(@PathVariable("id") String id,Model model)
+	{
+		User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		
+		TerraFile file = terraFileDao.findOne(id);
+		
+		//查询此文件最有价值的评论(按votes倒序的第1条)
+		Page<Comment> coment = commentDao.findAll(Criteria.where("fileId").is(id), new PageRequest(0, 1, Direction.DESC, "votes"));
+		Comment valComment = coment.hasContent() ? coment.iterator().next() : null;
+		
+		//(按时间由新到旧)查询文件的前5条评论
+		Page<Comment> page = commentDao.findAll(Criteria.where("fileId").is(id), new PageRequest(0, 5, Direction.DESC, "date"));
+		
+		model.addAttribute("file",file);
+		model.addAttribute("page",page);
+		model.addAttribute("comments",page.iterator());
+		model.addAttribute("valComment",valComment);
+		model.addAttribute("user",user);
+		
+		return "files/detail";
+	}
 	
 	
 	
@@ -186,9 +214,13 @@ public class FileController
 	@RequestMapping(value = "/files/upload_",method=RequestMethod.POST,produces="application/json;charset=UTF-8")
 	@ResponseBody
 	public Map<String,String> uploadFile(@Valid TerraFile file,@RequestParam("_tags")String _tags,
-																@RequestPart(value="file",required=false) Part partFile)
+																@RequestPart(value="file",required=false) Part partFile,
+																HttpServletRequest request)
 	{
+		Map<String,String> res = new HashMap<String,String>();
+		
 		User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		
 		
 		//以','拆分tag
 		String[] strs = _tags.trim().split(",");
@@ -228,11 +260,33 @@ public class FileController
 		file.setOwner(user.getUsername());
 		file.setComments(new ArrayList<Comment>());
 		
+		//
+		//取得"/"表示的tomcat中的实际路径
+		String uploadPath = request.getServletContext().getRealPath("/WEB-INF/staticfiles/");
 		
+		//从header中解译出上传的文件名
+		String value = partFile.getHeader("content-disposition");
+		
+		String fileName = value.substring(value.lastIndexOf("=")+2, value.length()-1);
+		
+		String uuid = UUID.randomUUID().toString();
+		
+		try
+		{
+			partFile.write(uploadPath + "\\"+uuid+"-"+fileName);
+			
+		} catch (IOException e)
+		{
+			e.printStackTrace();
+			res.put("status", "FAIL");
+			return res;
+		}
+		
+		file.setFileOriginalName(fileName);
+		file.setFileUrl("/staticfiles/"+uuid+"-"+fileName);
+			
 		terraFileDao.insert(file);
-		
-		
-		Map<String,String> res = new HashMap<String,String>();
+			
 		res.put("status", "SUCCESS");
 		res.put("Location", "/files/"+file.getId()+"/update");
 		return res;

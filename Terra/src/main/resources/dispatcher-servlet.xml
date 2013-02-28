@@ -60,6 +60,7 @@
 	<mvc:resources mapping="/css/**" location="/WEB-INF/pages/css/" cache-period="31556926"/>
 	<mvc:resources mapping="/js/**" location="/WEB-INF/pages/js/" cache-period="31556926"/>
 	<mvc:resources mapping="/img/**" location="/WEB-INF/pages/img/" cache-period="31556926"/>
+	<mvc:resources mapping="/staticfiles/**" location="/WEB-INF/staticfiles/"/>
 	
 	
 	<!-- 当URL无法与DispatcherServlet的handler配置时,尝试与Servlet容器的资源配置 -->

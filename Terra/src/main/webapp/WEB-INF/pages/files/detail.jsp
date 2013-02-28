@@ -250,8 +250,12 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
             	<c:if test="${file.type == 'Other'}"><img src="/img/ico-260px-other.png" class="img-rounded" data-src="holder.js/64x64" style="margin-bottom: 20px"></c:if>
                 
                 <img src="img/tag-mostvaluable.png" class="img-rounded" data-src="holder.js/64x64" style="margin-bottom: 20px">
+                <c:if test="${user.username == file.owner}">
                 <button class="btn btn-info" type="button" style="width: 100%;margin-bottom: 10px">Change</button>
+                </c:if>
+                <c:if test="${user.username != file.owner}">
                 <button class="btn btn-success" type="button" style="width: 100%;margin-bottom: 10px">Favorite</button>
+                </c:if>
                 <a href="${file.fileUrl}">
                 <button class="btn btn-danger" type="button" style="width: 100%;margin-bottom: 10px">Download</button>
                 </a>
