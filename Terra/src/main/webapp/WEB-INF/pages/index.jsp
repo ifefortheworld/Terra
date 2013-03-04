@@ -216,21 +216,15 @@ SimpleDateFormat f=new SimpleDateFormat("yyyy/MM/dd");
     </div>
 </footer>
 <!--footer(end)-->
-<script src="js/jquery-latest.js"></script>
-<script src="js/bootstrap.min.js"></script>
+<script src="/js/jquery-latest.js"></script>
+<script src="/js/bootstrap.min.js"></script>
 <script type="text/javascript">
-
+$(document).ready(function(){ 
 	$("#loginBtn").click(function(){login();return false;});
 
 	var xhr;
 
 	function login() {
-		/* 
-		FormData是用来上传用的,其Content-Type为application/form-data
-		var formData = new FormData();
-		formData.append("j_username",$("log_name").value);
-		formData.append("j_password",$("log_password").value);
-		 */
 		xhr = new XMLHttpRequest();
 
 		xhr.onreadystatechange = ajaxCallBack;
@@ -265,7 +259,9 @@ SimpleDateFormat f=new SimpleDateFormat("yyyy/MM/dd");
 		}
 
 	}
+});
 </script>
+
 
 </body>
 </html>

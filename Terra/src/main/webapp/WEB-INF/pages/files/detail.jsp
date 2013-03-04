@@ -88,7 +88,13 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
                         </li>
                     </ul>
                     <ul class="nav pull-right">
-                        <li><a href="/myspace/file-list"> @<sec:authentication property="principal.username"/></a></li>
+                        <sec:authorize access="hasAuthority('index')">
+                    	<li><a href="/myspace/file-list" > @<sec:authentication property="principal.username"/></a></li>
+                    	</sec:authorize>
+                    	
+                    	<sec:authorize access="!hasAuthority('index')">
+                        <li><a href="#" > Register</a></li>
+                        </sec:authorize>
                         <li class="dropdown">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown"> My Box <b class="caret"></b></a>
                             <ul class="dropdown-menu">
@@ -186,7 +192,9 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
                 <div class="well" style="background: none">
                     <h2 style="margin-right:10px;font-size: 20px">Comment</h2>
                     <textarea class="input-block-level" rows="5" placeholder="input something..." id="content"></textarea>
+                    <sec:authorize access="hasAuthority('index')">
                     <a href="#" style="float: left">@<sec:authentication property="principal.username"/></a>
+                    </sec:authorize>
                     <button class="btn btn-primary" type="button" style="float: right;margin-bottom: 10px" id="publishBtn">Publish</button>
                     <div class="clearfix"></div>
                     <div class="alert alert-info">
@@ -255,10 +263,10 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
             	<c:if test="${file.type == 'Other'}"><img src="/img/ico-260px-other.png" class="img-rounded" data-src="holder.js/64x64" style="margin-bottom: 20px"></c:if>
                 
                 <img src="img/tag-mostvaluable.png" class="img-rounded" data-src="holder.js/64x64" style="margin-bottom: 20px">
-                <c:if test="${user.username == file.owner}">
+                <c:if test="${(user != null) && (user.username == file.owner)}">
                 <button class="btn btn-info" type="button" style="width: 100%;margin-bottom: 10px">Change</button>
                 </c:if>
-                <c:if test="${user.username != file.owner}">
+                <c:if test="${(user == null) || (user.username != file.owner)}">
                 <button class="btn btn-success" type="button" style="width: 100%;margin-bottom: 10px">Favorite</button>
                 </c:if>
                 <a href="${file.fileUrl}" id="downBtn">

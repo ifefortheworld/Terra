@@ -32,7 +32,7 @@ public class TerraFile
 	/**
 	 * 文件名字
 	 */
-	@NotNull
+	//@NotNull
 	private String name;
 	
 	

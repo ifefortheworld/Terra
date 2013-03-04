@@ -44,6 +44,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 
 import com.ireland.dao.CommentDao;
+import com.ireland.dao.HdfsDao;
 import com.ireland.dao.TagDao;
 import com.ireland.dao.TerraFileDao;
 import com.ireland.model.Role;
@@ -110,6 +111,9 @@ public class FileController
 
 	@Autowired
 	private CommentDao commentDao;
+	
+	@Autowired
+	private HdfsDao hdfsDao;
 	
 	
 	
@@ -183,7 +187,8 @@ public class FileController
 	@RequestMapping(value = "/files/{id}")
 	public String getFileDetails(@PathVariable("id") String id,Model model)
 	{
-		User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		
+		User user = SecurityContextHolder.getContext().getAuthentication().getPrincipal() instanceof User ? (User)SecurityContextHolder.getContext().getAuthentication().getPrincipal(): null;
 		
 		TerraFile file = terraFileDao.findOne(id);
 		
@@ -197,7 +202,7 @@ public class FileController
 //评论END---------------------------------------------------------------------------------
 		
 //------正在浏览别人的文件,使文件的浏览数+1
-		if(file.getOwner() != user.getUsername())
+		if(user != null && (user.getUsername() != file.getOwner()))
 		{	
 			file.setViewsCnt(file.getViewsCnt()+1);
 			terraFileDao.inc(file.getId(), "viewsCnt", 1);
@@ -223,7 +228,7 @@ public class FileController
 	 */
 	@RequestMapping(value = "/files/upload_",method=RequestMethod.POST,produces="application/json;charset=UTF-8")
 	@ResponseBody
-	public Map<String,String> uploadFile(@Valid TerraFile file,@RequestParam("_tags")String _tags,
+	public Map<String,String> uploadFile(@Valid TerraFile file,@RequestParam(value="_tags",required=false)String _tags,
 																@RequestPart(value="file",required=false) Part partFile,
 																HttpServletRequest request)
 	{
@@ -280,8 +285,19 @@ public class FileController
 		String fileName = value.substring(value.lastIndexOf("=")+2, value.length()-1);
 		
 		String uuid = UUID.randomUUID().toString();
+		String fileUrl = "/staticfiles/"+uuid+"-"+fileName;
 		
 		try
+		{
+			hdfsDao.upload(partFile.getInputStream(), fileUrl);
+		} catch (IOException e)
+		{
+			e.printStackTrace();
+			res.put("status", "FAIL");
+			res.put("reason", "hafs upload fail!");
+			return res;
+		}
+/*		try
 		{
 			partFile.write(uploadPath + "\\"+uuid+"-"+fileName);
 			
@@ -290,16 +306,31 @@ public class FileController
 			e.printStackTrace();
 			res.put("status", "FAIL");
 			return res;
-		}
+		}*/
 		
 		file.setFileOriginalName(fileName);
-		file.setFileUrl("/staticfiles/"+uuid+"-"+fileName);
+		file.setFileUrl(fileUrl);
 			
 		terraFileDao.insert(file);
 			
 		res.put("status", "SUCCESS");
-		res.put("Location", "/files/"+file.getId()+"/update");
+		res.put("Location", "/files/"+file.getId());
 		return res;
+	}
+
+	/**
+	 * 下载文件
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	@RequestMapping(value = "/staticfiles/{path}")
+	@ResponseBody
+	public org.springframework.core.io.Resource downloadFile(@PathVariable("path")String path,HttpServletRequest request)
+	{
+		String url = request.getRequestURI();
+		//return hdfsDao.read("/staticfiles/"+path);
+		return hdfsDao.read(url);
 	}
 
 
