@@ -1,5 +1,6 @@
 package com.ireland.dao;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -11,6 +12,7 @@ import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.stereotype.Repository;
+import org.springframework.util.FileCopyUtils;
 
 import com.ireland.io.HdfsInputStreamResource;
 
@@ -29,15 +31,21 @@ public class HdfsDao
 	public org.springframework.core.io.Resource read(String pathString)
 	{
 		Path path = new Path(pathString); 
+		
 		try
-		{
+		{			
 			FSDataInputStream inputStream = hdfs.open(path);
 			
 			FileStatus status = hdfs.getFileStatus(path);
 			
 			return new HdfsInputStreamResource(status,inputStream);
 			
-		} catch (IOException e)
+		}
+		catch(FileNotFoundException e)
+		{
+			return null;//文件不存在
+		}
+		catch (IOException e)
 		{
 			e.printStackTrace();
 		}
@@ -56,45 +64,31 @@ public class HdfsDao
 	{
 		Path dst = new Path(path);
 		
-		FSDataOutputStream outputStream = null;
+		FSDataOutputStream out = null;
 		
 		try
 		{
+			out = hdfs.create(dst);
+			
+			FileCopyUtils.copy(in, out);
+			
+		} catch (Exception e)
+		{
+			e.printStackTrace();
 
-			try
+		} finally
+		{
+			if (out != null)
 			{
-				//2MB 
-				byte[] buff = new byte[2097152];
-				
-				int len = in.read(buff);
-				
-				outputStream = hdfs.create(dst);
-				
-				outputStream.write(buff, 0, len);
-				
-			} catch (Exception e)
-			{
-				e.printStackTrace();
-
-			} finally
-			{
-				if (outputStream != null)
+				try
 				{
-					outputStream.close();
+					out.close();
+				} catch (IOException e)
+				{
+					e.printStackTrace();
 				}
 			}
-
-			FileStatus files[] = hdfs.listStatus(dst);
-			for (FileStatus file : files)
-			{
-				System.out.println(file.getPath());
-			}
-
-		} catch (IOException e1)
-		{
-			e1.printStackTrace();
 		}
-
 	}
 	
 	

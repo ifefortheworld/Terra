@@ -25,7 +25,10 @@
 	formatting annotations @NumberFormat @DateTimeFormat, 
 	and JSR 303 style validation 
 	和 配置7个默认的HttpMessageConverter -->
-	<mvc:annotation-driven/>
+	<mvc:annotation-driven >
+		<!-- default-timeout: 1000 sec -->
+		<mvc:async-support default-timeout="10000000"></mvc:async-support>
+	</mvc:annotation-driven>
    
     <bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping">
     </bean>

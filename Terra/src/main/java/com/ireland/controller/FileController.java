@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.Callable;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -226,9 +227,10 @@ public class FileController
 	 * @param _tags
 	 * @return
 	 */
-	@RequestMapping(value = "/files/upload_",method=RequestMethod.POST,produces="application/json;charset=UTF-8")
+	@Deprecated //文件上传到HDFS时耗时严重,长时间占用窗口的Servlet 线程,改用asyncUploadFile
+	//@RequestMapping(value = "/files/upload_",method=RequestMethod.POST,produces="application/json;charset=UTF-8")
 	@ResponseBody
-	public Map<String,String> uploadFile(@Valid TerraFile file,@RequestParam(value="_tags",required=false)String _tags,
+	public Map<String,String> _uploadFile(@Valid TerraFile file,@RequestParam(value="_tags",required=false)String _tags,
 																@RequestPart(value="file",required=false) Part partFile,
 																HttpServletRequest request)
 	{
@@ -275,9 +277,6 @@ public class FileController
 		file.setOwner(user.getUsername());
 		file.setComments(new ArrayList<Comment>());
 		
-		//
-		//取得"/"表示的tomcat中的实际路径
-		String uploadPath = request.getServletContext().getRealPath("/WEB-INF/staticfiles/");
 		
 		//从header中解译出上传的文件名
 		String value = partFile.getHeader("content-disposition");
@@ -297,16 +296,6 @@ public class FileController
 			res.put("reason", "hafs upload fail!");
 			return res;
 		}
-/*		try
-		{
-			partFile.write(uploadPath + "\\"+uuid+"-"+fileName);
-			
-		} catch (IOException e)
-		{
-			e.printStackTrace();
-			res.put("status", "FAIL");
-			return res;
-		}*/
 		
 		file.setFileOriginalName(fileName);
 		file.setFileUrl(fileUrl);
@@ -317,6 +306,95 @@ public class FileController
 		res.put("Location", "/files/"+file.getId());
 		return res;
 	}
+	
+	@RequestMapping(value = "/files/upload_",method=RequestMethod.POST,produces="application/json;charset=UTF-8")
+	@ResponseBody
+	public Callable<Map<String,String>> asyncUploadFile(@Valid final TerraFile file,@RequestParam(value="_tags",required=false)String _tags,
+																@RequestPart(value="file",required=false) final Part partFile,
+																HttpServletRequest request)
+	{
+		
+		User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		
+		
+		//以','拆分tag
+		String[] strs = _tags.trim().split(",");
+		
+	    List<Tag> tags = new ArrayList<Tag>(strs.length);
+	    
+	    for(String str : strs)
+	    {
+	    	
+	    	Tag tag = tagDao.findOne("name", str);
+	    	
+	    	////如果 对应的tag不存在,则新建一个
+	    	if(tag == null)
+	    	{
+	    		tag = new Tag();
+	    		tag.setName(str);
+	    		tag.setFileCnt(1);
+	    		
+	    		tagDao.save(tag);
+	    	}
+	    	else//tag 已存在,则更新
+	    	{
+		    	//更新tag的人气
+		    	tag.setFileCnt(tag.getFileCnt()+1);
+		    	
+		    	//使数据库的fileCnt 加1
+		    	tagDao.inc(tag.getId(), "fileCnt", 1);
+	    		
+	    	}
+	    	
+	    	tags.add(tag);
+	    }
+	    
+		file.setTags(tags);
+		
+		file.setUploadDate(new Date());
+		file.setOwner(user.getUsername());
+		file.setComments(new ArrayList<Comment>());
+		
+		
+		//从header中解译出上传的文件名
+		String value = partFile.getHeader("content-disposition");
+		
+		final String fileName = value.substring(value.lastIndexOf("=")+2, value.length()-1);
+		
+		String uuid = UUID.randomUUID().toString();
+		final String fileUrl = "/staticfiles/"+uuid+"-"+fileName;
+		
+		file.setFileOriginalName(fileName);
+		file.setFileUrl(fileUrl);
+		
+		return new Callable<Map<String,String>>()
+		{
+
+			@Override
+			public Map<String, String> call() throws Exception
+			{
+				Map<String,String> res = new HashMap<String,String>();
+				
+				try
+				{
+					hdfsDao.upload(partFile.getInputStream(), fileUrl);
+				} catch (IOException e)
+				{
+					e.printStackTrace();
+					res.put("status", "FAIL");
+					res.put("reason", "hafs upload fail!");
+					return res;
+				}
+					
+				terraFileDao.insert(file);
+					
+				res.put("status", "SUCCESS");
+				res.put("Location", "/files/"+file.getId());
+				return res;
+			}
+		};
+		
+	}
 
 	/**
 	 * 下载文件
@@ -326,11 +404,20 @@ public class FileController
 	 */
 	@RequestMapping(value = "/staticfiles/{path}")
 	@ResponseBody
-	public org.springframework.core.io.Resource downloadFile(@PathVariable("path")String path,HttpServletRequest request)
+	public org.springframework.core.io.Resource downloadFile(@PathVariable("path")String path,HttpServletRequest request,HttpServletResponse response)
 	{
 		String url = request.getRequestURI();
-		//return hdfsDao.read("/staticfiles/"+path);
-		return hdfsDao.read(url);
+		
+		org.springframework.core.io.Resource resource = hdfsDao.read(url);
+
+		//404
+		if(resource == null)
+		{
+			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+			return null;
+		}
+			
+		return resource;
 	}
 
 
