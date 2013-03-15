@@ -222,13 +222,14 @@ SimpleDateFormat f=new SimpleDateFormat("yyyy/MM/dd");
 
                     </tfoot>
                 </table>
+                
                 <div class="pagination pagination-small pagination-right" >
                 <c:if test="${page.totalPages > 0}">
                     <ul id="fileTablePag">
                     	<%// 如果当前而是第一页,则disable上一页%>
                     	<c:if test="${page.number == 0}"><li class="disabled"><a>«</a></li></c:if>
                     	<%// 如果有下一页,则显示上一页  %> 
-                    	<c:if test="${page.number != 0}"><li><a href="/inwarehouse?page=${page.number}&sort=${param.sort}&status=${param.status}">«</a></li></c:if>
+                    	<c:if test="${page.number != 0}"><li><a href="/myspace/file-list?page=${page.number}&sort=${param.sort}&status=${param.status}">«</a></li></c:if>
 
                     	<%// 总页数少于等于5页,直接显示 %>
                     	<c:if test="${page.totalPages <= 5}">
@@ -257,7 +258,7 @@ SimpleDateFormat f=new SimpleDateFormat("yyyy/MM/dd");
                    		
                			<c:forEach begin="${begin}" end="${end}" varStatus="status">
                				<li <c:if test="${status.index == page.number}"> class="active"</c:if> >
-               					<a href="/inwarehouse?page=${status.index + 1}&sort=${param.sort}&status=${param.status}">${status.index + 1}</a>
+               					<a href="/myspace/file-list?page=${status.index + 1}&sort=${param.sort}&status=${param.status}">${status.index + 1}</a>
                				</li>
                			</c:forEach>
                			
@@ -269,7 +270,7 @@ SimpleDateFormat f=new SimpleDateFormat("yyyy/MM/dd");
                         <%// 如果当前而是末页,则disable下一页 %>
                     	<c:if test="${page.number == (page.totalPages - 1)}"><li class="disabled"><a>»</a></li></c:if>
                     	<%// 如果有下一页,则显示<<  %>
-                    	<c:if test="${page.number < (page.totalPages - 1)}"><li><a href="/inwarehouse?page=${page.number + 2}&sort=${param.sort}&status=${param.status}">»</a></li></c:if>
+                    	<c:if test="${page.number < (page.totalPages - 1)}"><li><a href="/myspace/file-list?page=${page.number + 2}&sort=${param.sort}&status=${param.status}">»</a></li></c:if>
                     </ul>
                 </c:if>
                 </div>

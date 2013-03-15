@@ -1,4 +1,4 @@
-package com.ireland.security.configbean;
+package com.ireland.security.config;
 
 import java.lang.reflect.Field;
 

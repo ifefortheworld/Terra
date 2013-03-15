@@ -53,9 +53,7 @@
 
     
     
-    
-    <!-- 省略了pattern 过滤链会匹配所有请求: If omitted, the filter chain will match all requests. -->
-    <sec:http auto-config="true" use-expressions="true" entry-point-ref="authenticationEntryPoint">
+    <sec:http pattern="/**" use-expressions="true" entry-point-ref="authenticationEntryPoint">
 			
 		<!-- use-expressions="true" :  SecurityExpressionRoot -->
 	
@@ -97,6 +95,12 @@
 				
 				/> 
 		
+		
+		<!-- 原来的HttpSessionRequestCache是将登录前的请求存放到Session里面,然后登录成功后利用SavedRequestAwareAuthenticationSuccessHandler重新取出Session里的请求,然后重定向回去原来的页面 -->
+		<!-- 这样也未免太复杂了,换用基于URL参数的实现 -->
+		<sec:request-cache ref="nullRequestCache"/>
+		
+		
 		<!--ANONYMOUS_FILTER: AnonymousAuthenticationFilter -->
 		<sec:anonymous granted-authority="ROLE_ANONYMOUS"/>
 		
@@ -135,6 +139,7 @@
 
 <!--END 配置SecurityFilterChain -->
 
+	<bean id="nullRequestCache" class="org.springframework.security.web.savedrequest.NullRequestCache"/>
 	
 	
 	<!-- 自定义认证入口点AuthenticationEntryPoint 4 ExceptionTranslationFilter -->

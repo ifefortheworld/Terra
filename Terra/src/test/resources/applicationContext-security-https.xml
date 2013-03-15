@@ -62,8 +62,7 @@
    
     
     
-    <!-- 省略了pattern 过滤链会匹配所有请求: If omitted, the filter chain will match all requests. -->
-	<http auto-config="true" use-expressions="true" entry-point-ref="authenticationEntryPoint">
+	<http pattern="/**" auto-config="true" use-expressions="true" entry-point-ref="authenticationEntryPoint">
 	
 	
 		<!-- ________________________________ intercept-url _________________________________ -->
