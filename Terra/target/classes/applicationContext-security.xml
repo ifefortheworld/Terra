@@ -53,7 +53,7 @@
 
     
     
-    <sec:http pattern="/**" use-expressions="true" entry-point-ref="authenticationEntryPoint">
+    <sec:http pattern="/**" use-expressions="true" entry-point-ref="authenticationEntryPoint" >
 			
 		<!-- use-expressions="true" :  SecurityExpressionRoot -->
 	
@@ -119,10 +119,7 @@
 		<!-- EXCEPTION_TRANSLATION_FILTER: ExceptionTranslationFilter -->
 		<sec:access-denied-handler error-page="/403"/>
 		
-		
-		<!-- 放置自定义的FilterSecurityInterceptor 来替代默认的 FILTER_SECURITY_INTERCEPTOR, 后面的FILTER_SECURITY_INTERCEPTOR不会起作用  -->
-		<sec:custom-filter ref="refreshableFilterSecurityInterceptor" before="FILTER_SECURITY_INTERCEPTOR" />
-		
+				
 		
 		<!-- FilterSecurityInterceptor 使用 <sec:intercept-url pattern="" access="" requires-channel=""/>作为SecurityMetadataSource  -->
 		<!-- FilterSecurityInterceptor 使用了 intercept-url 的 pattern, access 和  method 属性 -->
@@ -179,31 +176,17 @@
    		</constructor-arg>
    	</bean>
    	
-	
-	<!-- 可刷新元数据的 FILTER_SECURITY_INTERCEPTOR -->
-	<bean id="refreshableFilterSecurityInterceptor" class="com.ireland.security.web.access.intercept.RefreshableFilterSecurityInterceptor">
-		
-		<!-- 每一个Authority功能模块就是一个安全配置 SecurityMetadata -->
-		<constructor-arg name="securityMetadataProvider" ref="authorityService"/>
+
+   	
+   	<!-- 可重新加载无数据的SecurityMetadataSource -->
+   	<bean id="securityMetadataSource" class="com.ireland.security.web.access.intercept.ReloadableExpressionBasedFilterInvocationSecurityMetadataSource">
+   		
+   		<constructor-arg name="securityMetadataProvider" ref="authorityService"/>
 		
 		<constructor-arg name="expressionHandler" ref="urlTemplateWebSecurityExpressionHandler"/>
-		
-   		<property name="authenticationManager" ref="authenticationManager"/>
-   		 
-   		<property name="accessDecisionManager" ref="unanimousBased"/>
-   		 		 
    	</bean>
      
-	
-	
-	
-	<!-- for URL访问授权  <sec:authorize url="/url"> -->
-	<!-- 给URL访问授权配置自定义的 SecurityInterceptor-->
-<!-- 	<bean id="webInvocationPrivilegeEvaluator" class="org.springframework.security.web.access.DefaultWebInvocationPrivilegeEvaluator">
-		<constructor-arg name="securityInterceptor" ref="refreshableFilterSecurityInterceptor"/>
-	</bean> -->
-	
-	
+
 	
     
     <bean id="restLogoutSuccessHandler" class="com.ireland.security.authentication.logout.RestLogoutSuccessHandler">
@@ -255,27 +238,21 @@
 
 <!-- 
 
-position 1 of 11 in additional filter chain; firing Filter:  'SecurityContextPersistenceFilter'
+position 1 of 8 in additional filter chain; firing Filter:  'SecurityContextPersistenceFilter'
 
-position 2 of 11 in additional filter chain; firing Filter:  'LogoutFilter'
+position 2 of 8 in additional filter chain; firing Filter:  'LogoutFilter'
 
-position 3 of 11 in additional filter chain; firing Filter:  'UsernamePasswordAuthenticationFilter'
+position 3 of 8 in additional filter chain; firing Filter:  'UsernamePasswordAuthenticationFilter' 
 
-position 4 of 11 in additional filter chain; firing Filter:  'BasicAuthenticationFilter'
- 
-position 5 of 11 in additional filter chain; firing Filter:  'RequestCacheAwareFilter'
+position 4 of 8 in additional filter chain; firing Filter:  'SecurityContextHolderAwareRequestFilter'
 
-position 6 of 11 in additional filter chain; firing Filter:  'SecurityContextHolderAwareRequestFilter'
+position 5 of 8 in additional filter chain; firing Filter:  'AnonymousAuthenticationFilter'
 
-position 7 of 11 in additional filter chain; firing Filter:  'AnonymousAuthenticationFilter'
+position 6 of 8 in additional filter chain; firing Filter:  'SessionManagementFilter'
 
-position 8 of 11 in additional filter chain; firing Filter:  'SessionManagementFilter'
+position 7 of 8 in additional filter chain; firing Filter:  'ExceptionTranslationFilter'
 
-position 9 of 11 in additional filter chain; firing Filter:  'ExceptionTranslationFilter'
-
-position 10 of 11 in additional filter chain; firing Filter: 'RefreshableFilterSecurityInterceptor'
-
-position 11 of 11 in additional filter chain; firing Filter: 'FilterSecurityInterceptor'
+position 8 of 8 in additional filter chain; firing Filter:  'FilterSecurityInterceptor'
 
 
 

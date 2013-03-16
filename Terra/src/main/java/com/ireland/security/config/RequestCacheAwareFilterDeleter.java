@@ -17,16 +17,12 @@ import org.springframework.security.web.access.intercept.FilterSecurityIntercept
 import org.springframework.security.web.savedrequest.RequestCacheAwareFilter;
 import org.springframework.stereotype.Component;
 
-import com.ireland.security.web.access.intercept.RefreshableFilterSecurityInterceptor;
 
 
 /**
  * 由于通过<http/>标签默认会配置上一个RequestCacheAwareFilter,而项目里却没使用默认的RequestCache机制,
  * 原来RequestCacheAwareFilter中的的HttpSessionRequestCache是将登录前的请求存放到Session里面,
  * 然后登录成功后利用SavedRequestAwareAuthenticationSuccessHandler重新取出Session里的请求,然后重定向回去原来的页面
- * 
- * 由于自定义了RefreshableFilterSecurityInterceptor了,当通过<http/>标签默认定义的 FilterSecurityInterceptor
- * 不能被替代,故将其删除
  * 
  * 
  * 故在应用的上下文启动完成前将其删除!
@@ -38,17 +34,11 @@ import com.ireland.security.web.access.intercept.RefreshableFilterSecurityInterc
 
 
 @Component
-public class FilterChainProxyPostModifier  
+public class RequestCacheAwareFilterDeleter  
 {
+	@Autowired
 	private FilterChainProxy filterChainProxy;
 		
-	@Autowired
-	public void setWebInvocationPrivilegeEvaluator(
-			FilterChainProxy filterChainProxy)
-	{
-		this.filterChainProxy = filterChainProxy;
-	}
-	
 	
 	
 	@PostConstruct
@@ -64,9 +54,7 @@ public class FilterChainProxyPostModifier
 		
 			for(Filter filter : filters)
 			{
-				if(filter instanceof RequestCacheAwareFilter || 
-						(filter instanceof FilterSecurityInterceptor && !(filter instanceof RefreshableFilterSecurityInterceptor) )
-					)
+				if(filter instanceof RequestCacheAwareFilter)
 				{
 					filtersToDelete.add(filter);
 				}
