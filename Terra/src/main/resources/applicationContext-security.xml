@@ -53,7 +53,8 @@
 
     
     
-    <sec:http pattern="/**" use-expressions="true" entry-point-ref="authenticationEntryPoint" >
+    <sec:http pattern="/**" use-expressions="true" entry-point-ref="authenticationEntryPoint" authentication-manager-ref="authenticationManager" 
+    																						  access-decision-manager-ref="accessDecisionManager">
 			
 		<!-- use-expressions="true" :  SecurityExpressionRoot -->
 	
@@ -123,13 +124,12 @@
 		
 		<!-- FilterSecurityInterceptor 使用 <sec:intercept-url pattern="" access="" requires-channel=""/>作为SecurityMetadataSource  -->
 		<!-- FilterSecurityInterceptor 使用了 intercept-url 的 pattern, access 和  method 属性 -->
+		
 		<!-- FILTER_SECURITY_INTERCEPTOR:  FilterSecurityInterceptor -->
 		
 		
-			<!-- DateWebSecurityExpressionHandler -->
-			<sec:expression-handler ref="urlTemplateWebSecurityExpressionHandler"/>
-			
-			
+		<!-- WebSecurityExpressionHandler -->
+		<sec:expression-handler ref="webSecurityExpressionHandler"/>
 		
 		
 	</sec:http>
@@ -159,15 +159,18 @@
    		
    	</bean>
    
+   
+	<!-- WebSecurityExpressionHandler, SPEL表达的处理器 -->
+	<bean id="webSecurityExpressionHandler" class="com.ireland.security.web.access.expression.UrlTemplateWebSecurityExpressionHandler"/>
 	
 	
 	<!-- WebExpressionVoter SpEL投票器 -->
    	<bean id="webExpressionVoter" class="org.springframework.security.web.access.expression.WebExpressionVoter">
-   		<property name="expressionHandler" ref="urlTemplateWebSecurityExpressionHandler"/>
+   		<property name="expressionHandler" ref="webSecurityExpressionHandler"/>
    	</bean>
    
    	<!-- AccessDecisionManager: unanimousBased 一致性-访问决策管理器 --> 
-   	<bean id="unanimousBased" class="org.springframework.security.access.vote.UnanimousBased">
+   	<bean id="accessDecisionManager" class="org.springframework.security.access.vote.UnanimousBased">
    	
    		<constructor-arg name="decisionVoters">
    			<list>
@@ -183,7 +186,7 @@
    		
    		<constructor-arg name="securityMetadataService" ref="authorityService"/>
 		
-		<constructor-arg name="expressionHandler" ref="urlTemplateWebSecurityExpressionHandler"/>
+		<constructor-arg name="expressionHandler" ref="webSecurityExpressionHandler"/>
    	</bean>
      
 
@@ -228,9 +231,8 @@
 	<bean id="passwordEncoder" class="org.springframework.security.authentication.encoding.ShaPasswordEncoder"></bean>
    
    
-     
-    <!-- MethodSecurityInterceptor  -->
-    <sec:global-method-security pre-post-annotations="enabled"> </sec:global-method-security>
+    <!-- MethodSecurityInterceptor : 默认基于注解的配置方式   -->
+    <sec:global-method-security pre-post-annotations="enabled"></sec:global-method-security>
   
     
 </beans>

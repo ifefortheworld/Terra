@@ -16,7 +16,6 @@ import org.springframework.stereotype.Component;
  *
  */
 
-@Component("urlTemplateWebSecurityExpressionHandler")
 public class UrlTemplateWebSecurityExpressionHandler extends
 		DateWebSecurityExpressionHandler
 {
