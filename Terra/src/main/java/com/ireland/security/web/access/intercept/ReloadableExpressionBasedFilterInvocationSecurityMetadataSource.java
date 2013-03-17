@@ -21,8 +21,8 @@ import org.springframework.security.web.util.AntPathRequestMatcher;
 import org.springframework.security.web.util.RequestMatcher;
 import org.springframework.util.Assert;
 
-import com.ireland.security.authentication.config.SecurityMetadata;
-import com.ireland.security.authentication.config.SecurityMetadataProvider;
+import com.ireland.security.securitymetadata.SecurityMetadata;
+import com.ireland.security.securitymetadata.SecurityMetadataService;
 
 /**
  * 利用Proxy方式实现的可重新加载数据的 ExpressionBasedFilterInvocationSecurityMetadataSource
@@ -41,18 +41,18 @@ public class ReloadableExpressionBasedFilterInvocationSecurityMetadataSource imp
 {
     private ExpressionBasedFilterInvocationSecurityMetadataSource securityMetadataSource;
 
-	private SecurityMetadataProvider securityMetadataProvider;
+	private SecurityMetadataService securityMetadataService;
 
 	private SecurityExpressionHandler<FilterInvocation> expressionHandler;
     
 	
-	public ReloadableExpressionBasedFilterInvocationSecurityMetadataSource(SecurityMetadataProvider securityMetadataProvider,
+	public ReloadableExpressionBasedFilterInvocationSecurityMetadataSource(SecurityMetadataService securityMetadataService,
 			SecurityExpressionHandler<FilterInvocation> expressionHandler)
 	{
-		Assert.notNull(securityMetadataProvider, "A non-null securityMetadataProvider is required");
+		Assert.notNull(securityMetadataService, "A non-null securityMetadataService is required");
 		Assert.notNull(expressionHandler, "A non-null expressionHandler is required");
 		
-		this.securityMetadataProvider = securityMetadataProvider;
+		this.securityMetadataService = securityMetadataService;
 		this.expressionHandler = expressionHandler;
 		
 		reload();
@@ -66,7 +66,7 @@ public class ReloadableExpressionBasedFilterInvocationSecurityMetadataSource imp
 	public void reload()
 	{
 		//这里没有指定SecurityMetadata返回的顺序,可能出现点问题!
-		List<? extends SecurityMetadata> metadatas = securityMetadataProvider.getSecurityMetadatas();
+		List<? extends SecurityMetadata> metadatas = securityMetadataService.getSecurityMetadatas();
 
 		
 		LinkedHashMap<RequestMatcher, Collection<ConfigAttribute>> requestMap = new LinkedHashMap<RequestMatcher, Collection<ConfigAttribute>>();

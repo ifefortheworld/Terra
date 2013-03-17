@@ -9,7 +9,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.util.Assert;
 
-import com.ireland.security.authentication.config.SecurityMetadata;
+import com.ireland.security.securitymetadata.SecurityMetadata;
 
 /**
  * Basic concrete implementation of a {@link GrantedAuthority}. Stores a

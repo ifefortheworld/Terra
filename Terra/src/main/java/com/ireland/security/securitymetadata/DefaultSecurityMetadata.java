@@ -1,4 +1,6 @@
-package com.ireland.security.authentication.config;
+package com.ireland.security.securitymetadata;
+
+import javax.persistence.Entity;
 
 
 /**
@@ -11,28 +13,25 @@ package com.ireland.security.authentication.config;
  *
  *
  */
-public interface SecurityMetadata
+@Entity
+public class DefaultSecurityMetadata implements SecurityMetadata
 {
+	private String id;
 	
 	/**
 	 * The pattern which defines the URL path. 
 	 * The content will depend on the type set in the containing http element, so will default to ant path syntax.
 	 * URL的模式,可以用通配符,也可以是一个简单URL,如/home.jsp
 	 */
-	String getUrlPattern();
+	private String urlPattern;
 	
 	
 	/**
 	 * The access configuration attributes that apply for the configured path.
-	 *
-	 * 对应XML配置的<intercept-url access="" >元素
-	 * 
-	 * link:org.springframework.security.access.ConfigAttribute
-	 * 
 	 * Spring Security 的SPEL格式的!
 	 */
-	String getSecurityConfigAttribute();
-
+	private String securityConfigAttribute;
+	
 	
 	/**
 	Attribute : method
@@ -51,8 +50,7 @@ public interface SecurityMetadata
 		
 		如果SecurityMetadata.method == null,则不限制HTTP方法
 	 */
-	String getHttpMethod();
-
+	private String httpMethod;
 	
 	/**
 	Attribute : requires-channel
@@ -61,5 +59,65 @@ public interface SecurityMetadata
 	
 	如果SecurityMetadata.requires_channel == null,则不限制channel
 	 */
-	String getHttpChannel();
+	private String httpChannel;
+
+	
+	
+
+	public String getId()
+	{
+		return id;
+	}
+
+	public void setId(String id)
+	{
+		this.id = id;
+	}
+
+	@Override
+	public String getUrlPattern()
+	{
+		return urlPattern;
+	}
+
+	public void setUrlPattern(String urlPattern)
+	{
+		this.urlPattern = urlPattern;
+	}
+
+	
+	@Override
+	public String getSecurityConfigAttribute()
+	{
+		return securityConfigAttribute;
+	}
+
+	public void setSecurityConfigAttribute(String securityConfigAttribute)
+	{
+		this.securityConfigAttribute = securityConfigAttribute;
+	}
+
+	@Override
+	public String getHttpMethod()
+	{
+		return httpMethod;
+	}
+
+	public void setHttpMethod(String httpMethod)
+	{
+		this.httpMethod = httpMethod;
+	}
+
+	@Override
+	public String getHttpChannel()
+	{
+		return httpChannel;
+	}
+
+	public void setHttpChannel(String httpChannel)
+	{
+		this.httpChannel = httpChannel;
+	}
+
+	
 }

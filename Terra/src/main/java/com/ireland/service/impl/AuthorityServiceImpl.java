@@ -13,13 +13,13 @@ import com.ireland.dao.UserDao;
 import com.ireland.model.Authority;
 import com.ireland.model.Role;
 import com.ireland.model.User;
-import com.ireland.security.authentication.config.SecurityMetadata;
-import com.ireland.security.authentication.config.SecurityMetadataProvider;
+import com.ireland.security.securitymetadata.SecurityMetadata;
+import com.ireland.security.securitymetadata.SecurityMetadataService;
 import com.ireland.service.AuthorityService;
 
 
 @Service("authorityService")
-public class AuthorityServiceImpl implements AuthorityService,SecurityMetadataProvider
+public class AuthorityServiceImpl implements AuthorityService,SecurityMetadataService
 {
 	
 	private AuthorityDao authorityDao;
@@ -49,13 +49,13 @@ public class AuthorityServiceImpl implements AuthorityService,SecurityMetadataPr
 	
 	//---------------------------------------------------------------------------------
 	
-	//SecurityMetadataProvider-----------------------------------------------------
+	//SecurityMetadataService-----------------------------------------------------
 		@Override
 		public List<? extends SecurityMetadata> getSecurityMetadatas()
 		{
 			return authorityDao.findAll();
 		}
-	//END SecurityMetadataProvider-----------------------------------------------------
+	//END SecurityMetadataService-----------------------------------------------------
 		
 		
 	  

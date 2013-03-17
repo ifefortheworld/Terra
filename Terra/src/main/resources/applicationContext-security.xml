@@ -181,7 +181,7 @@
    	<!-- 可重新加载无数据的SecurityMetadataSource -->
    	<bean id="securityMetadataSource" class="com.ireland.security.web.access.intercept.ReloadableExpressionBasedFilterInvocationSecurityMetadataSource">
    		
-   		<constructor-arg name="securityMetadataProvider" ref="authorityService"/>
+   		<constructor-arg name="securityMetadataService" ref="authorityService"/>
 		
 		<constructor-arg name="expressionHandler" ref="urlTemplateWebSecurityExpressionHandler"/>
    	</bean>

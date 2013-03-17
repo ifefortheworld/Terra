@@ -1,4 +1,4 @@
-package com.ireland.security.authentication.config;
+package com.ireland.security.securitymetadata;
 
 import java.util.List;
 
@@ -11,7 +11,7 @@ import java.util.List;
  * @author 吉林大学珠海学院1队
  *
  */
-public interface SecurityMetadataProvider
+public interface SecurityMetadataService
 {
 	/**
 	 * 取出全部SecurityMetadata,注意SecurityMetadata的顺序的安全性的影响
