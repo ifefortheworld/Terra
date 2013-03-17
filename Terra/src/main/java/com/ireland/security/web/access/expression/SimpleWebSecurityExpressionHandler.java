@@ -10,7 +10,7 @@ import org.springframework.security.web.access.expression.WebSecurityExpressionH
 
 /**
  * 
- * 增加了对UrlTemplate相关(如路径变量PathVariable)的控制的SpEL 4 WebSecurityExpressionRoot
+ * WebSecurityExpressionRoot 里,有hasAuthority,但在spel里却不能写为!hasAuthority
  * 
  * 注意:只适用于model.User的情况!
  * 
@@ -19,15 +19,15 @@ import org.springframework.security.web.access.expression.WebSecurityExpressionH
  *
  */
 
-public class UrlTemplateWebSecurityExpressionHandler extends AbstractSecurityExpressionHandler<FilterInvocation> implements WebSecurityExpressionHandler
+public class SimpleWebSecurityExpressionHandler extends AbstractSecurityExpressionHandler<FilterInvocation> implements WebSecurityExpressionHandler
 {
 	private final AuthenticationTrustResolver trustResolver = new AuthenticationTrustResolverImpl();
 	
 	@Override
 	protected SecurityExpressionRoot createSecurityExpressionRoot(Authentication authentication, FilterInvocation fi)
 	{
-		UrlTemplateWebSecurityExpressionRoot root = new UrlTemplateWebSecurityExpressionRoot(authentication, fi);
-				
+		SimpleWebSecurityExpressionRoot root = new SimpleWebSecurityExpressionRoot(authentication, fi);
+		
         root.setPermissionEvaluator(getPermissionEvaluator());
         root.setTrustResolver(trustResolver);
         root.setRoleHierarchy(getRoleHierarchy());

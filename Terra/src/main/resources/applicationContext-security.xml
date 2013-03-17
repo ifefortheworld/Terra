@@ -161,7 +161,7 @@
    
    
 	<!-- WebSecurityExpressionHandler, SPEL表达的处理器 -->
-	<bean id="webSecurityExpressionHandler" class="com.ireland.security.web.access.expression.UrlTemplateWebSecurityExpressionHandler"/>
+	<bean id="webSecurityExpressionHandler" class="com.ireland.security.web.access.expression.SimpleWebSecurityExpressionHandler"/>
 	
 	
 	<!-- WebExpressionVoter SpEL投票器 -->
