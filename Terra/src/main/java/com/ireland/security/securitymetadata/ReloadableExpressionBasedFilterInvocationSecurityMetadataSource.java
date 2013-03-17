@@ -1,4 +1,4 @@
-package com.ireland.security.web.access.intercept;
+package com.ireland.security.securitymetadata;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -21,8 +21,6 @@ import org.springframework.security.web.util.AntPathRequestMatcher;
 import org.springframework.security.web.util.RequestMatcher;
 import org.springframework.util.Assert;
 
-import com.ireland.security.securitymetadata.SecurityMetadata;
-import com.ireland.security.securitymetadata.SecurityMetadataService;
 
 /**
  * 利用Proxy方式实现的可重新加载数据的 ExpressionBasedFilterInvocationSecurityMetadataSource
@@ -37,7 +35,7 @@ import com.ireland.security.securitymetadata.SecurityMetadataService;
  *
  */
 
-public class ReloadableExpressionBasedFilterInvocationSecurityMetadataSource implements FilterInvocationSecurityMetadataSource
+public class ReloadableExpressionBasedFilterInvocationSecurityMetadataSource implements FilterInvocationSecurityMetadataSource,ReloadableSecurityMetadataSourceAware
 {
     private ExpressionBasedFilterInvocationSecurityMetadataSource securityMetadataSource;
 

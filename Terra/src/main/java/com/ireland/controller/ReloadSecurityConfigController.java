@@ -7,7 +7,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.ireland.security.web.access.intercept.ReloadableExpressionBasedFilterInvocationSecurityMetadataSource;
+import com.ireland.security.securitymetadata.ReloadableExpressionBasedFilterInvocationSecurityMetadataSource;
 
 @Controller
 public class ReloadSecurityConfigController
