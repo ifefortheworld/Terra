@@ -83,7 +83,7 @@
 
 	<!-- 错误页面 -->
 	<mvc:view-controller path="/404" view-name="system/404"/>
-	<mvc:view-controller path="/403" view-name="system/404"/>
+	<mvc:view-controller path="/403" view-name="system/403"/>
 	
 	<!-- 用户 -->
 	<!-- <mvc:view-controller path="/login" view-name="user/login"/> -->
