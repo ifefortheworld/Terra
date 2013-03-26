@@ -49,6 +49,12 @@ public class Role {
 	private String name;
 	
 	
+	/**
+	 * 开关状态,默认true
+	 */
+	private Boolean enable = true;
+	
+	
 	
     //END业务属性-------------------------------------------------
 
@@ -94,6 +100,18 @@ public class Role {
 	public void setName(String name)
 	{
 		this.name = name;
+	}
+
+
+	public Boolean getEnable()
+	{
+		return enable;
+	}
+
+
+	public void setEnable(Boolean enable)
+	{
+		this.enable = enable;
 	}
 	
 }

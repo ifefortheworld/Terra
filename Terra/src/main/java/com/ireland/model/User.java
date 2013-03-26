@@ -85,7 +85,7 @@ public class User implements SingleRoleUserDetails
 	{
 		Role role = getRole();
 		
-		if(role != null)
+		if(role != null && role.getEnable() == true)		//role.enable要为true才能返回auth
 			return role.getAuthorities();
 		
 		return new ArrayList<Authority>();

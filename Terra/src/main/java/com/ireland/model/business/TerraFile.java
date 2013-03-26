@@ -41,6 +41,13 @@ public class TerraFile
 	 */
 	@Indexed
 	private String owner;
+	
+	
+	/**
+	 * 持有者的ID
+	 */
+	@Indexed
+	private String ownerId;
 
 	/**
 	 * 上传时间
@@ -131,6 +138,22 @@ public class TerraFile
 	public void setOwner(String owner)
 	{
 		this.owner = owner;
+	}
+
+	/**
+	 * @return the ownerId
+	 */
+	public String getOwnerId()
+	{
+		return ownerId;
+	}
+
+	/**
+	 * @param ownerId the ownerId to set
+	 */
+	public void setOwnerId(String ownerId)
+	{
+		this.ownerId = ownerId;
 	}
 
 	public Date getUploadDate()

@@ -27,7 +27,12 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.DateTimeFormat.ISO;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
+import org.springframework.security.authentication.AuthenticationTrustResolver;
+import org.springframework.security.authentication.AuthenticationTrustResolverImpl;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.provisioning.UserDetailsManager;
@@ -103,6 +108,7 @@ public class FileController
 		this.roleService = roleService;
 	}
 	
+	private AuthenticationTrustResolver authenticationTrustResolver = new AuthenticationTrustResolverImpl();
 	
 	@Autowired
 	private TerraFileDao terraFileDao;
@@ -353,6 +359,7 @@ public class FileController
 		
 		file.setUploadDate(new Date());
 		file.setOwner(user.getUsername());
+		file.setOwnerId(user.getId());
 		file.setComments(new ArrayList<Comment>());
 		
 		
@@ -361,8 +368,10 @@ public class FileController
 		
 		final String fileName = value.substring(value.lastIndexOf("=")+2, value.length()-1);
 		
+		final String filePostFix = fileName.substring(fileName.lastIndexOf("."), fileName.length());
+		
 		String uuid = UUID.randomUUID().toString();
-		final String fileUrl = "/staticfiles/"+uuid+"-"+fileName;
+		final String fileUrl = "/staticfiles/"+uuid+filePostFix;
 		
 		file.setFileOriginalName(fileName);
 		file.setFileUrl(fileUrl);
@@ -408,6 +417,41 @@ public class FileController
 	{
 		String url = request.getRequestURI();
 		
+		//根据URL查找对应的File
+		TerraFile file = terraFileDao.findOne("fileUrl", url);
+		
+		//查不到文件,返回404
+		if(file == null)
+		{
+			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+			return null;
+		}
+		
+		//处理资源受保护的情况
+		if(file.getIsShared() == false)
+		{
+			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+			
+			//如果用户未登录或来自记住密码等,重定向到登录页面
+			if(authentication == null || authenticationTrustResolver.isAnonymous(authentication) || authenticationTrustResolver.isRememberMe(authentication)
+					|| !UsernamePasswordAuthenticationToken.class.isAssignableFrom(authentication.getClass()))
+			{
+				throw new AuthenticationCredentialsNotFoundException("please login in!");
+			}
+			
+			
+			User user = (User) authentication.getPrincipal();
+			
+			
+			//用户已登录,处理非本人访问,返回403页面
+			if(!user.getId().equals(file.getOwnerId()))
+			{
+				throw new AccessDeniedException(null);
+			}
+		}
+		
+		
+		//从HDFS读取文件,并返回结果
 		org.springframework.core.io.Resource resource = hdfsDao.read(url);
 
 		//404
