@@ -1,6 +1,7 @@
 package com.ireland.model;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -57,10 +58,23 @@ public class User implements SingleRoleUserDetails
 	private Role role;
 
 	
+//Business 属性--------------------------------------------------------------------
+	
 	/*
 	 * 真实姓名
 	 */
 	private String trueName;
+
+	
+	private String email;
+	
+	//头像的URL
+	private String avaterUrl;
+	
+	//注册时间
+	private Date registerDate;
+
+	
 	
 
 	
@@ -171,6 +185,42 @@ public class User implements SingleRoleUserDetails
 	public void setTrueName(String trueName)
 	{
 		this.trueName = trueName;
+	}
+
+
+	public String getEmail()
+	{
+		return email;
+	}
+
+
+	public void setEmail(String email)
+	{
+		this.email = email;
+	}
+
+
+	public String getAvaterUrl()
+	{
+		return avaterUrl;
+	}
+
+
+	public void setAvaterUrl(String avaterUrl)
+	{
+		this.avaterUrl = avaterUrl;
+	}
+
+
+	public Date getRegisterDate()
+	{
+		return registerDate;
+	}
+
+
+	public void setRegisterDate(Date registerDate)
+	{
+		this.registerDate = registerDate;
 	}
 
 }

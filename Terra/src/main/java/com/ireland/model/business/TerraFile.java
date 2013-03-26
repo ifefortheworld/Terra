@@ -39,7 +39,7 @@ public class TerraFile
 	/**
 	 * 持有者的名称 
 	 */
-	@Indexed
+	@Deprecated
 	private String owner;
 	
 	
@@ -130,11 +130,13 @@ public class TerraFile
 		this.name = name;
 	}
 
+	@Deprecated
 	public String getOwner()
 	{
 		return owner;
 	}
 
+	@Deprecated
 	public void setOwner(String owner)
 	{
 		this.owner = owner;
