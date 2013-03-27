@@ -72,7 +72,7 @@
 		<!--LOGOUT_FILTER: 由 LogoutFilter 处理 -->
 		<sec:logout invalidate-session="true"   
 				logout-url="/j_spring_security_logout" 
-				success-handler-ref="restLogoutSuccessHandler"/> <!-- default: /j_spring_security_logout -->
+				success-handler-ref="simpleUrlLogoutSuccessHandler"/> <!-- default: /j_spring_security_logout -->
 		
 		
 		<!-- logout-success-url="/index"   不能和 success-handler-ref 同时使用 -->
@@ -91,8 +91,8 @@
 				username-parameter="j_username"
 				password-parameter="j_password"
 				
-				authentication-success-handler-ref="restAuthenticationSuccessHandler"
-				authentication-failure-handler-ref="restAuthenticationFailureHandler" 
+				authentication-success-handler-ref="authenticationSuccessHandler"
+				authentication-failure-handler-ref="authenticationFailureHandler" 
 				
 				/> 
 		
@@ -150,6 +150,7 @@
    		<!-- 登录页面强制使用HTTPS --> 
    		<!-- <property name="forceHttps" value="true"/> -->
    		
+   		<property name="targetUrlParameter" value="redirect_url"/>
    		
    		<!-- 特定URL模式的登录地址(这里是wap的登录地址) -->
    		<property name="patternLoginUrlMap">
@@ -190,10 +191,26 @@
    	</bean>
      
 
+
+	<!-- 登录成功的处理器 -->
+	<bean id="authenticationSuccessHandler" class="com.ireland.security.authentication.RestAuthenticationSuccessHandler">
+		
+		<!-- 默认为个人主页 -->
+		<property name="defaultTargetUrl" value="/myspace/file-list"/>
+		
+		<!-- 可使用redirect_url参数准确控制目标URL -->
+		<property name="targetUrlParameter" value="redirect_url"/>
+	</bean>
 	
     
-    <bean id="restLogoutSuccessHandler" class="com.ireland.security.authentication.logout.RestLogoutSuccessHandler">
+<!-- 
+     <bean id="restLogoutSuccessHandler" class="com.ireland.security.authentication.logout.RestLogoutSuccessHandler">
     	<property name="logoutSuccessUrl" value="/"/>
+    </bean>
+-->
+    
+    <bean id="simpleUrlLogoutSuccessHandler" class="org.springframework.security.web.authentication.logout.SimpleUrlLogoutSuccessHandler">
+    	<property name="defaultTargetUrl" value="/"/>
     </bean>
    
    

@@ -16,6 +16,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.DefaultRedirectStrategy;
 import org.springframework.security.web.RedirectStrategy;
 import org.springframework.security.web.WebAttributes;
+import org.springframework.security.web.authentication.AbstractAuthenticationTargetUrlRequestHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,49 +34,44 @@ import com.ireland.model.User;
  */
 
 
-@Component("restAuthenticationSuccessHandler")
-public class RestAuthenticationSuccessHandler implements AuthenticationSuccessHandler
+public class RestAuthenticationSuccessHandler extends AbstractAuthenticationTargetUrlRequestHandler implements AuthenticationSuccessHandler
 {
-	private UserDao userDao;
 	
-    private RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
-
-	
-	@Resource(name="userDao")
-	public void setUserDao(UserDao userDao)
-	{
-		this.userDao = userDao;
-	}
-
-	
-	@Transactional(readOnly=true)
+	/**
+	 * 
+	 * 用REST+JSON方式(非重定向或请求转发)响应登录成功的事件,这种方式适用于浏览器或移动客户端,通用性较高
+	 * 
+	 * 登录后的URL将放置在HTTP响应头的"Location"属性里
+	 * 
+	 */
 	@Override
-	public void onAuthenticationSuccess(HttpServletRequest request,
-			HttpServletResponse response, Authentication authentication)
-			throws IOException, ServletException
+	protected void handle(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException
 	{
-		
+        String targetUrl = determineTargetUrl(request, response);
+
+        if (response.isCommitted()) {
+            logger.debug("Response has already been committed. Unable to redirect to " + targetUrl);
+            return;
+        }
+        
 		//200 OK
 		response.setStatus(HttpServletResponse.SC_OK);
 		
-		
-		Collection<? extends GrantedAuthority> authorities =  authentication.getAuthorities();
-		
-		
-		String path = request.getContextPath();
-		String basePath = request.getScheme() + "://"+ request.getServerName() + ":" + request.getServerPort()+ path ;
-		
-		String username = ((UserDetails) authentication.getPrincipal()).getUsername();
-		
-		response.setHeader("Location", basePath+"/myspace/file-list");
-        //redirectStrategy.sendRedirect(request, response, "/");
-
-		
-		
-		clearAuthenticationAttributes(request);
-		
+		response.setHeader("Location", targetUrl);
 	}
 
+
+    /**
+     * Calls the {@code handle()} method to response JSON to the Client , and
+     * then calls {@code clearAuthenticationAttributes()} to remove any leftover session data.
+     */
+	@Override
+    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
+            Authentication authentication) throws IOException, ServletException {
+
+        handle(request, response, authentication);
+        clearAuthenticationAttributes(request);
+    }
 	
 	
     /**
@@ -92,15 +88,4 @@ public class RestAuthenticationSuccessHandler implements AuthenticationSuccessHa
         session.removeAttribute(WebAttributes.AUTHENTICATION_EXCEPTION);
     }
     
-    
-    /**
-     * Allows overriding of the behaviour when redirecting to a target URL.
-     */
-    public void setRedirectStrategy(RedirectStrategy redirectStrategy) {
-        this.redirectStrategy = redirectStrategy;
-    }
-
-    protected RedirectStrategy getRedirectStrategy() {
-        return redirectStrategy;
-    }
 }

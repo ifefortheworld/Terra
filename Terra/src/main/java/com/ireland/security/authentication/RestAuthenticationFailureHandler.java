@@ -29,7 +29,7 @@ import com.google.gson.Gson;
 
 //{"reason":"用户名不存在"}
 
-@Component("restAuthenticationFailureHandler")
+@Component("authenticationFailureHandler")
 public class RestAuthenticationFailureHandler implements AuthenticationFailureHandler
 {
 	private static Gson gson = new Gson();

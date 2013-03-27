@@ -13,6 +13,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
 import org.springframework.security.web.util.AntPathRequestMatcher;
 import org.springframework.security.web.util.RequestMatcher;
+import org.springframework.util.StringUtils;
 
 /**
  * 
@@ -82,7 +83,14 @@ public class UrlMatchLoginUrlAuthenticationEntryPoint extends
 {
 	private List<LoginUrlMatcher> loginUrlMatchers;
 
-
+	/**
+	 * 从请求的Referer请求头中取出登录前的URL,通过URL参数targetUrlParameter(如:redirect_url)带到EntryPoint
+	 * 使得用户登录后可访问到登录前的页面
+	 */
+	private String targetUrlParameter = null;
+				
+			
+	
 	/**
 	 * 
 	 * @param loginFormUrl //默认的登录地址
@@ -122,23 +130,62 @@ public class UrlMatchLoginUrlAuthenticationEntryPoint extends
 	/**
 	 * 
 	 * 根据访问的不同pattern而被重定向到不同的登录页面
+	 * 
+	 * 如果配置了targetUrlParameter,且请求的Referer不为空,
+	 * 则从请求的Referer请求头中取出登录前的URL,通过URL参数targetUrlParameter(如:redirect_url)带到EntryPoint
+	 * 使得用户登录后可访问到登录前的页面
+	 * 
 	 */
 	@Override
 	protected String determineUrlToUseForThisRequest(
 			HttpServletRequest request, HttpServletResponse response,
 			AuthenticationException exception)
 	{
+		String loginFormUrl = null;
+		
 		//根据访问的不同pattern而被重定向到不同的登录页面
 		for (LoginUrlMatcher loginUrlMatcher : loginUrlMatchers)
 		{
 			if (loginUrlMatcher.matches(request))
 			{
-				return loginUrlMatcher.getLoginUrl();
+				loginFormUrl = loginUrlMatcher.getLoginUrl();
+				break;
 			}
 		}
 
-		//其它情况重定向到默认的URL
-		return super.determineUrlToUseForThisRequest(request, response,exception);
+		if(!StringUtils.hasText(loginFormUrl))
+		{
+			//其它情况重定向到默认的URL
+			loginFormUrl = super.determineUrlToUseForThisRequest(request, response,exception);
+		}
+		
+		if(targetUrlParameter != null)
+		{
+			String referer = request.getHeader("Referer");
+			
+			if(StringUtils.hasText(referer))
+				loginFormUrl += "?"+targetUrlParameter+"="+referer;
+		}
+		
+		return loginFormUrl;
+	}
+
+
+	/**
+	 * @return the targetUrlParameter
+	 */
+	public String getTargetUrlParameter()
+	{
+		return targetUrlParameter;
+	}
+
+
+	/**
+	 * @param targetUrlParameter the targetUrlParameter to set
+	 */
+	public void setTargetUrlParameter(String targetUrlParameter)
+	{
+		this.targetUrlParameter = targetUrlParameter;
 	}
 
 }

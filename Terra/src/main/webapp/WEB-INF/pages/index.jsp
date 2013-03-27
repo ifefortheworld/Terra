@@ -173,6 +173,7 @@ SimpleDateFormat f=new SimpleDateFormat("yyyy/MM/dd");
                     <div class="divider" style="border-top: 1px solid #ddd;margin-top: 10px;margin-bottom: 20px"></div>
                     <input type="text" class="input-block-level" placeholder="Email address" id="username" name="username">
                     <input type="password" class="input-block-level" placeholder="Password" id="password" name="password">
+                    <input type="hidden" id="redirect_url" name="redirect_url" value="${param.redirect_url}">
                     <label class="checkbox">
                         <input type="checkbox" value="remember-me"> Remember me
                     </label>
@@ -233,10 +234,18 @@ $(document).ready(function(){
 
 		xhr.setRequestHeader("Content-Type",
 				"application/x-www-form-urlencoded");
-
-		xhr.send("j_username=" + $("#username").val() + 
-				"&j_password=" + $("#password").val());
-
+		
+		
+		var redirect_url = $("#redirect_url").val();
+		
+		var param = "j_username=" + $("#username").val() + "&j_password=" + $("#password").val();
+		
+		if(redirect_url != null && redirect_url.length > 0)
+		{
+			param += "&redirect_url=" + redirect_url;
+		}
+		
+		xhr.send(param);
 	}
 
 	function ajaxCallBack() {
