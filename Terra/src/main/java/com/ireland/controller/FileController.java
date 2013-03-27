@@ -371,10 +371,12 @@ public class FileController
 		final String filePostFix = fileName.substring(fileName.lastIndexOf("."), fileName.length());
 		
 		String uuid = UUID.randomUUID().toString();
-		final String fileUrl = "/staticfiles/"+uuid+filePostFix;
+		String fileUrl = "/staticfiles/"+uuid+filePostFix;				//文件的访问的URL
+		final String storageLocation = "/staticfiles/"+uuid;			//文件实际存放路径
 		
 		file.setFileOriginalName(fileName);
 		file.setFileUrl(fileUrl);
+		file.setStorageLocation(storageLocation);
 		
 		return new Callable<Map<String,String>>()
 		{
@@ -386,7 +388,7 @@ public class FileController
 				
 				try
 				{
-					hdfsDao.upload(partFile.getInputStream(), fileUrl);
+					hdfsDao.upload(partFile.getInputStream(), storageLocation);
 				} catch (IOException e)
 				{
 					e.printStackTrace();
@@ -450,9 +452,11 @@ public class FileController
 			}
 		}
 		
+		//取得真实存储的路径
+		String storageLocation = file.getStorageLocation();
 		
 		//从HDFS读取文件,并返回结果
-		org.springframework.core.io.Resource resource = hdfsDao.read(url);
+		org.springframework.core.io.Resource resource = hdfsDao.read(storageLocation);
 
 		//404
 		if(resource == null)

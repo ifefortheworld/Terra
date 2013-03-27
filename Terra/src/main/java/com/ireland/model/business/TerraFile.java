@@ -93,6 +93,12 @@ public class TerraFile
 	 */
 	private String fileOriginalName;
 	
+	
+	/**
+	 * 文件的实际存放路径,如HDFS里的路径
+	 */
+	private String storageLocation;
+	
 	/**
 	 * 浏览数
 	 */
@@ -241,6 +247,22 @@ public class TerraFile
 	public void setFileOriginalName(String fileOriginalName)
 	{
 		this.fileOriginalName = fileOriginalName;
+	}
+
+	/**
+	 * @return the storageLocation
+	 */
+	public String getStorageLocation()
+	{
+		return storageLocation;
+	}
+
+	/**
+	 * @param storageLocation the storageLocation to set
+	 */
+	public void setStorageLocation(String storageLocation)
+	{
+		this.storageLocation = storageLocation;
 	}
 
 	public int getViewsCnt()
