@@ -13,7 +13,7 @@ import com.ireland.model.business.Comment;
 
 /**
  * 
- * @author 吉林大学珠海学院1队
+ * @KEN
  *
  */
 

@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 /**
  * 根据路径变量直接跳转到对应视频的控制器
  * 
- * @author 吉林大学珠海学院1队
+ * @KEN
  * @since 2012/5/11
  */
 

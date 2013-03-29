@@ -7,7 +7,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Repository;
 
 import com.ireland.dao.support.SimpleMongoDao;
-import com.ireland.model.User;
+import com.ireland.model.business.RealFile;
 
 
 
@@ -17,14 +17,14 @@ import com.ireland.model.User;
  *
  */
 
-@Repository("userDao")
-public class UserDao extends SimpleMongoDao<User, String>
+@Repository("realFileDao")
+public class RealFileDao extends SimpleMongoDao<RealFile, String>
 {
 	
 	@Autowired
-	public UserDao(MongoTemplate mongoTemplate)
+	public RealFileDao(MongoTemplate mongoTemplate)
 	{
-		super(mongoTemplate, User.class);
+		super(mongoTemplate, RealFile.class);
 	}
 	
 }

@@ -12,7 +12,7 @@ import org.springframework.security.web.access.expression.WebSecurityExpressionR
  * 增加了日期控制的SpEL 4 WebSecurityExpressionRoot
  * 
  * 
- * @author 吉林大学珠海学院1队
+ * @KEN
  * @since 2012-05-30
  *
  */

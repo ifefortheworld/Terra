@@ -21,7 +21,7 @@ import com.ireland.security.core.userdetails.SingleRoleUserDetails;
  * 
  * 一个用户只有一个角色
  * 
- * @author 吉林大学珠海学院1队
+ * @KEN
  * 
  */
 

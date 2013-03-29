@@ -5,7 +5,7 @@ import javax.persistence.Entity;
 
 /**
  * 
- * @author 吉林大学珠海学院1队
+ * @KEN
  *
  * <intercept-url pattern="/url" access="permitAll" method="POST" requires-channel="https"/>
  * 

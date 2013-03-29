@@ -30,7 +30,7 @@ import com.ireland.model.User;
 /**
  * REST 风格 的 AuthenticationSuccessHandler,验证成功的话就返回 200+Location
  * 
- * @author 吉林大学珠海学院1队
+ * @KEN
  */
 
 

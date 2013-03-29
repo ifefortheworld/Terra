@@ -51,12 +51,14 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 import com.ireland.dao.CommentDao;
 import com.ireland.dao.HdfsDao;
+import com.ireland.dao.RealFileDao;
 import com.ireland.dao.TagDao;
 import com.ireland.dao.TerraFileDao;
 import com.ireland.model.Role;
 import com.ireland.model.User;
 
 import com.ireland.model.business.Comment;
+import com.ireland.model.business.RealFile;
 import com.ireland.model.business.Tag;
 import com.ireland.model.business.TerraFile;
 
@@ -68,7 +70,7 @@ import com.ireland.service.UserService;
  * 订单管理
  *
  *
- * @author 吉林大学珠海学院1队
+ * @KEN
  * 
  */
 
@@ -112,6 +114,9 @@ public class FileController
 	
 	@Autowired
 	private TerraFileDao terraFileDao;
+	
+	@Autowired
+	private RealFileDao realFileDao;
 	
 	@Autowired
 	private TagDao tagDao;
@@ -215,6 +220,7 @@ public class FileController
 			terraFileDao.inc(file.getId(), "viewsCnt", 1);
 		}
 		
+
 		model.addAttribute("file",file);
 		model.addAttribute("page",page);
 		model.addAttribute("comments",page.iterator());
@@ -304,7 +310,7 @@ public class FileController
 		}
 		
 		file.setFileOriginalName(fileName);
-		file.setFileUrl(fileUrl);
+		//file.setFileUrl(fileUrl);
 			
 		terraFileDao.insert(file);
 			
@@ -371,12 +377,15 @@ public class FileController
 		final String filePostFix = fileName.substring(fileName.lastIndexOf("."), fileName.length());
 		
 		String uuid = UUID.randomUUID().toString();
-		String fileUrl = "/staticfiles/"+uuid+filePostFix;				//文件的访问的URL
+		String fileUrl = "/staticfiles/"+uuid+filePostFix;				//文件的访问的URL,每份文件的URL都是唯一的,但可能引用同一个RealFile
 		final String storageLocation = "/staticfiles/"+uuid;			//文件实际存放路径
 		
-		file.setFileOriginalName(fileName);
 		file.setFileUrl(fileUrl);
-		file.setStorageLocation(storageLocation);
+		file.setFileOriginalName(fileName);
+		
+		final RealFile realFile = new RealFile();
+		realFile.setStorageLocation(storageLocation);
+		
 		
 		return new Callable<Map<String,String>>()
 		{
@@ -396,8 +405,21 @@ public class FileController
 					res.put("reason", "hafs upload fail!");
 					return res;
 				}
-					
+				
+				realFileDao.insert(realFile);
+				
+				file.setRealFileId(realFile.getId());
+				
 				terraFileDao.insert(file);
+				
+				//更新引用计数
+				realFile.setReferenceCount(1);
+				
+				List<String> referenceIds = new ArrayList<String>(1);
+				referenceIds.add(file.getId());
+				realFile.setReferenceIds(referenceIds);
+				
+				realFileDao.save(realFile);
 					
 				res.put("status", "SUCCESS");
 				res.put("Location", "/files/"+file.getId());
@@ -452,8 +474,10 @@ public class FileController
 			}
 		}
 		
+		RealFile realFile = realFileDao.findOne(file.getRealFileId());
+		
 		//取得真实存储的路径
-		String storageLocation = file.getStorageLocation();
+		String storageLocation = realFile.getStorageLocation();
 		
 		//从HDFS读取文件,并返回结果
 		org.springframework.core.io.Resource resource = hdfsDao.read(storageLocation);

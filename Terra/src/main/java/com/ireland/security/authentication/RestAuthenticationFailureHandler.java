@@ -24,7 +24,7 @@ import com.google.gson.Gson;
 /**
  * REST 风格 的 AuthenticationFailureHandler,用户名不存在则返回 404,密码错误或无权限访问则返回401 UNAUTHORIZED
  * 
- * @author 吉林大学珠海学院1队
+ * @KEN
  */
 
 //{"reason":"用户名不存在"}

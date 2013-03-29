@@ -15,7 +15,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
  * 每个用户可能有多种"角色",利用"角色"实现粗粒度的"分组权限"的分配
  * 为了与完全基于"角色"的权限机制兼容,Role的authorities属性至少包含"权限":ROLE_XXX
  * 
- * @author 吉林大学珠海学院1队, chenqipeng
+ * @KEN, chenqipeng
  * 
  */
 

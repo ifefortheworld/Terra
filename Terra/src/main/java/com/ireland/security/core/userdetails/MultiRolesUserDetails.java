@@ -13,7 +13,7 @@ import com.ireland.model.Role;
  * 这使得"角色"和"权限"的概念上更明确了!
  * 
  * 
- * @author 吉林大学珠海学院1队
+ * @KEN
  *
  */
 

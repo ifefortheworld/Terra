@@ -19,7 +19,7 @@ import com.ireland.security.securitymetadata.SecurityMetadata;
  * 
  * @author Luke Taylor 基于简单字符串表示的权限(注意,最好仅用于表示权限,而不用于表示角色)
  * 
- * @author 吉林大学珠海学院1队, chenqipeng
+ * @KEN, chenqipeng
  * 
  *         PS:如果一个功能没在用Authority在数据里配置,则默认可以直接访问这个功能
  */

@@ -13,7 +13,7 @@ import org.springframework.security.web.authentication.logout.LogoutSuccessHandl
 /**
  * REST风格的logoutSuccesshandler,成功退出,则返回OK(200),logoutSuccessUrl装将作为响应头Location返回
  * 
- * @author 吉林大学珠海学院1队
+ * @KEN
  */
 
 public class RestLogoutSuccessHandler implements LogoutSuccessHandler

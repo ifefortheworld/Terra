@@ -17,7 +17,7 @@ import com.ireland.security.securitymetadata.ReloadableExpressionBasedFilterInvo
  * 而它会持有<http/>的FILTER_SECURITY_INTERCEPTOR,
  * 而我这里使用了反射将自定义的FILTER_SECURITY_INTERCEPTOR替换了原来的FILTER_SECURITY_INTERCEPTOR
  * 
- * @author 吉林大学珠海学院1队
+ * @KEN
  *
  */
 

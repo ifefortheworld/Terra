@@ -19,7 +19,7 @@ import com.ireland.utils.MyDate;
 /**
  * 文件
  * 
- * @author 吉林大学珠海学院1队
+ * @KEN
  * 
  */
 
@@ -82,22 +82,23 @@ public class TerraFile
 	 */
 	private Boolean isShared;
 
-	
+
 	/**
-	 * 文件的下载路径
+	 * 文件的下载URL
 	 */
+	@Indexed
 	private String fileUrl;
 	
 	/**
 	 * 文件的原始名
 	 */
 	private String fileOriginalName;
-	
+
 	
 	/**
-	 * 文件的实际存放路径,如HDFS里的路径
+	 * 对应的真实文件的id
 	 */
-	private String storageLocation;
+	private String realFileId;
 	
 	/**
 	 * 浏览数
@@ -229,11 +230,19 @@ public class TerraFile
 		this.isShared = isShared;
 	}
 
+
+
+	/**
+	 * @return the fileUrl
+	 */
 	public String getFileUrl()
 	{
 		return fileUrl;
 	}
 
+	/**
+	 * @param fileUrl the fileUrl to set
+	 */
 	public void setFileUrl(String fileUrl)
 	{
 		this.fileUrl = fileUrl;
@@ -249,20 +258,15 @@ public class TerraFile
 		this.fileOriginalName = fileOriginalName;
 	}
 
-	/**
-	 * @return the storageLocation
-	 */
-	public String getStorageLocation()
+	
+	public String getRealFileId()
 	{
-		return storageLocation;
+		return realFileId;
 	}
 
-	/**
-	 * @param storageLocation the storageLocation to set
-	 */
-	public void setStorageLocation(String storageLocation)
+	public void setRealFileId(String realFileId)
 	{
-		this.storageLocation = storageLocation;
+		this.realFileId = realFileId;
 	}
 
 	public int getViewsCnt()

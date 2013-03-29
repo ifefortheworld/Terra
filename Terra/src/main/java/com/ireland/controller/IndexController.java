@@ -48,7 +48,7 @@ import com.ireland.service.UserService;
 /**
  * 系统主页
  * 
- * @author 吉林大学珠海学院1队
+ * @KEN
  * 
  */
 

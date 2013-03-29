@@ -29,7 +29,7 @@ import com.ireland.model.User;
  * 
  * 如注册时,提供的user的密码应该是未加密的,而HibernateUserDetailsManager利用passwordEncoder加密后再存放到数据库中
  * 
- * @author 吉林大学珠海学院1队
+ * @KEN
  *
  */
 

@@ -171,8 +171,8 @@ SimpleDateFormat f=new SimpleDateFormat("yyyy/MM/dd");
                     <!--form-signin-->
                     <h2 class="form-signin-heading" style="font-size: 20px;line-height: 1.5">Sign in Terra</h2>
                     <div class="divider" style="border-top: 1px solid #ddd;margin-top: 10px;margin-bottom: 20px"></div>
-                    <input type="text" class="input-block-level" placeholder="Email address" id="username" name="username">
-                    <input type="password" class="input-block-level" placeholder="Password" id="password" name="password">
+                    <input type="text" class="input-block-level" placeholder="Email address" id="username" name="username" value="admin">
+                    <input type="password" class="input-block-level" placeholder="Password" id="password" name="password" value="123456">
                     <input type="hidden" id="redirect_url" name="redirect_url" value="${param.redirect_url}">
                     <label class="checkbox">
                         <input type="checkbox" value="remember-me"> Remember me

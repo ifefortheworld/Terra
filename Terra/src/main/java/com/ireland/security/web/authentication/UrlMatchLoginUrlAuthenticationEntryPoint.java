@@ -18,7 +18,7 @@ import org.springframework.util.StringUtils;
 /**
  * 
  * 
- * @author 吉林大学珠海学院1队
+ * @KEN
  * 
  */
 interface LoginUrlMatcher
@@ -74,7 +74,7 @@ class DefaultLoginUrlMatcher implements LoginUrlMatcher
 /**
  * 基于URL模式匹配的LoginUrlAuthenticationEntryPoint, 适用于多个不同的入口点,如一个系统有web和wap两个入口点的情况
  * 
- * @author 吉林大学珠海学院1队
+ * @KEN
  * 
  */
 

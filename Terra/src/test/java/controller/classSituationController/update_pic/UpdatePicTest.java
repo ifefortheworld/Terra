@@ -53,7 +53,7 @@ import com.google.gson.Gson;
 /**
  * 登录的HttpClient测试for安卓
  * 
- * @author 吉林大学珠海学院1队
+ * @KEN
  *
  */
 

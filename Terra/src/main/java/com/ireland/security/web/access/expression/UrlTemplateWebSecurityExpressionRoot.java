@@ -16,7 +16,7 @@ import com.ireland.model.User;
  * 
  * 注意:只适用于model.User的情况!
  * 
- * @author 吉林大学珠海学院1队
+ * @KEN
  * @since 2012-06-01
  *
  */

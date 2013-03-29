@@ -32,7 +32,7 @@ import com.ireland.service.UserService;
 /**
  * 用户相关的操作
  * 
- * @author 吉林大学珠海学院1队
+ * @KEN
  * 
  */
 

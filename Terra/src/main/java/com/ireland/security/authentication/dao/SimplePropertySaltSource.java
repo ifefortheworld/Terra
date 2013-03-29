@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
  * 
  * 取User的username作为salt
  * 
- * @author 吉林大学珠海学院1队
+ * @KEN
  *
  */
 

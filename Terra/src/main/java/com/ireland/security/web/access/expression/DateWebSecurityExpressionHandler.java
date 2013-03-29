@@ -13,7 +13,7 @@ import org.springframework.security.web.access.expression.WebSecurityExpressionH
  * 增加了日期的控制
  * 
  * 
- * @author 吉林大学珠海学院1队
+ * @KEN
  * @since 2012-05-30
  */
 

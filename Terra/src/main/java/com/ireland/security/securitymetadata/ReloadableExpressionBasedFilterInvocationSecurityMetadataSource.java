@@ -31,7 +31,7 @@ import org.springframework.util.Assert;
  * 
  * PS: CHANNEL_FILTER[ChannelProcessingFilter] 的 SecurityMetadataSource不受此影响,迟点写个RefreshableChannelProcessingFilter
  * 
- * @author 吉林大学珠海学院1队
+ * @KEN
  *
  */
 
