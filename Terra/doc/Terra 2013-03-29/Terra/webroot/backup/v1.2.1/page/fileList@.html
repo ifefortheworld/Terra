@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/html" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="utf-8">
+    <title>Files</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <!-- Bootstrap -->
+    <!--<link href="../css/bootstrap.min.css" rel="stylesheet" media="screen">-->
+    <!-- Le styles -->
+    <link href="../css/bootstrap.css" rel="stylesheet">
+    <!--<link href="../css/bootstrap-responsive-min-980px.css" rel="stylesheet">-->
+    <link href="../css/docs.css" rel="stylesheet">
+    <style type="text/css" rel="stylesheet">
+        body{
+            padding-top: 50px;
+        }
+        @media (min-width: 768px) and (max-width: 979px) {
+            body{
+                padding-top: 0px;
+            }
+        }
+        /*--page_file--*/
+        .breadcrumb{
+            margin-bottom: 20px;
+        }
+        .table{
+            border-top: 1px solid #ddd;
+            border-bottom: 1px solid #ddd;
+        }
+        .tab-logo-ico{
+            float: right;
+            margin-top: 2px;
+            margin-right: -6px;
+            opacity: .25;
+        }
+        /*.btn-toolbar{*/
+            /*border-bottom: 1px solid #ddd;*/
+            /**/
+        /*}*/
+        /*.btn-toolbar .left{*/
+            /*float: left;*/
+        /*}*/
+        /*.btn-toolbar .right{*/
+            /*float: right;*/
+        /*}*/
+    </style>
+    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="#">
+    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="#">
+    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="#">
+    <link rel="apple-touch-icon-precomposed" href="#">
+    <link rel="shortcut icon" href="#">
+
+</head>
+<body>
+<!--header-->
+<header>
+    <div class="navbar navbar-inverse navbar-fixed-top">
+        <div class="navbar-inner">
+            <div class="container">
+                <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </a>
+                <a class="brand" href="#">Terra</a>
+                <div class="nav-collapse collapse">
+                    <ul class="nav">
+                        <li class="active"><a href="#"> Home</a></li>
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown"> My Box <b class="caret"></b></a>
+                            <ul class="dropdown-menu">
+                                <li><a href="#"><i class="icon-file"></i> Files</a></li>
+                                <li><a href="#"><i class="icon-bookmark"></i> Columns</a></li>
+                                <li><a href="#"><i class="icon-tag"></i> Pages</a></li>
+                                <li><a href="#"><i class="icon-pencil"></i> Notes</a></li>
+                            </ul>
+                        </li>
+                        <li><a href="#"> Upload </a></li>
+                        <li><a href="#"> Search </a></li>
+                        <li><a href="#"> Columns </a></li>
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle"  data-toggle="dropdown">About <b class="caret"></b></a>
+                            <ul class="dropdown-menu">
+                                <li><a href="#"><i class="icon-envelope"></i> Contact</a></li>
+                                <li><a href="#"><i class="icon-globe"></i> Introduction</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                    <ul class="nav pull-right">
+                        <li><a href="#" >Register</a></li>
+                        <li><a href="#">Sign in</a></li>
+                    </ul>
+                </div><!--/.nav-collapse -->
+            </div>
+        </div>
+    </div>
+</header>
+<!--header(end)-->
+<!--container-->
+<div class="container">
+    <ul class="breadcrumb">
+        <li><a href="#">Box</a> <span class="divider">/</span></li>
+        <li class="active"><a href="#">Files</a> </li>
+    </ul>
+    <div class="row-fluid">
+        <div class="span10 table-table">
+            <div class="alert alert-block">
+                <strong>Tips!</strong> Love Sharing! Be a Creator of Resource.
+            </div>
+            <div class="well">
+                <div class="alert alert-info">
+                    <a class="close" data-dismiss="alert">×</a>
+                    <strong>Box Info!</strong> You have 26 files! 22 files <span class="label label-warning">Unshared</span>.
+                </div>
+                <div class="btn-toolbar">
+                    <div class="btn-group">
+                        <a class="btn dropdown-toggle" data-toggle="dropdown" href="#"><i class=" icon-list-alt"></i> Order <span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                            <li class="active"><a href="#"><i class="icon-calendar"></i> by Date</a></li>
+                            <li><a href="#"><i class="icon-file"></i> by Type</a></li>
+                            <li><a href="#"><i class="icon-user"></i> by Owner</a></li>
+                            <!-- 下拉菜单链接 -->
+                        </ul>
+                    </div>
+                    <div class="btn-group">
+                        <a class="btn" href="#"><i class="icon-th-large"></i> Check</a>
+                        <a class="btn" href="#"><i class="icon-arrow-up"></i> Upload</a>
+                        <a class="btn" href="#"><i class="icon-remove"></i> Delete</a>
+                        <a class="btn" href="#"><i class="icon-refresh"></i> Refresh</a>
+                    </div>
+                    <a class="btn" href="#"><i class="icon-cog"></i> Setting</a>
+                </div>
+                <table id="filesTable" class="table table-striped table-hover">
+                    <thead>
+                    <tr>
+                        <th>
+                            <!--<label class="checkbox">-->
+                                <!--<input type="checkbox">-->
+                            <!--</label>-->
+                        </th>
+                        <th>Type</th>
+                        <th>Name</th>
+                        <th>Code</th>
+                        <th>Owner</th>
+                        <th>Date</th>
+                        <th>Shared</th>
+                        <th>Detail</th>
+                        <th>Download</th>
+                    </tr>
+                    </thead>
+                    <tbody id="filesTableTBody">
+                    <tr>
+                        <td>
+                            <label class="checkbox">
+                                <input type="checkbox">
+                            </label>
+                        </td>
+                        <td><i class="icon-music"></i></td>
+                        <td>On the Floor</td>
+                        <td>1838ds74838273dsf</td>
+                        <td>Mine</td>
+                        <td>2013/2/1</td>
+                        <td><span class="badge badge-success">Shared</span></td>
+                        <td>
+                            <button class="btn btn-mini btn-info">Detail</button>
+                        </td>
+                        <td>
+                            <button class="btn btn-mini btn-danger"> Download</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label class="checkbox">
+                                <input type="checkbox">
+                            </label>
+                        </td>
+                        <td><i class="icon-music"></i></td>
+                        <td>On the Floor</td>
+                        <td>1838ds74838273dsf</td>
+                        <td>Mine</td>
+                        <td>2013/2/1</td>
+                        <td><span class="badge badge-success">Shared</span></td>
+                        <td>
+                            <button class="btn btn-mini btn-info">Detail</button>
+                        </td>
+                        <td>
+                            <!--<button class="btn btn-mini btn-info">Detail</button>-->
+                            <button class="btn btn-mini btn-danger"> Download</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label class="checkbox">
+                                <input type="checkbox">
+                            </label>
+                        </td>
+                        <td><i class="icon-music"></i></td>
+                        <td>On the Floor</td>
+                        <td>1838ds74838273dsf</td>
+                        <td>Mine</td>
+                        <td>2013/2/1</td>
+                        <td><span class="badge badge-success">Shared</span></td>
+                        <td>
+                            <button class="btn btn-mini btn-info">Detail</button>
+                        </td>
+                        <td>
+                            <!--<button class="btn btn-mini btn-info">Detail</button>-->
+                            <button class="btn btn-mini btn-danger"> Download</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label class="checkbox">
+                                <input type="checkbox">
+                            </label>
+                        </td>
+                        <td><i class="icon-music"></i></td>
+                        <td>On the Floor</td>
+                        <td>1838ds74838273dsf</td>
+                        <td>Mine</td>
+                        <td>2013/2/1</td>
+                        <td><span class="badge badge-success">Shared</span></td>
+                        <td>
+                            <button class="btn btn-mini btn-info">Detail</button>
+                        </td>
+                        <td>
+                            <!--<button class="btn btn-mini btn-info">Detail</button>-->
+                            <button class="btn btn-mini btn-danger"> Download</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label class="checkbox">
+                                <input type="checkbox">
+                            </label>
+                        </td>
+                        <td><i class="icon-music"></i></td>
+                        <td>On the Floor</td>
+                        <td>1838ds74838273dsf</td>
+                        <td>Mine</td>
+                        <td>2013/2/1</td>
+                        <td><span class="badge badge-success">Shared</span></td>
+                        <td>
+                            <button class="btn btn-mini btn-info">Detail</button>
+                        </td>
+                        <td>
+                            <!--<button class="btn btn-mini btn-info">Detail</button>-->
+                            <button class="btn btn-mini btn-danger"> Download</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label class="checkbox">
+                                <input type="checkbox">
+                            </label>
+                        </td>
+                        <td><i class="icon-music"></i></td>
+                        <td>On the Floor</td>
+                        <td>1838ds74838273dsf</td>
+                        <td>Mine</td>
+                        <td>2013/2/1</td>
+                        <td><span class="badge badge-success">Shared</span></td>
+                        <td>
+                            <button class="btn btn-mini btn-info">Detail</button>
+                        </td>
+                        <td>
+                            <!--<button class="btn btn-mini btn-info">Detail</button>-->
+                            <button class="btn btn-mini btn-danger"> Download</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label class="checkbox">
+                                <input type="checkbox">
+                            </label>
+                        </td>
+                        <td><i class="icon-music"></i></td>
+                        <td>On the Floor</td>
+                        <td>1838ds74838273dsf</td>
+                        <td>Mine</td>
+                        <td>2013/2/1</td>
+                        <td><span class="badge badge-success">Shared</span></td>
+                        <td>
+                            <button class="btn btn-mini btn-info">Detail</button>
+                        </td>
+                        <td>
+                            <!--<button class="btn btn-mini btn-info">Detail</button>-->
+                            <button class="btn btn-mini btn-danger"> Download</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label class="checkbox">
+                                <input type="checkbox">
+                            </label>
+                        </td>
+                        <td><i class="icon-music"></i></td>
+                        <td>On the Floor</td>
+                        <td>1838ds74838273dsf</td>
+                        <td>Mine</td>
+                        <td>2013/2/1</td>
+                        <td><span class="badge badge-success">Shared</span></td>
+                        <td>
+                            <button class="btn btn-mini btn-info">Detail</button>
+                        </td>
+                        <td>
+                            <!--<button class="btn btn-mini btn-info">Detail</button>-->
+                            <button class="btn btn-mini btn-danger"> Download</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label class="checkbox">
+                                <input type="checkbox">
+                            </label>
+                        </td>
+                        <td><i class="icon-music"></i></td>
+                        <td>On the Floor</td>
+                        <td>1838ds74838273dsf</td>
+                        <td>Mine</td>
+                        <td>2013/2/1</td>
+                        <td><span class="badge badge-success">Shared</span></td>
+                        <td>
+                            <button class="btn btn-mini btn-info">Detail</button>
+                        </td>
+                        <td>
+                            <!--<button class="btn btn-mini btn-info">Detail</button>-->
+                            <button class="btn btn-mini btn-danger"> Download</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label class="checkbox">
+                                <input type="checkbox">
+                            </label>
+                        </td>
+                        <td><i class="icon-music"></i></td>
+                        <td>On the Floor</td>
+                        <td>1838ds74838273dsf</td>
+                        <td>Mine</td>
+                        <td>2013/2/1</td>
+                        <td><span class="badge badge-warning">Unshared</span></td>
+                        <td>
+                            <button class="btn btn-mini btn-info">Detail</button>
+                        </td>
+                        <td>
+                            <!--<button class="btn btn-mini btn-info">Detail</button>-->
+                            <button class="btn btn-mini btn-danger"> Download</button>
+                        </td>
+                    </tr>
+                    </tbody>
+                    <tfoot>
+
+                    </tfoot>
+                </table>
+                <div class="pagination pagination-small pagination-right" >
+                    <ul id="fileTablePag">
+                        <li><a href="#"><<</a></li>
+                        <li><a href="#">1</a></li>
+                        <li><a href="#">2</a></li>
+                        <li><a href="#">3</a></li>
+                        <li><a href="#">4</a></li>
+                        <li><a href="#">5</a></li>
+                        <li><a href="#">>></a></li>
+                    </ul>
+                </div>
+            </div>
+            <!--Sidebar content-->
+        </div>
+        <div class="span2">
+            <ul class="nav nav-tabs nav-stacked">
+                <li><a href="#"><i class="tab-logo-ico icon-arrow-up"></i> Upload</a></li>
+                <li><a href="#"><i class="tab-logo-ico icon-search"></i> Search</a></li>
+                <li><a href="#"><i class="tab-logo-ico icon-list"></i> Statistics</a></li>
+            </ul>
+            <div class="well sidebar-nav">
+                <ul class="nav nav-list" >
+                    <li class="nav-header">File Type</li>
+                    <li class="active"><a href="#"><i class="icon-file"></i> All File</a></li>
+                    <li><a href="#"><i class="icon-book"></i> Text</a></li>
+                    <li><a href="#"><i class="icon-film"></i> Video</a></li>
+                    <li><a href="#"><i class="icon-music"></i> Audio</a></li>
+                    <li><a href="#"><i class="icon-picture"></i> Image</a></li>
+                    <li><a href="#"><i class="icon-lock"></i> Bag</a></li>
+                    <li><a href="#"><i class="icon-file"></i> Other</a></li>
+                    <li class="divider"></li>
+                    <li class="nav-header">File Owner</li>
+                    <li><a href="#"><i class="icon-user"></i> Mine</a></li>
+                    <li><a href="#"><i class="icon-star"></i> Fav</a></li>
+                    <li class="divider"></li>
+                    <li class="nav-header">Folder</li>
+                    <li><a href="#"><i class="icon-folder-close"></i> Mine</a></li>
+                    <li><a href="#"><span class="label"><i class="icon-plus icon-white"></i> Add</span></a></li>
+                    <li class="divider"></li>
+                    <li class="nav-header">trash</li>
+                    <li><a href="#"><i class="icon-trash"></i> trash</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+<!--container(end)-->
+<!--footer-->
+<footer>
+    <div class="container">
+        <p>Designed and built with all the love in the world by <a href="#">@Mocha</a></p>
+        <ul class="footer-links">
+            <li><a href="#">Blog</a></li>
+            <li class="muted">·</li>
+            <li><a href="#">Weibo</a></li>
+        </ul>
+    </div>
+</footer>
+<!--footer(end)-->
+<script src="http://code.jquery.com/jquery-latest.js"></script>
+<script src="../js/bootstrap.min.js"></script>
+<script src="../js/filesTbRefresh.js"></script>
+</body>
+</html>

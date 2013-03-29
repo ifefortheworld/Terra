@@ -1,0 +1,51 @@
+.tSelect {
+	width: 550px;
+	/*margin: 80px auto;*/
+	position: relative;
+	z-index: 10000;
+}
+
+.tSelect cite {
+	width: 514px;
+	height: 32px;
+	line-height: 32px;
+	display: block;
+	color: #999999;
+    font-weight: bold;
+	cursor: pointer;
+	font-style: normal;
+	padding-left: 4px;
+	padding-right: 30px;
+	border: 1px solid #c0c0c0;
+	background: #ffffff url("../images/dropdownBtnBG.png") no-repeat right center;
+    /*background: */
+    /*z-index: 1000;*/
+}
+
+.tSelect ul {
+	width: 534px;
+	border: 1px solid #333333;
+	background-color: #ffffff;
+	position: absolute;
+	z-index: 20000;
+	margin-top: -1px;
+	display: none;
+}
+
+.tSelect ul li {
+	height: 24px;
+	line-height: 24px;
+}
+
+.tSelect ul li a {
+	display: block;
+	height: 24px;
+	color: #333333;
+	text-decoration: none;
+	padding-left: 10px;
+	padding-right: 10px;
+}
+
+.tSelect ul li a:hover {
+	background-color: #CCC;
+}

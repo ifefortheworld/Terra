@@ -1,0 +1,449 @@
+/* Add additional stylesheets below
+-------------------------------------------------- */
+/*
+  Terra's documentation styles
+*/
+
+/* Body and structure
+-------------------------------------------------- */
+body {
+    position: relative;
+    padding-top: 40px;
+    /*padding-bottom: 40px;*/
+}
+
+/* Base class
+-------------------------------------------------- */
+/* propaganda font
+------------------------- */
+.propaganda{
+    color: #fff;
+    text-align: center;
+    /*z-index: 1;*/
+}
+/* propaganda structure
+------------------------- */
+.propaganda{
+    position: relative;
+    padding: 70px 0 80px;
+}
+.propaganda .container{
+    position: relative;
+    z-index: 2;
+}
+/* propaganda background
+------------------------- */
+.propaganda{
+    text-shadow: 0 1px 3px rgba(0,0,0,.4), 0 0 30px rgba(0,0,0,.075);
+    background: #064e4c;   /*Old browsers*/
+    background: -moz-linear-gradient(45deg, #064e4c 0%, #5bb15d 100%);  /*FF3.6+*/
+    background: -webkit-gradient(linear, left bottom, right top, color-stop(0%,#064e4c), color-stop(100%,#5bb15d));  /*Chrome,Safari4+*/
+    background: -webkit-linear-gradient(45deg,  #064e4c 0%,#5bb15d 100%);  /*Chrome10+,Safari5.1+*/
+    background: -o-linear-gradient(45deg,  #064e4c 0%,#5bb15d 100%);  /*Opera 11.10+*/
+    background: -ms-linear-gradient(45deg,  #064e4c 0%,#5bb15d 100%);  /*IE10+*/
+    background: linear-gradient(45deg,  #064e4c 0%,#5bb15d 100%); /* W3C*/
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#064e4c', endColorstr='#5bb15d',GradientType=1 );  /*IE6-9 fallback on horizontal gradient*/
+    -webkit-box-shadow: inset 0 3px 7px rgba(0,0,0,.2), inset 0 -3px 7px rgba(0,0,0,.2);
+    -moz-box-shadow: inset 0 3px 7px rgba(0,0,0,.2), inset 0 -3px 7px rgba(0,0,0,.2);
+    box-shadow: inset 0 3px 7px rgba(0,0,0,.2), inset 0 -3px 7px rgba(0,0,0,.2);
+}
+.propaganda:after{
+    content: '';
+    display: block;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background: url(../img/propaganda-pattern.png) repeat center center;
+    opacity: .4;
+}
+/*propaganda h1 h2 h3 h4 h5 h6
+------------------------- */
+.propaganda h1{
+    color: inherit;
+    font-size: 120px;
+    font-weight: bold;
+    line-height: 1;
+    letter-spacing: -2px;
+    /*margin-bottom: 60px;*/
+}
+/*propaganda p
+------------------------- */
+.propaganda p{
+    font-size: 40px;
+    font-weight:200;
+    line-height: 1.25;
+    margin-bottom: 30px;
+}
+/* propaganda-link
+------------------------- */
+.propaganda-links {
+    /*color: inherit;*/
+    margin: 0;
+    list-style: none;
+}
+.propaganda-links li {
+    display: inline;
+    padding: 0 10px;
+    color: #cecece;
+}
+.propaganda-links a{
+    color: #ff92a6;
+    font-size: 14px;
+}
+/* propaganda btn
+------------------------- */
+.propaganda .btn {
+    padding: 19px 24px;
+    font-size: 24px;
+    font-weight: 200;
+    color: #fff; /* redeclare to override the `.jumbotron a` */
+    border: 0;
+    -webkit-border-radius: 6px;
+    -moz-border-radius: 6px;
+    border-radius: 6px;
+    -webkit-box-shadow: inset 0 1px 0 rgba(255,255,255,.1), 0 1px 5px rgba(0,0,0,.25);
+    -moz-box-shadow: inset 0 1px 0 rgba(255,255,255,.1), 0 1px 5px rgba(0,0,0,.25);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.1), 0 1px 5px rgba(0,0,0,.25);
+    -webkit-transition: none;
+    -moz-transition: none;
+    transition: none;
+}
+.propaganda .btn:hover {
+    -webkit-box-shadow: inset 0 1px 0 rgba(255,255,255,.1), 0 1px 5px rgba(0,0,0,.25);
+    -moz-box-shadow: inset 0 1px 0 rgba(255,255,255,.1), 0 1px 5px rgba(0,0,0,.25);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.1), 0 1px 5px rgba(0,0,0,.25);
+}
+.propaganda .btn:active {
+    -webkit-box-shadow: inset 0 2px 4px rgba(0,0,0,.1), 0 1px 0 rgba(255,255,255,.1);
+    -moz-box-shadow: inset 0 2px 4px rgba(0,0,0,.1), 0 1px 0 rgba(255,255,255,.1);
+    box-shadow: inset 0 2px 4px rgba(0,0,0,.1), 0 1px 0 rgba(255,255,255,.1);
+}
+/*jumbotron
+------------------------- */
+/*.jumbotron {*/
+    /*margin: 60px 0;*/
+    /*text-align: center;*/
+/*}*/
+/*.jumbotron h1 {*/
+    /*font-size: 72px;*/
+    /*line-height: 1;*/
+/*}*/
+/*.jumbotron .btn {*/
+    /*font-size: 21px;*/
+    /*padding: 14px 24px;*/
+/*}*/
+/*masthead
+------------------------- */
+.masthead{
+    position: relative;
+}
+.masthead{
+    color: #fff;
+    /*text-align: center;*/
+    /*z-index: 1;*/
+}
+.masthead{
+    text-shadow: 0 1px 3px rgba(0,0,0,.4), 0 0 30px rgba(0,0,0,.075);
+    background:   #064e4c ;   /*Old browsers*/
+    background: -moz-linear-gradient(45deg, #064e4c 0%, #5bb15d 100%);  /*FF3.6+*/
+    background: -webkit-gradient(linear, left bottom, right top, color-stop(0%,#064e4c), color-stop(100%,#5bb15d));  /*Chrome,Safari4+*/
+    background: -webkit-linear-gradient(45deg,  #064e4c 0%,#5bb15d 100%);  /*Chrome10+,Safari5.1+*/
+    background: -o-linear-gradient(45deg,  #064e4c 0%,#5bb15d 100%);  /*Opera 11.10+*/
+    background: -ms-linear-gradient(45deg,  #064e4c 0%,#5bb15d 100%);  /*IE10+*/
+    background: linear-gradient(45deg,  #064e4c 0%,#5bb15d 100%); /* W3C*/
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#064e4c', endColorstr='#5bb15d',GradientType=1 );  /*IE6-9 fallback on horizontal gradient*/
+    -webkit-box-shadow: inset 0 3px 7px rgba(0,0,0,.2), inset 0 -3px 7px rgba(0,0,0,.2);
+    -moz-box-shadow: inset 0 3px 7px rgba(0,0,0,.2), inset 0 -3px 7px rgba(0,0,0,.2);
+    box-shadow: inset 0 3px 7px rgba(0,0,0,.2), inset 0 -3px 7px rgba(0,0,0,.2);
+}
+.masthead :after{
+    content: '';
+    display: block;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background: url(../img/propaganda-pattern.png) repeat center center;
+    opacity: .4;
+}
+/*breadcrumb
+------------------------- */
+.breadcrumb{
+    background: none;
+    border-bottom: 1px solid #e5e5e5;
+    margin-bottom: 0px;
+    /*background:   #064e4c ;   *//*Old browsers*/
+    /*background: -moz-linear-gradient(45deg, #064e4c 0%, #5bb15d 100%);  *//*FF3.6+*/
+    /*background: -webkit-gradient(linear, left bottom, right top, color-stop(0%,#064e4c), color-stop(100%,#5bb15d));  *//*Chrome,Safari4+*/
+    /*background: -webkit-linear-gradient(45deg,  #064e4c 0%,#5bb15d 100%);  *//*Chrome10+,Safari5.1+*/
+    /*background: -o-linear-gradient(45deg,  #064e4c 0%,#5bb15d 100%);  *//*Opera 11.10+*/
+    /*background: -ms-linear-gradient(45deg,  #064e4c 0%,#5bb15d 100%);  *//*IE10+*/
+    /*background: linear-gradient(45deg,  #064e4c 0%,#5bb15d 100%); *//* W3C*/
+    /*filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#4e0e12', endColorstr='#b1545a',GradientType=1 );  *//*IE6-9 fallback on horizontal gradient*/
+    /*-webkit-box-shadow: inset 0 3px 7px rgba(0,0,0,.2), inset 0 -3px 7px rgba(0,0,0,.2);*/
+    /*-moz-box-shadow: inset 0 3px 7px rgba(0,0,0,.2), inset 0 -3px 7px rgba(0,0,0,.2);*/
+    /*box-shadow: inset 0 3px 7px rgba(0,0,0,.2), inset 0 -3px 7px rgba(0,0,0,.2);*/
+}
+.breadcrumb a{
+    /*text-shadow:none;*/
+    /*color: #fff;*/
+}
+/*content
+------------------------- */
+.contact-area{
+    text-align: center;
+    padding-top: 20px;
+}
+/*thanks
+------------------------- */
+.thanks-area{
+    text-align: center;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+    color: #fff;
+    background: #4e0e12;   /*Old browsers*/
+    background: -moz-linear-gradient(45deg, #4e0e12 0%, #b1545a 100%);  /*FF3.6+*/
+    background: -webkit-gradient(linear, left bottom, right top, color-stop(0%,#4e0e12), color-stop(100%,#b1545a));  /*Chrome,Safari4+*/
+    background: -webkit-linear-gradient(45deg,  #4e0e12 0%,#b1545a 100%);  /*Chrome10+,Safari5.1+*/
+    background: -o-linear-gradient(45deg,  #4e0e12 0%,#b1545a 100%);  /*Opera 11.10+*/
+    background: -ms-linear-gradient(45deg,  #4e0e12 0%,#b1545a 100%);  /*IE10+*/
+    background: linear-gradient(45deg,  #4e0e12 0%,#b1545a 100%); /* W3C*/
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#4e0e12', endColorstr='#b1545a',GradientType=1 );  /*IE6-9 fallback on horizontal gradient*/
+    -webkit-box-shadow: inset 0 3px 7px rgba(0,0,0,.2), inset 0 -3px 7px rgba(0,0,0,.2);
+    -moz-box-shadow: inset 0 3px 7px rgba(0,0,0,.2), inset 0 -3px 7px rgba(0,0,0,.2);
+    box-shadow: inset 0 3px 7px rgba(0,0,0,.2), inset 0 -3px 7px rgba(0,0,0,.2);
+}
+.thanks-area h1{
+    margin-bottom: 20px;
+    font-size: 60px;
+    line-height: 1;
+    letter-spacing: -1px;
+    color: inherit;
+}
+/*.thanks-area:after{*/
+    /*content: '';*/
+    /*display: block;*/
+    /*position: absolute;*/
+    /*top: 0;*/
+    /*right: 0;*/
+    /*bottom: 0;*/
+    /*left: 0;*/
+    /*background: url(../img/propaganda-pattern.png) repeat center center;*/
+    /*opacity: .4;*/
+/*}*/
+/*contact-area
+------------------------- */
+.contact-area{
+    text-align: center;
+    background: none;
+}
+
+/* advantage section of Overview
+-------------------------------------------------- */
+.introduction {
+    text-align: center;
+    color: #5a5a5a;
+}
+.introduction h1 {
+    margin: 60px 0 10px;
+    font-size: 60px;
+    font-weight: 200;
+    line-height: 1;
+    letter-spacing: -1px;
+}
+.introduction h2 {
+    font-weight: 200;
+    margin-bottom: 5px;
+}
+.introduction p {
+    font-size: 16px;
+    line-height: 1.5;
+}
+.introduction .introduction-byline {
+    /*margin-bottom: 40px;*/
+    font-size: 20px;
+    font-weight: 300;
+    line-height: 1.25;
+    color: #999;
+}
+.introduction-img {
+    display: block;
+    margin: 0 auto 30px;
+    max-height: 145px;
+}
+/* Featurettes
+ ------------------------- */
+.featurette-area{
+    text-align: center;
+}
+.featurette-area h1{
+    margin: 60px 0 10px;
+    font-size: 60px;
+    font-weight: 200;
+    line-height: 1;
+    letter-spacing: -1px;
+}
+.featurette-area p{
+    margin-bottom: 40px;
+    font-size: 20px;
+    font-weight: 300;
+    line-height: 1.25;
+    color: #999;
+}
+.featurette-divider {
+    margin: 80px 0; /* Space out the Bootstrap <hr> more */
+}
+.featurette {
+    padding-top: 120px; /* Vertically center images part 1: add padding above and below text. */
+    overflow: hidden; /* Vertically center images part 2: clear their floats. */
+}
+.featurette-image {
+    margin-top: -120px; /* Vertically center images part 3: negative margin up the image the same amount of the padding to center it. */
+}
+/* Give some space on the sides of the floated elements so text doesn't run right into it. */
+.featurette-image.pull-left {
+    margin-right: 40px;
+}
+.featurette-image.pull-right {
+    margin-left: 40px;
+}
+/* Thin out the marketing headings */
+.featurette-heading {
+    font-size: 50px;
+    font-weight: 300;
+    line-height: 1;
+    letter-spacing: -1px;
+}
+/*footer
+------------------------- */
+footer {
+    text-align: center;
+    padding: 30px 0;
+    /*margin-top: 70px;*/
+    border-top: 1px solid #e5e5e5;
+    /*background-color: #f5f5f5;*/
+}
+footer p {
+    margin-bottom: 0;
+    color: #777;
+}
+.footer-links {
+    margin: 10px 0;
+}
+.footer-links li {
+    display: inline;
+    padding: 0 2px;
+}
+.footer-links li:first-child {
+    padding-left: 0;
+}
+
+/* RESPONSIVE CSS
+-------------------------------------------------- */
+/* Desktop large
+------------------------- */
+@media (min-width: 1200px) {
+    /*.jumbotron{*/
+    /*padding: 70px 0 40px;*/
+    /*padding-right: 70px;*/
+    /*padding-left:70px;*/
+    /*}*/
+}
+/* ipad
+------------------------- */
+@media (max-width: 1200px) {
+    .propaganda{
+        padding: 100px 0 160px;
+        /*padding-left:70px;
+        padding-right:70px;*/
+    }
+}
+/* Desktop
+------------------------- */
+@media (max-width: 980px) {
+
+    .propaganda{
+        margin-top: -20px;
+        padding: 60px 0 50px
+    }
+    .featurette {
+        height: auto;
+        padding: 0;
+    }
+    .featurette-image.pull-left,
+    .featurette-image.pull-right {
+        display: block;
+        float: none;
+        max-width: 40%;
+        margin: 0 auto 20px;
+    }
+}
+/* Tablet to desktop
+------------------------- */
+@media (min-width: 768px) and (max-width: 979px) {
+    /* Remove any padding from the body */
+    body {
+        padding-top: 0;
+    }
+    /* Widen propaganda and social buttons to fill body padding */
+    .propaganda {
+        margin-top: -20px; /* Offset bottom margin on .navbar */
+
+    }
+}
+/* Tablet
+------------------------- */
+@media (max-width: 767px) {
+    body {
+        padding-top: 0px;
+    }
+    .propaganda {
+        /*padding: 170px 0 280px;*/
+        padding: 40px 20px;
+        margin-top:   -20px; /* Offset bottom margin on .navbar */
+        margin-right: -20px;
+        margin-left:  -20px;
+    }
+    .featurette-heading {
+        font-size: 30px;
+    }
+    .featurette .lead {
+        font-size: 18px;
+        line-height: 1.5;
+    }
+    footer {
+        margin-left: -20px;
+        margin-right: -20px;
+        padding-left: 20px;
+        padding-right: 20px;
+    }
+    footer p {
+        margin-bottom: 9px;
+    }
+}
+/* Landscape phones
+------------------------- */
+@media (max-width: 480px) {
+    body {
+        padding-top: 0px;
+    }
+    .propaganda h1{
+        color: inherit;
+        font-size: 60px;
+        margin-bottom: 10px;
+    }
+    .propaganda p{
+        font-size: 20px;
+        font-weight:200;
+        line-height: 1.25;
+        margin-bottom: 30px;
+    }
+    footer {
+        padding-top: 20px;
+        padding-bottom: 20px;
+    }
+}

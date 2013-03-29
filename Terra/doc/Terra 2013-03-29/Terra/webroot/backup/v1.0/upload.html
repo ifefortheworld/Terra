@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Terra Upload</title>
+    <link rel="stylesheet" href="css/uploadStyle.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="css/jquery.tSelect.css" />
+    <link rel="stylesheet" href="css/gstyle_buttons.css" type="text/css"  media="screen">
+    <script type="text/javascript" src="js/jquery.js"></script>
+    <script type="text/javascript" src="js/jquery.tSelect.js"></script>
+    <script type="text/javascript">
+        $(function() {
+            $.divselect("#fileTypeSelect", "#fileTypeInput");
+            $.divselect("#pathSelect", "#pathInput");
+            $.divselect("#sourceSelect", "#sourceInput");
+        });
+        function openBrowse(){
+            var ie=navigator.appName=="Microsoft Internet Explorer" ? true : false;
+            if(ie){
+                document.getElementById("attachment").click();
+                document.getElementById("attachmentPath").value=document.getElementById("attachment").value;
+            }else{
+                var a=document.createEvent("MouseEvents");//FF的处理
+                a.initEvent("click", true, true);
+                document.getElementById("attachment").dispatchEvent(a);
+            }
+        }
+    </script>
+</head>
+<body>
+<div id="header">
+    <h1><span>Terra</span></h1>
+    <h2><span>We all love sharing</span></h2>
+    <ul id="headerMenu">
+        <li><a href="#">Terra</a></li>
+        <li><a href="#">Box</a></li>
+        <li><a href="#">Project</a></li>
+        <li><a href="#">Help</a></li>
+    </ul>
+    <div id="logo"></div>
+</div>
+<div id="container">
+    <div id="content">
+        <div id="topPath">
+            <ul id="path">
+                <li>Box</li>
+                <li>></li>
+                <li>Upload</li>
+            </ul>
+            <div id="funcLogo">
+                <img src="images/funcLogo.png">
+            </div>
+        </div>
+        <div id="main">
+            <div id="mainLeft">
+                <div id="fileBasicInf">
+                    <div id="fileTypeSelect" style="z-index: 3" class="tSelect">
+                        <cite>Type:Video</cite>
+                        <ul>
+                            <li><a href="javascript:;" selectid="1">Type:Video</a>
+                            </li>
+                            <li><a href="javascript:;" selectid="2">Type:Audio</a>
+                            </li>
+                            <li><a href="javascript:;" selectid="3">Type:Images</a>
+                            </li>
+                            <li><a href="javascript:;" selectid="4">Type:File</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <input name="" type="hidden" value="" id="fileTypeInput" />
+                    <br/>
+                    <div id="pathSelect" style="z-index: 2" class="tSelect">
+                        <cite>Path:Root</cite>
+                        <ul>
+                            <li><a href="javascript:;" selectid="1">Path:Root</a>
+                        </ul>
+                    </div>
+                    <input name="" type="hidden" value="" id="pathInput" />
+                    <br/>
+                    <div id="sourceSelect" style="z-index: 1" class="tSelect">
+                        <cite>Source:Net</cite>
+                        <ul>
+                            <li><a href="javascript:;" selectid="1">Source:Net</a>
+                            </li>
+                            <li><a href="javascript:;" selectid="2">Source:Original</a>
+                            </li>
+                            <li><a href="javascript:;" selectid="3">Source:Other</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <input name="" type="hidden" value="" id="sourceInput" />
+                    <br/>
+                </div>
+                <div id="fileDetailInf">
+                    <div id="typeLogo">
+                        <img src="images/typeLogo.png" />
+                    </div>
+                    <input type="input" id="title" class="tInput" placeholder="Title"/>
+                    <input type="input" id="subTitle" class="tInput" placeholder="Sub Title"/>
+                    <div class="clear"></div>
+                    <div id="attachmentShop">
+                        <input type="input" id="attachmentPath" class="tInput" placeholder="Attachment" />
+                        <input type="file" id="attachment" style="display: none" onchange="document.getElementById('attachmentPath').value=this.value;this.style.display='none';" />
+                        <button id="addAttachment"  class="action bluebtn" onclick="javascript:openBrowse();">
+                            <span class="label">Add</span>
+                        </button>
+                    </div>
+                    <textarea id="description" placeholder="Description"></textarea>
+                    <input type="input" id="tag" class="tInput" placeholder="tag" />
+                </div>
+            </div>
+            <div id="mainRight">
+                <div id="userInf">
+                    <div id="userAvater">
+                        <img src="images/userAvater.png" />
+                    </div>
+                    <input type="input" id="owner" class="tInput" placeholder="Owner" />
+                    <input type="input" id="date" class="tInput" placeholder="Date" />
+                </div>
+            </div>
+            <div class="clear"></div>
+            <button id="uploadBtn"  class="action redbtn">
+                <span class="label">Upload</span>
+            </button>
+        </div>
+        <!--<div id="sidebar"></div>-->
+        <!--<div class="clear"></div>-->
+    </div>
+    <!--<div class="clear"></div>-->
+</div>
+<div id="footer"></div>
+</body>
+</html>
