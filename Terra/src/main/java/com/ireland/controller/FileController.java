@@ -64,6 +64,7 @@ import com.ireland.model.business.TerraFile;
 
 import com.ireland.service.AuthorityService;
 import com.ireland.service.RoleService;
+import com.ireland.service.TerraFileService;
 import com.ireland.service.UserService;
 
 /**
@@ -114,6 +115,9 @@ public class FileController
 	
 	@Autowired
 	private TerraFileDao terraFileDao;
+	
+	@Autowired
+	private TerraFileService terraFileService;
 	
 	@Autowired
 	private RealFileDao realFileDao;
@@ -527,8 +531,7 @@ public class FileController
 		
 		for(String id : fileIds)
 		{
-			terraFileDao.delete(id);           //删除文件
-			commentDao.delete("fileId", id);   //删除文件的所有评论
+			terraFileService.delete(id);   //删除文件\所有评论\更新或删除RealFile
 		}
 		
 		Map<String,Object> res = new HashMap<String,Object>();

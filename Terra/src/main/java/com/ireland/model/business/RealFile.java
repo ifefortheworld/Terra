@@ -34,13 +34,19 @@ public class RealFile
 	 * 引用计数,表示这份文件被多少个TerraFile引用
 	 * 当引用计数为0的时候,此文件才能被删除
 	 */
-	private Integer referenceCount;
+	private Integer referenceCount = 0;
 	
 	/**
 	 * 引用本文件的所有TerraFile的ID,其数量一定与referenceCount相等
 	 */
 	private List<String> referenceIds;
 
+	
+	/**
+	 * 文件的MD5值,用于文件去重
+	 */
+	private String fileHashCode;
+	
 	
 	public String getId()
 	{
@@ -81,5 +87,21 @@ public class RealFile
 	public void setReferenceIds(List<String> referenceIds)
 	{
 		this.referenceIds = referenceIds;
+	}
+
+	/**
+	 * @return the fileHashCode
+	 */
+	public String getFileHashCode()
+	{
+		return fileHashCode;
+	}
+
+	/**
+	 * @param fileHashCode the fileHashCode to set
+	 */
+	public void setFileHashCode(String fileHashCode)
+	{
+		this.fileHashCode = fileHashCode;
 	}
 }
