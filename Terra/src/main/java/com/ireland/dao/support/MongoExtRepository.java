@@ -7,6 +7,7 @@ import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.data.mongodb.core.query.Update.Position;
 import org.springframework.data.mongodb.repository.MongoRepository;
@@ -75,11 +76,17 @@ public interface MongoExtRepository<T, ID extends Serializable> extends MongoRep
 	 * 
 	 * @param key 属性名
 	 * @param value 属性值
-	 * @return 查询到的对象
+	 * @return 查询到的对象,若符合条件的对象有多个,则只返回第一个
 	 */
 	T findOne(String key, Object value);
 	
 	
+	/**
+	 * 根据query来查询符合条件的第一个实体
+	 * @param query
+	 * @return
+	 */
+	T findOne(Query query);
 	
 	/**
 	 * 根据对象的属性值来查询实体s
@@ -222,6 +229,16 @@ public interface MongoExtRepository<T, ID extends Serializable> extends MongoRep
 	void updateMulti(String key, Object value, Update update);
 	
 	
+	/**
+	 * Updates all objects that are found in the collection for the entity class that matches the query document criteria
+	 * with the provided updated document.
+	 * 
+	 * @param query the query document that specifies the criteria used to select a record to be updated
+	 * @param update the update document that contains the updated object or $ operators to manipulate the existing
+	 *          object.
+	 */
+	void updateMulti(Query query, Update update);
+	
 	//更新单属性操作-------------------------------------------------------------------------
 	
 	/**
@@ -328,4 +345,12 @@ public interface MongoExtRepository<T, ID extends Serializable> extends MongoRep
 	 * @return
 	 */
 	 void rename(ID id,String oldName, String newName);
+
+
+
+
+
+
+
+
 }

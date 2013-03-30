@@ -24,9 +24,9 @@ import static org.springframework.data.mongodb.core.query.Query.query;
 
 
 /**
- * 对SimpleMongoRepository增加额外常用Update的操作,如$set,$unset,$inc
+ * 对SimpleMongoRepository增加额外常用Update的操作
  * 
- * @version 2013-03-11 
+ * @version 2013-03-30 
  * 
  * @author KEN
  *
@@ -104,9 +104,18 @@ public class SimpleMongoExtRepository<T, ID extends Serializable> extends Simple
 		Assert.hasText(key, "The given key must not be empty!");
 		Assert.notNull(value, "The given value must not be null!");
 		
-		return mongoOperations.findOne(	query(where(key).is(value)), entityInformation.getJavaType(), entityInformation.getCollectionName());
+		return mongoOperations.findOne(	query(where(key).is(value)).limit(1), entityInformation.getJavaType(), entityInformation.getCollectionName());
 	}
 
+	@Override
+	public T findOne(Query query)
+	{
+		Assert.notNull(query, "The given query must not be null!");
+		
+		query.limit(1);								//反正只要1个结果,所以limit一下,提高性能
+		
+		return mongoOperations.findOne(	query, entityInformation.getJavaType(), entityInformation.getCollectionName());
+	}
 
 
 	@Override
@@ -261,6 +270,15 @@ public class SimpleMongoExtRepository<T, ID extends Serializable> extends Simple
 		Assert.notNull(update, "The given update must not be null!");
 		
 		mongoOperations.updateMulti( query(where(key).is(value)), update, entityInformation.getJavaType());
+	}
+	
+	@Override
+	public void updateMulti(Query query, Update update)
+	{
+		Assert.notNull(query, "The given query must not be null!");
+		Assert.notNull(update, "The given update must not be null!");
+		
+		mongoOperations.updateMulti( query, update, entityInformation.getJavaType());
 	}
 
 

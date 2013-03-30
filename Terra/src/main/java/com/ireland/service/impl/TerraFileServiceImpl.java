@@ -1,18 +1,20 @@
 package com.ireland.service.impl;
 
 import java.util.List;
+import java.util.Set;
+
 import javax.annotation.Resource;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.ireland.dao.CommentDao;
-import com.ireland.dao.RealFileDao;
+import com.ireland.dao.SourceFileDao;
 import com.ireland.dao.RoleDao;
 import com.ireland.dao.TerraFileDao;
 import com.ireland.dao.UserDao;
 import com.ireland.model.User;
-import com.ireland.model.business.RealFile;
+import com.ireland.model.business.SourceFile;
 import com.ireland.model.business.TerraFile;
 import com.ireland.service.TerraFileService;
 
@@ -34,7 +36,7 @@ public class TerraFileServiceImpl implements TerraFileService
 	private CommentDao commentDao;
 
 	@Autowired
-	private RealFileDao realFileDao;
+	private SourceFileDao sourceFileDao;
 	
 	/**
 	 * 删除指定ID的TerraFile,及它的所有评论,
@@ -48,30 +50,30 @@ public class TerraFileServiceImpl implements TerraFileService
 		
 		if(file == null) return;
 		
-		//更新或删除RealFile
-		String realFileId = file.getRealFileId();
-		if(realFileId != null)
+		//更新或删除SourceFile
+		String sourceFileId = file.getSourceFileId();
+		if(sourceFileId != null)
 		{
-			RealFile realFile = realFileDao.findOne(realFileId);
+			SourceFile sourceFile = sourceFileDao.findOne(sourceFileId);
 			
-			if(realFile != null)
+			if(sourceFile != null)
 			{
-				Integer referenceCount = realFile.getReferenceCount();
+				Integer referenceCount = sourceFile.getReferenceCount();
 				
 				if(referenceCount >= 2)		//更新引用计数器	
 				{
-					realFile.setReferenceCount(referenceCount-1);
+					sourceFile.setReferenceCount(referenceCount-1);
 					
-					List<String> referenceIds = realFile.getReferenceIds();
+					Set<String> referenceIds = sourceFile.getReferenceIds();
 					referenceIds.remove(id);
 					
-					realFile.setReferenceIds(referenceIds);
+					sourceFile.setReferenceIds(referenceIds);
 					
-					realFileDao.save(realFile);
+					sourceFileDao.save(sourceFile);
 				}
 				else		//引用计数为0,可删除
 				{
-					realFileDao.delete(realFile);
+					sourceFileDao.delete(sourceFile);
 				}
 			}
 		}

@@ -4,8 +4,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.Callable;
 
@@ -50,15 +52,15 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 
 import com.ireland.dao.CommentDao;
-import com.ireland.dao.HdfsDao;
-import com.ireland.dao.RealFileDao;
+import com.ireland.dao.FileDao;
+import com.ireland.dao.SourceFileDao;
 import com.ireland.dao.TagDao;
 import com.ireland.dao.TerraFileDao;
 import com.ireland.model.Role;
 import com.ireland.model.User;
 
 import com.ireland.model.business.Comment;
-import com.ireland.model.business.RealFile;
+import com.ireland.model.business.SourceFile;
 import com.ireland.model.business.Tag;
 import com.ireland.model.business.TerraFile;
 
@@ -120,7 +122,7 @@ public class FileController
 	private TerraFileService terraFileService;
 	
 	@Autowired
-	private RealFileDao realFileDao;
+	private SourceFileDao sourceFileDao;
 	
 	@Autowired
 	private TagDao tagDao;
@@ -129,7 +131,7 @@ public class FileController
 	private CommentDao commentDao;
 	
 	@Autowired
-	private HdfsDao hdfsDao;
+	private FileDao fileDao;
 	
 	
 	
@@ -304,7 +306,7 @@ public class FileController
 		
 		try
 		{
-			hdfsDao.upload(partFile.getInputStream(), fileUrl);
+			fileDao.write(partFile.getInputStream(), fileUrl);
 		} catch (IOException e)
 		{
 			e.printStackTrace();
@@ -381,14 +383,15 @@ public class FileController
 		final String filePostFix = fileName.substring(fileName.lastIndexOf("."), fileName.length());
 		
 		String uuid = UUID.randomUUID().toString();
-		String fileUrl = "/staticfiles/"+uuid+filePostFix;				//文件的访问的URL,每份文件的URL都是唯一的,但可能引用同一个RealFile
+		String fileUrl = "/staticfiles/"+uuid+filePostFix;				//文件的访问的URL,每份文件的URL都是唯一的,但可能引用同一个SourceFile
 		final String storageLocation = "/staticfiles/"+uuid;			//文件实际存放路径
 		
 		file.setFileUrl(fileUrl);
 		file.setFileOriginalName(fileName);
 		
-		final RealFile realFile = new RealFile();
-		realFile.setStorageLocation(storageLocation);
+		final SourceFile sourceFile = new SourceFile();
+		sourceFile.setSize(partFile.getSize());
+		sourceFile.setStorageLocation(storageLocation);
 		
 		
 		return new Callable<Map<String,String>>()
@@ -401,7 +404,7 @@ public class FileController
 				
 				try
 				{
-					hdfsDao.upload(partFile.getInputStream(), storageLocation);
+					fileDao.write(partFile.getInputStream(), storageLocation);
 				} catch (IOException e)
 				{
 					e.printStackTrace();
@@ -410,20 +413,21 @@ public class FileController
 					return res;
 				}
 				
-				realFileDao.insert(realFile);
-				
-				file.setRealFileId(realFile.getId());
-				
 				terraFileDao.insert(file);
 				
-				//更新引用计数
-				realFile.setReferenceCount(1);
-				
-				List<String> referenceIds = new ArrayList<String>(1);
+
+				//设置引用计数				
+				Set<String> referenceIds = new HashSet<String>(1);
 				referenceIds.add(file.getId());
-				realFile.setReferenceIds(referenceIds);
 				
-				realFileDao.save(realFile);
+				sourceFile.setReferenceIds(referenceIds);
+				sourceFile.setReferenceCount(1);
+
+				sourceFileDao.insert(sourceFile);
+				
+				file.setSourceFileId(sourceFile.getId());
+				
+				terraFileDao.set(file.getId(), "realFileId", file.getSourceFileId());
 					
 				res.put("status", "SUCCESS");
 				res.put("Location", "/files/"+file.getId());
@@ -478,13 +482,13 @@ public class FileController
 			}
 		}
 		
-		RealFile realFile = realFileDao.findOne(file.getRealFileId());
+		SourceFile sourceFile = sourceFileDao.findOne(file.getSourceFileId());
 		
 		//取得真实存储的路径
-		String storageLocation = realFile.getStorageLocation();
+		String storageLocation = sourceFile.getStorageLocation();
 		
 		//从HDFS读取文件,并返回结果
-		org.springframework.core.io.Resource resource = hdfsDao.read(storageLocation);
+		org.springframework.core.io.Resource resource = fileDao.read(storageLocation);
 
 		//404
 		if(resource == null)
@@ -531,7 +535,7 @@ public class FileController
 		
 		for(String id : fileIds)
 		{
-			terraFileService.delete(id);   //删除文件\所有评论\更新或删除RealFile
+			terraFileService.delete(id);   //删除文件\所有评论\更新或删除SourceFile
 		}
 		
 		Map<String,Object> res = new HashMap<String,Object>();

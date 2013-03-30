@@ -98,7 +98,7 @@ public class TerraFile
 	/**
 	 * 对应的真实文件的id
 	 */
-	private String realFileId;
+	private String sourceFileId;
 	
 	/**
 	 * 浏览数
@@ -259,14 +259,14 @@ public class TerraFile
 	}
 
 	
-	public String getRealFileId()
+	public String getSourceFileId()
 	{
-		return realFileId;
+		return sourceFileId;
 	}
 
-	public void setRealFileId(String realFileId)
+	public void setSourceFileId(String realFileId)
 	{
-		this.realFileId = realFileId;
+		this.sourceFileId = realFileId;
 	}
 
 	public int getViewsCnt()
