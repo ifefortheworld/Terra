@@ -12,6 +12,7 @@ import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
+import org.springframework.data.mongodb.core.query.Update.Position;
 import org.springframework.data.mongodb.repository.query.MongoEntityInformation;
 import org.springframework.data.mongodb.repository.support.SimpleMongoRepository;
 import org.springframework.util.Assert;
@@ -23,9 +24,9 @@ import static org.springframework.data.mongodb.core.query.Query.query;
 
 
 /**
- * 对SimpleMongoRepository增加额外常用的操作,如insert
+ * 对SimpleMongoRepository增加额外常用Update的操作,如$set,$unset,$inc
  * 
- * @version 2013-02-26 
+ * @version 2013-03-11 
  * 
  * @author KEN
  *
@@ -263,6 +264,29 @@ public class SimpleMongoExtRepository<T, ID extends Serializable> extends Simple
 	}
 
 
+	//单属性更新操作-------------------------------------------------------------------------
+
+	@Override
+	public void set(ID id, String key, Object value)
+	{
+		Assert.notNull(id, "The given id must not be null!");
+		Assert.hasText(key, "The given key must not be empty!");
+		Assert.notNull(value, "The given value must not be null!");
+		
+		update(id, new Update().set(key, value));
+	}
+
+
+	@Override
+	public void unset(ID id, String key)
+	{
+		Assert.notNull(id, "The given id must not be null!");
+		Assert.hasText(key, "The given key must not be empty!");
+		
+		update(id, new Update().unset(key));
+	}
+	
+
 	@Override
 	public void inc(ID id, String key, Number inc)
 	{
@@ -273,4 +297,83 @@ public class SimpleMongoExtRepository<T, ID extends Serializable> extends Simple
 		update(id, new Update().inc(key, inc));
 	}
 
+
+	@Override
+	public void push(ID id,String key, Object value)
+	{
+		Assert.notNull(id, "The given id must not be null!");
+		Assert.hasText(key, "The given key must not be empty!");
+		Assert.notNull(value, "The given value must not be null!");
+		
+		update(id,new Update().push(key, value));
+	}
+
+
+	@Override
+	public void pushAll(ID id, String key, Object[] values)
+	{
+		Assert.notNull(id, "The given id must not be null!");
+		Assert.hasText(key, "The given key must not be empty!");
+		Assert.notNull(values, "The given values must not be null!");
+		
+		update(id,new Update().pushAll(key, values));
+	}
+
+
+	@Override
+	public void addToSet(ID id, String key, Object value)
+	{
+		Assert.notNull(id, "The given id must not be null!");
+		Assert.hasText(key, "The given key must not be empty!");
+		Assert.notNull(value, "The given value must not be null!");
+		
+		update(id,new Update().addToSet(key, value));
+	}
+
+
+	@Override
+	public void pop(ID id, String key, Position pos)
+	{
+		Assert.notNull(id, "The given id must not be null!");
+		Assert.hasText(key, "The given key must not be empty!");
+		Assert.notNull(pos, "The given pos must not be null!");
+		
+		update(id,new Update().pop(key, pos));
+	}
+
+
+	@Override
+	public void pull(ID id, String key, Object value)
+	{
+		Assert.notNull(id, "The given id must not be null!");
+		Assert.hasText(key, "The given key must not be empty!");
+		Assert.notNull(value, "The given value must not be null!");
+		
+		update(id,new Update().pull(key, value));
+	}
+
+
+	@Override
+	public void pullAll(ID id, String key, Object[] values)
+	{
+		Assert.notNull(id, "The given id must not be null!");
+		Assert.hasText(key, "The given key must not be empty!");
+		Assert.notNull(values, "The given values must not be null!");
+		
+		update(id,new Update().pullAll(key, values));
+	}
+
+
+	@Override
+	public void rename(ID id, String oldName, String newName)
+	{
+		Assert.notNull(id, "The given id must not be null!");
+		Assert.hasText(oldName, "The given oldName must not be empty!");
+		Assert.hasText(newName, "The given newName must not be empty!");
+
+		update(id,new Update().rename(oldName, newName));
+	}
+
+
+	
 }

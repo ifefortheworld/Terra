@@ -8,7 +8,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Update;
+import org.springframework.data.mongodb.core.query.Update.Position;
 import org.springframework.data.mongodb.repository.MongoRepository;
+
+import com.mongodb.BasicDBObject;
+import com.mongodb.DBObject;
 
 
 
@@ -221,6 +225,29 @@ public interface MongoExtRepository<T, ID extends Serializable> extends MongoRep
 	//更新单属性操作-------------------------------------------------------------------------
 	
 	/**
+	 * Update using the $set update modifier
+	 * 
+	 * 更新属性key的值 
+	 * 
+	 * @param key
+	 * @param value
+	 * @return
+	 */
+	void set(ID id,String key, Object value);
+
+	
+	/**
+	 * Update using the $unset update modifier
+	 * 
+	 * 顾名思义，就是删除字段了
+	 * 
+	 * @param key
+	 * @return
+	 */
+	void unset(ID id,String key);
+	
+	
+	/**
 	 * 使指定ID的实体的的指定属性key的值加上特定的值inc
 	 * 
 	 * @param id
@@ -228,4 +255,77 @@ public interface MongoExtRepository<T, ID extends Serializable> extends MongoRep
 	 * @param inc 
 	 */
 	void inc(ID id,String key, Number inc);
+
+
+	/**
+	 * Update using the $push update modifier
+	 * 
+	 * 把value追加到属性key(线性表)里面去，field一定要是线性表类型才行例：
+	 * 
+	 * @param key
+	 * @param value
+	 * @return
+	 */
+	void push(ID id, String key, Object value);
+	
+	/**
+	 * Update using the $pushAll update modifier
+	 * 
+	 * 同$push,只是一次可以追加多个值到一个线性表字段内
+	 * 
+	 * @param key
+	 * @param values
+	 * @return
+	 */
+	void pushAll(ID id,String key, Object[] values);
+
+	/**
+	 * Update using the $addToSet update modifier
+	 * 
+	 * @param key
+	 * @param value
+	 * @return
+	 */
+	void addToSet(ID id,String key, Object value);
+	
+	/**
+	 * Update using the $pop update modifier
+	 * 
+	 * 删除线性表的首或尾元素
+	 *  
+	 * @param key
+	 * @param pos
+	 * @return
+	 */
+	void pop(ID id,String key, Position pos);
+
+	/**
+	 * Update using the $pull update modifier
+	 * 
+	 * 	从线性表key内删除一个等于value值
+	 * @param key
+	 * @param value
+	 * @return
+	 */
+	void pull(ID id,String key, Object value);
+
+	/**
+	 * Update using the $pullAll update modifier
+	 * 
+	 * 同$pull,可以一次删除线性表内的多个值
+	 * 
+	 * @param key
+	 * @param values
+	 * @return
+	 */
+	 void pullAll(ID id,String key, Object[] values);
+
+	/**
+	 * Update using the $rename update modifier
+	 * 修改字段oldName的名字为newName
+	 * @param oldName
+	 * @param newName
+	 * @return
+	 */
+	 void rename(ID id,String oldName, String newName);
 }
