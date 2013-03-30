@@ -26,8 +26,8 @@ import com.ireland.service.FileService;
  *
  */
 
-@Service("terraFileServiceImpl")
-public class TerraFileServiceImpl implements FileService
+@Service("fileServiceImpl")
+public class FileServiceImpl implements FileService
 {
 	@Autowired
 	private FileDao fileDao;
@@ -39,7 +39,7 @@ public class TerraFileServiceImpl implements FileService
 	private SourceFileDao sourceFileDao;
 	
 	/**
-	 * 删除指定ID的TerraFile,及它的所有评论,
+	 * 删除指定ID的File,及它的所有评论,
 	 * 并更新或删除对应的SourceFile
 	 * @param id
 	 */

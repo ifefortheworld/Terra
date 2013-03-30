@@ -12,7 +12,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 
 /**
- * 代表真实存放在硬盘上的文件(源文件),同一时刻可能有多TerraFile引用同一份源文件
+ * 代表真实存放在硬盘上的文件(源文件),同一时刻可能有多File引用同一份源文件
  * 
  * @KEN
  * 
@@ -48,7 +48,7 @@ public class SourceFile
 	private Integer fileCount = 0;
 	
 	/**
-	 * 引用本文件的所有TerraFile的ID,其数量一定与fileCount相等
+	 * 引用本文件的所有File的ID,其数量一定与fileCount相等
 	 */
 	private Set<String> fileIds;
 

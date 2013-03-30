@@ -121,10 +121,10 @@ public class SourceFileServiceImpl implements SourceFileService
 		
 		//4:若存在,则将引用计数少的lessRefSourceFile合并到引用计数多的moreRefSourceFile,(将引用计数器合并,引用的文件id列表合并),
 		
-		//先更新terraFileid到moreRefSourceFile的引用
-		Set<String> terraFileIds  = lessRefSourceFile.getFileIds();
+		//先更新fileid到moreRefSourceFile的引用
+		Set<String> fileIds  = lessRefSourceFile.getFileIds();
 		
-		fileDao.updateMulti(query(where("id").in(terraFileIds)), new Update().set("sourceFileId", moreRefSourceFile.getId()));
+		fileDao.updateMulti(query(where("id").in(fileIds)), new Update().set("sourceFileId", moreRefSourceFile.getId()));
 		
 
 		//更新moreRefSourceFile
