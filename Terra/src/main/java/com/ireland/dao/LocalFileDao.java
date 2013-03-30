@@ -19,5 +19,7 @@ public interface LocalFileDao
 	
 	
 	void write(InputStream in, String path);
-
+	
+	
+	boolean delete(String path);
 }

@@ -91,5 +91,20 @@ public class HdfsFileDao implements LocalFileDao
 			}
 		}
 	}
+
+	@Override
+	public boolean delete(String pathString)
+	{
+		Path path = new Path(pathString);
+		
+		try
+		{
+			return hdfs.delete(path, false);
+		} catch (IOException e)
+		{
+			e.printStackTrace();
+			return false;
+		}
+	}
 	
 }

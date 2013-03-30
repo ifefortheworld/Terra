@@ -19,14 +19,14 @@ public class SourceFileServiceTest
 	@Test
 	public void test()
 	{
-		SourceFile file = sourceFileService.calculateAndUpdateFileHashCode("5155595d496537d424d70681");
+		SourceFile file = sourceFileService.calculateAndUpdateFileHashCode("5156b596caffc24eceb1c947");
 	}
 
 	
 	@Test
 	public void test2()
 	{
-		SourceFile file = sourceFileService.updateOrMerageSourceFile("5156a1b9caffc2c9378228c0");
+		SourceFile file = sourceFileService.updateOrMerageSourceFile("5156b531caffc24eceb1c945");
 	}
 
 }

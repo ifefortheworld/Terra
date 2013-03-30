@@ -138,10 +138,23 @@ public class SourceFileServiceImpl implements SourceFileService
 													);
 		
 		//删除计数计数少的那个lessRefSourceFile
-		sourceFileDao.delete(lessRefSourceFile.getId());			
+		deleteSourceFileWithLocalFile(lessRefSourceFile);			
 		
 		
 		//返回合并后的SourceFile
 		return moreRefSourceFile;
+	}
+
+
+
+	@Override
+	public boolean deleteSourceFileWithLocalFile(SourceFile sourceFile)
+	{
+		//在本地路径将本地源文件删除
+		localFileDao.delete(sourceFile.getStorageLocation());
+		
+		sourceFileDao.delete(sourceFile);
+		
+		return true;
 	}
 }

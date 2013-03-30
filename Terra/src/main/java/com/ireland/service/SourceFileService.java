@@ -21,7 +21,7 @@ public interface SourceFileService
 	 * 3:若不存在,更新SourceFile的特征值到数据库,并返回更新后的SourceFile
 	 * 
 	 * 4:若存在,则将引用计数最少的SourceFile合并到引用计数多的SourceFile,(将引用计数器合并,引用的文件id列表合并),
-	 *   删除计数计数少的那个SourceFile,并返回合并后的SourceFile
+	 *   删除计数计数少的那个SourceFile及其本地源文件,并返回合并后的SourceFile
 	 *   
 	 * 
 	 * 
@@ -29,4 +29,13 @@ public interface SourceFileService
 	 * @return 更新或合并后的SourceFile
 	 */
 	SourceFile updateOrMerageSourceFile(String id);
+	
+	
+	/**
+	 * 将SourceFile与存放在硬盘上的源文件 一起删除掉
+	 * 
+	 * @param sourceFile 
+	 * @return 
+	 */
+	boolean deleteSourceFileWithLocalFile(SourceFile sourceFile);
 }
