@@ -42,15 +42,15 @@ public class SourceFile
 	private Long size;
 	
 	/**
-	 * 引用计数,表示这份文件被多少个TerraFile引用
+	 * 引用计数,表示这份文件被多少个File引用
 	 * 当引用计数为0的时候,此文件才能被删除
 	 */
-	private Integer referenceCount = 0;
+	private Integer fileCount = 0;
 	
 	/**
-	 * 引用本文件的所有TerraFile的ID,其数量一定与referenceCount相等
+	 * 引用本文件的所有TerraFile的ID,其数量一定与fileCount相等
 	 */
-	private Set<String> referenceIds;
+	private Set<String> fileIds;
 
 	
 	public String getId()
@@ -74,24 +74,24 @@ public class SourceFile
 		this.storageLocation = storageLocation;
 	}
 
-	public Integer getReferenceCount()
+	public Integer getFileCount()
 	{
-		return referenceCount;
+		return fileCount;
 	}
 
-	public void setReferenceCount(Integer referenceCount)
+	public void setFileCount(Integer referenceCount)
 	{
-		this.referenceCount = referenceCount;
+		this.fileCount = referenceCount;
 	}
 
-	public Set<String> getReferenceIds()
+	public Set<String> getFileIds()
 	{
-		return referenceIds;
+		return fileIds;
 	}
 
-	public void setReferenceIds(Set<String> referenceIds)
+	public void setFileIds(Set<String> fileIds)
 	{
-		this.referenceIds = referenceIds;
+		this.fileIds = fileIds;
 	}
 
 	/**

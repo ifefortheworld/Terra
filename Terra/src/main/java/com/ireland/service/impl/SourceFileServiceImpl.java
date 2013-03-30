@@ -13,16 +13,16 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import com.ireland.dao.CommentDao;
-import com.ireland.dao.FileDao;
+import com.ireland.dao.LocalFileDao;
 import com.ireland.dao.SourceFileDao;
 import com.ireland.dao.RoleDao;
-import com.ireland.dao.TerraFileDao;
+import com.ireland.dao.FileDao;
 import com.ireland.dao.UserDao;
 import com.ireland.model.User;
 import com.ireland.model.business.SourceFile;
-import com.ireland.model.business.TerraFile;
+import com.ireland.model.business.File;
 import com.ireland.service.SourceFileService;
-import com.ireland.service.TerraFileService;
+import com.ireland.service.FileService;
 
 import static org.springframework.data.mongodb.core.query.Criteria.where;
 import static org.springframework.data.mongodb.core.query.Query.query;
@@ -38,14 +38,14 @@ import static org.springframework.data.mongodb.core.query.Query.query;
 public class SourceFileServiceImpl implements SourceFileService
 {
 	@Autowired
-	private TerraFileDao terraFileDao;
+	private FileDao fileDao;
 
 
 	@Autowired
 	private SourceFileDao sourceFileDao;
 	
 	@Autowired
-	private FileDao fileDao;
+	private LocalFileDao localFileDao;
 	
 
 	
@@ -64,7 +64,7 @@ public class SourceFileServiceImpl implements SourceFileService
 			return sourceFile;
 			
 		
-		Resource resource = fileDao.read(sourceFile.getStorageLocation());
+		Resource resource = localFileDao.read(sourceFile.getStorageLocation());
 		
 		String hash = null;
 		try
@@ -107,7 +107,7 @@ public class SourceFileServiceImpl implements SourceFileService
 		
 		
 		//先确定哪个引用数的多少,将引用少的合并到引用多的
-		if(sourceFile.getReferenceCount() <= sameFile.getReferenceCount())
+		if(sourceFile.getFileCount() <= sameFile.getFileCount())
 		{
 			lessRefSourceFile = sourceFile;
 			moreRefSourceFile = sameFile;
@@ -122,19 +122,19 @@ public class SourceFileServiceImpl implements SourceFileService
 		//4:若存在,则将引用计数少的lessRefSourceFile合并到引用计数多的moreRefSourceFile,(将引用计数器合并,引用的文件id列表合并),
 		
 		//先更新terraFileid到moreRefSourceFile的引用
-		Set<String> terraFileIds  = lessRefSourceFile.getReferenceIds();
+		Set<String> terraFileIds  = lessRefSourceFile.getFileIds();
 		
-		terraFileDao.updateMulti(query(where("id").in(terraFileIds)), new Update().set("sourceFileId", moreRefSourceFile.getId()));
+		fileDao.updateMulti(query(where("id").in(terraFileIds)), new Update().set("sourceFileId", moreRefSourceFile.getId()));
 		
 
 		//更新moreRefSourceFile
-		moreRefSourceFile.getReferenceIds().addAll(lessRefSourceFile.getReferenceIds());
+		moreRefSourceFile.getFileIds().addAll(lessRefSourceFile.getFileIds());
 	
-		moreRefSourceFile.setReferenceCount(moreRefSourceFile.getReferenceIds().size());
+		moreRefSourceFile.setFileCount(moreRefSourceFile.getFileIds().size());
 		
 		sourceFileDao.update(moreRefSourceFile.getId(), 
-										new Update().set("referenceCount", moreRefSourceFile.getReferenceCount())
-													.set("referenceIds",   moreRefSourceFile.getReferenceIds())
+										new Update().set("referenceCount", moreRefSourceFile.getFileCount())
+													.set("referenceIds",   moreRefSourceFile.getFileIds())
 													);
 		
 		//删除计数计数少的那个lessRefSourceFile

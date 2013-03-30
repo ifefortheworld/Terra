@@ -52,21 +52,21 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 
 import com.ireland.dao.CommentDao;
-import com.ireland.dao.FileDao;
+import com.ireland.dao.LocalFileDao;
 import com.ireland.dao.SourceFileDao;
 import com.ireland.dao.TagDao;
-import com.ireland.dao.TerraFileDao;
+import com.ireland.dao.FileDao;
 import com.ireland.model.Role;
 import com.ireland.model.User;
 
 import com.ireland.model.business.Comment;
 import com.ireland.model.business.SourceFile;
 import com.ireland.model.business.Tag;
-import com.ireland.model.business.TerraFile;
+import com.ireland.model.business.File;
 
 import com.ireland.service.AuthorityService;
 import com.ireland.service.RoleService;
-import com.ireland.service.TerraFileService;
+import com.ireland.service.FileService;
 import com.ireland.service.UserService;
 
 /**
@@ -116,10 +116,10 @@ public class FileController
 	private AuthenticationTrustResolver authenticationTrustResolver = new AuthenticationTrustResolverImpl();
 	
 	@Autowired
-	private TerraFileDao terraFileDao;
+	private FileDao fileDao;
 	
 	@Autowired
-	private TerraFileService terraFileService;
+	private FileService fileService;
 	
 	@Autowired
 	private SourceFileDao sourceFileDao;
@@ -131,7 +131,7 @@ public class FileController
 	private CommentDao commentDao;
 	
 	@Autowired
-	private FileDao fileDao;
+	private LocalFileDao localFileDao;
 	
 	
 	
@@ -160,11 +160,11 @@ public class FileController
 		//默认按uploadDate排序
 		if(sort == null) sort ="uploadDate";
 		
-		Page<TerraFile> page = (type == null) ? terraFileDao.findAll(Criteria.where("owner").is(user.getUsername()), new PageRequest(pageNumber - 1, 10, Direction.DESC,sort))
-											  : terraFileDao.findAll(Criteria.where("owner").is(user.getUsername()).and("type").is(type), new PageRequest(pageNumber - 1, 10, Direction.DESC,sort));
+		Page<File> page = (type == null) ? fileDao.findAll(Criteria.where("owner").is(user.getUsername()), new PageRequest(pageNumber - 1, 10, Direction.DESC,sort))
+											  : fileDao.findAll(Criteria.where("owner").is(user.getUsername()).and("type").is(type), new PageRequest(pageNumber - 1, 10, Direction.DESC,sort));
 		//统计未分享的数量
-		Long unsharedCnt = (type == null)? terraFileDao.count("isShared", Boolean.FALSE)
-										 : terraFileDao.count(Criteria.where("isShared").is(Boolean.FALSE).and("type").is(type));
+		Long unsharedCnt = (type == null)? fileDao.count("isShared", Boolean.FALSE)
+										 : fileDao.count(Criteria.where("isShared").is(Boolean.FALSE).and("type").is(type));
 		
 		model.addAttribute("page",page);
 		model.addAttribute("files",page.iterator());
@@ -182,7 +182,7 @@ public class FileController
 	@RequestMapping(value = "/files/{id}/update")
 	public String getOwnFile(@PathVariable("id") String id,Model model)
 	{
-		TerraFile file = terraFileDao.findOne(id);
+		File file = fileDao.findOne(id);
 		
 		//查询此文件最有价值的评论(按votes倒序的第1条)
 		Page<Comment> coment = commentDao.findAll(Criteria.where("fileId").is(id), new PageRequest(0, 1, Direction.DESC, "votes"));
@@ -208,7 +208,7 @@ public class FileController
 		
 		User user = SecurityContextHolder.getContext().getAuthentication().getPrincipal() instanceof User ? (User)SecurityContextHolder.getContext().getAuthentication().getPrincipal(): null;
 		
-		TerraFile file = terraFileDao.findOne(id);
+		File file = fileDao.findOne(id);
 		
 //评论---------------------------------------------------------------------------------		
 		//查询此文件最有价值的评论(按votes倒序的第1条)
@@ -223,7 +223,7 @@ public class FileController
 		if(user != null && (user.getUsername() != file.getOwner()))
 		{	
 			file.setViewsCnt(file.getViewsCnt()+1);
-			terraFileDao.inc(file.getId(), "viewsCnt", 1);
+			fileDao.inc(file.getId(), "viewsCnt", 1);
 		}
 		
 
@@ -248,7 +248,7 @@ public class FileController
 	@Deprecated //文件上传到HDFS时耗时严重,长时间占用窗口的Servlet 线程,改用asyncUploadFile
 	//@RequestMapping(value = "/files/upload_",method=RequestMethod.POST,produces="application/json;charset=UTF-8")
 	@ResponseBody
-	public Map<String,String> _uploadFile(@Valid TerraFile file,@RequestParam(value="_tags",required=false)String _tags,
+	public Map<String,String> _uploadFile(@Valid File file,@RequestParam(value="_tags",required=false)String _tags,
 																@RequestPart(value="file",required=false) Part partFile,
 																HttpServletRequest request)
 	{
@@ -306,7 +306,7 @@ public class FileController
 		
 		try
 		{
-			fileDao.write(partFile.getInputStream(), fileUrl);
+			localFileDao.write(partFile.getInputStream(), fileUrl);
 		} catch (IOException e)
 		{
 			e.printStackTrace();
@@ -318,7 +318,7 @@ public class FileController
 		file.setFileOriginalName(fileName);
 		//file.setFileUrl(fileUrl);
 			
-		terraFileDao.insert(file);
+		fileDao.insert(file);
 			
 		res.put("status", "SUCCESS");
 		res.put("Location", "/files/"+file.getId());
@@ -327,7 +327,7 @@ public class FileController
 	
 	@RequestMapping(value = "/files/upload_",method=RequestMethod.POST,produces="application/json;charset=UTF-8")
 	@ResponseBody
-	public Callable<Map<String,String>> asyncUploadFile(@Valid final TerraFile file,@RequestParam(value="_tags",required=false)String _tags,
+	public Callable<Map<String,String>> asyncUploadFile(@Valid final File file,@RequestParam(value="_tags",required=false)String _tags,
 																@RequestPart(value="file",required=false) final Part partFile,
 																HttpServletRequest request)
 	{
@@ -404,7 +404,7 @@ public class FileController
 				
 				try
 				{
-					fileDao.write(partFile.getInputStream(), storageLocation);
+					localFileDao.write(partFile.getInputStream(), storageLocation);
 				} catch (IOException e)
 				{
 					e.printStackTrace();
@@ -413,21 +413,21 @@ public class FileController
 					return res;
 				}
 				
-				terraFileDao.insert(file);
+				fileDao.insert(file);
 				
 
 				//设置引用计数				
 				Set<String> referenceIds = new HashSet<String>(1);
 				referenceIds.add(file.getId());
 				
-				sourceFile.setReferenceIds(referenceIds);
-				sourceFile.setReferenceCount(1);
+				sourceFile.setFileIds(referenceIds);
+				sourceFile.setFileCount(1);
 
 				sourceFileDao.insert(sourceFile);
 				
 				file.setSourceFileId(sourceFile.getId());
 				
-				terraFileDao.set(file.getId(), "sourceFileId", file.getSourceFileId());
+				fileDao.set(file.getId(), "sourceFileId", file.getSourceFileId());
 					
 				res.put("status", "SUCCESS");
 				res.put("Location", "/files/"+file.getId());
@@ -450,7 +450,7 @@ public class FileController
 		String url = request.getRequestURI();
 		
 		//根据URL查找对应的File
-		TerraFile file = terraFileDao.findOne("fileUrl", url);
+		File file = fileDao.findOne("fileUrl", url);
 		
 		//查不到文件,返回404
 		if(file == null)
@@ -488,7 +488,7 @@ public class FileController
 		String storageLocation = sourceFile.getStorageLocation();
 		
 		//从HDFS读取文件,并返回结果
-		org.springframework.core.io.Resource resource = fileDao.read(storageLocation);
+		org.springframework.core.io.Resource resource = localFileDao.read(storageLocation);
 
 		//404
 		if(resource == null)
@@ -535,7 +535,7 @@ public class FileController
 		
 		for(String id : fileIds)
 		{
-			terraFileService.delete(id);   //删除文件\所有评论\更新或删除SourceFile
+			fileService.delete(id);   //删除文件\所有评论\更新或删除SourceFile
 		}
 		
 		Map<String,Object> res = new HashMap<String,Object>();
@@ -554,7 +554,7 @@ public class FileController
 	public Map<String,String> downsCntInc(@RequestParam("file_id")String id)
 	{
 		//使数据库的downsCnt 加1
-		terraFileDao.inc(id, "downsCnt", 1);
+		fileDao.inc(id, "downsCnt", 1);
 	    		
 		Map<String,String> res = new HashMap<String,String>();
 		res.put("status", "SUCCESS");

@@ -39,7 +39,7 @@ import com.ireland.model.Role;
 import com.ireland.model.User;
 
 import com.ireland.model.business.Tag;
-import com.ireland.model.business.TerraFile;
+import com.ireland.model.business.File;
 
 import com.ireland.service.AuthorityService;
 import com.ireland.service.RoleService;

@@ -24,7 +24,7 @@ import com.ireland.utils.MyDate;
  */
 
 @Document
-public class TerraFile
+public class File
 {
 	@Id
 	private String id;

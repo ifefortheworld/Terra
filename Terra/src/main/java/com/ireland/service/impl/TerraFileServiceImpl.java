@@ -11,12 +11,12 @@ import org.springframework.stereotype.Service;
 import com.ireland.dao.CommentDao;
 import com.ireland.dao.SourceFileDao;
 import com.ireland.dao.RoleDao;
-import com.ireland.dao.TerraFileDao;
+import com.ireland.dao.FileDao;
 import com.ireland.dao.UserDao;
 import com.ireland.model.User;
 import com.ireland.model.business.SourceFile;
-import com.ireland.model.business.TerraFile;
-import com.ireland.service.TerraFileService;
+import com.ireland.model.business.File;
+import com.ireland.service.FileService;
 
 
 
@@ -27,10 +27,10 @@ import com.ireland.service.TerraFileService;
  */
 
 @Service("terraFileServiceImpl")
-public class TerraFileServiceImpl implements TerraFileService
+public class TerraFileServiceImpl implements FileService
 {
 	@Autowired
-	private TerraFileDao terraFileDao;
+	private FileDao fileDao;
 	
 	@Autowired
 	private CommentDao commentDao;
@@ -46,7 +46,7 @@ public class TerraFileServiceImpl implements TerraFileService
 	@Override
 	public void delete(String id)
 	{
-		TerraFile file = terraFileDao.findOne(id);
+		File file = fileDao.findOne(id);
 		
 		if(file == null) return;
 		
@@ -58,16 +58,16 @@ public class TerraFileServiceImpl implements TerraFileService
 			
 			if(sourceFile != null)
 			{
-				Integer referenceCount = sourceFile.getReferenceCount();
+				Integer referenceCount = sourceFile.getFileCount();
 				
 				if(referenceCount >= 2)		//更新引用计数器	
 				{
-					sourceFile.setReferenceCount(referenceCount-1);
+					sourceFile.setFileCount(referenceCount-1);
 					
-					Set<String> referenceIds = sourceFile.getReferenceIds();
+					Set<String> referenceIds = sourceFile.getFileIds();
 					referenceIds.remove(id);
 					
-					sourceFile.setReferenceIds(referenceIds);
+					sourceFile.setFileIds(referenceIds);
 					
 					sourceFileDao.save(sourceFile);
 				}
@@ -78,7 +78,7 @@ public class TerraFileServiceImpl implements TerraFileService
 			}
 		}
 
-		terraFileDao.delete(id);           //删除文件
+		fileDao.delete(id);           //删除文件
 		
 		//有评论的时候才要删除
 		if(file.getComments() != null && file.getComments().size() > 0)

@@ -1,6 +1,6 @@
 package com.ireland.service;
 
-public interface TerraFileService
+public interface FileService
 {
 	/**
 	 * 删除指定ID的TerraFile,及它的所有评论,

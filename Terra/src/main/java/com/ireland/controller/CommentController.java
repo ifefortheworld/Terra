@@ -41,13 +41,13 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 import com.ireland.dao.CommentDao;
 import com.ireland.dao.TagDao;
-import com.ireland.dao.TerraFileDao;
+import com.ireland.dao.FileDao;
 import com.ireland.model.Role;
 import com.ireland.model.User;
 
 import com.ireland.model.business.Comment;
 import com.ireland.model.business.Tag;
-import com.ireland.model.business.TerraFile;
+import com.ireland.model.business.File;
 
 import com.ireland.service.AuthorityService;
 import com.ireland.service.RoleService;
@@ -99,7 +99,7 @@ public class CommentController
 	
 	
 	@Autowired
-	private TerraFileDao terraFileDao;
+	private FileDao fileDao;
 	
 	@Autowired
 	private TagDao tagDao;
