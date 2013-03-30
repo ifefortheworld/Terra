@@ -17,7 +17,7 @@ import com.ireland.model.business.SourceFile;
  *
  */
 
-@Repository("realFileDao")
+@Repository("sourceFileDao")
 public class SourceFileDao extends SimpleMongoDao<SourceFile, String>
 {
 	

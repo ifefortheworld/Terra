@@ -11,7 +11,7 @@ import com.ireland.service.SourceFileService;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations={"/mongo-config.xml","/applicationContext.xml"})
-public class RealFileServiceTest
+public class SourceFileServiceTest
 {
 	@Autowired
 	private SourceFileService sourceFileService;

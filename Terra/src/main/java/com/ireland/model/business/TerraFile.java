@@ -264,9 +264,9 @@ public class TerraFile
 		return sourceFileId;
 	}
 
-	public void setSourceFileId(String realFileId)
+	public void setSourceFileId(String sourceFileId)
 	{
-		this.sourceFileId = realFileId;
+		this.sourceFileId = sourceFileId;
 	}
 
 	public int getViewsCnt()

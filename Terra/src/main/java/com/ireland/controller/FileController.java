@@ -427,7 +427,7 @@ public class FileController
 				
 				file.setSourceFileId(sourceFile.getId());
 				
-				terraFileDao.set(file.getId(), "realFileId", file.getSourceFileId());
+				terraFileDao.set(file.getId(), "sourceFileId", file.getSourceFileId());
 					
 				res.put("status", "SUCCESS");
 				res.put("Location", "/files/"+file.getId());

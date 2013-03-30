@@ -34,7 +34,7 @@ import static org.springframework.data.mongodb.core.query.Query.query;
  *
  */
 
-@Service("realFileService")
+@Service("sourceFileService")
 public class SourceFileServiceImpl implements SourceFileService
 {
 	@Autowired
@@ -95,7 +95,6 @@ public class SourceFileServiceImpl implements SourceFileService
 		
 		
 		//2:查找是否存在其它特征值一样的文件,若存在多个一样的情况(这种情况很少),只取第一个
-		//SourceFile sameFile = sourceFileDao.findOne("fileHashCode", realFile.getFileHashCode());
 		SourceFile sameFile = sourceFileDao.findOne(query(where("fileHashCode").is(sourceFile.getFileHashCode()).norOperator(where("id").is(sourceFile.getId())) ));
 	
 		
@@ -125,7 +124,7 @@ public class SourceFileServiceImpl implements SourceFileService
 		//先更新terraFileid到moreRefSourceFile的引用
 		Set<String> terraFileIds  = lessRefSourceFile.getReferenceIds();
 		
-		terraFileDao.updateMulti(query(where("id").in(terraFileIds)), new Update().set("realFileId", moreRefSourceFile.getId()));
+		terraFileDao.updateMulti(query(where("id").in(terraFileIds)), new Update().set("sourceFileId", moreRefSourceFile.getId()));
 		
 
 		//更新moreRefSourceFile
