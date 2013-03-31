@@ -178,6 +178,6 @@ public class SourceFileServiceImpl implements SourceFileService
 			updateOrMerageSourceFile(sourceFile.getId());
 		}
 		
-		return 0;
+		return list.size();
 	}
 }

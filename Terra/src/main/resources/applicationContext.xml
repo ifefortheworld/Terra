@@ -23,5 +23,11 @@
 	
 	<!-- service -->
 	<context:component-scan base-package="com.ireland.service"></context:component-scan>
+	
+	
+	<bean id="taskScheduler" class="org.springframework.scheduling.concurrent.ConcurrentTaskScheduler"></bean>
+	
+	<!-- task -->
+	<context:component-scan base-package="com.ireland.task"></context:component-scan>
 
 </beans>
