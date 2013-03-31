@@ -8,6 +8,7 @@ import java.util.Set;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
+import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -95,10 +96,15 @@ public class SourceFileServiceImpl implements SourceFileService
 		
 		
 		//2:查找是否存在其它特征值一样的文件,若存在多个一样的情况(这种情况很少),只取第一个
-		SourceFile sameFile = sourceFileDao.findOne(query(where("fileHashCode").is(sourceFile.getFileHashCode()).norOperator(where("id").is(sourceFile.getId())) ));
+		//查找fileHashCode相等,但id不相等的SourceFile
+		SourceFile sameFile = sourceFileDao.findOne(query(
+															where("fileHashCode").is(sourceFile.getFileHashCode())
+															.and("id").ne(sourceFile.getId())
+														)
+													);
 	
 		
-		//3:若特征值相同的文件不存在,更新SourceFile的特征值到数据库,并返回更新后的SourceFile
+		//3:若特征值相同的文件不存在,直接返回SourceFile
 		if(sameFile == null) return sourceFile;
 
 		
@@ -133,8 +139,8 @@ public class SourceFileServiceImpl implements SourceFileService
 		moreRefSourceFile.setFileCount(moreRefSourceFile.getFileIds().size());
 		
 		sourceFileDao.update(moreRefSourceFile.getId(), 
-										new Update().set("referenceCount", moreRefSourceFile.getFileCount())
-													.set("referenceIds",   moreRefSourceFile.getFileIds())
+										new Update().set("fileCount", moreRefSourceFile.getFileCount())
+													.set("fileIds",   moreRefSourceFile.getFileIds())
 													);
 		
 		//删除计数计数少的那个lessRefSourceFile
@@ -156,5 +162,22 @@ public class SourceFileServiceImpl implements SourceFileService
 		sourceFileDao.delete(sourceFile);
 		
 		return true;
+	}
+
+
+
+	@Override
+	public int deduplicationForNewSourceFile()
+	{
+		//查找所有未计算特征值的SourceFile
+		List<SourceFile> list = sourceFileDao.findAll("fileHashCode", null);
+		
+		//对每个SourceFile进行去重操作
+		for(SourceFile sourceFile : list)
+		{
+			updateOrMerageSourceFile(sourceFile.getId());
+		}
+		
+		return 0;
 	}
 }

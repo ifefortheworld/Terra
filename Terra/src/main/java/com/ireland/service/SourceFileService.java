@@ -18,7 +18,7 @@ public interface SourceFileService
 	 * 
 	 * 2:查找是否存在其它特征值一样的文件
 	 * 
-	 * 3:若不存在,更新SourceFile的特征值到数据库,并返回更新后的SourceFile
+	 * 3:若不存在,返回更新后的SourceFile
 	 * 
 	 * 4:若存在,则将引用计数最少的SourceFile合并到引用计数多的SourceFile,(将引用计数器合并,引用的文件id列表合并),
 	 *   删除计数计数少的那个SourceFile及其本地源文件,并返回合并后的SourceFile
@@ -38,4 +38,12 @@ public interface SourceFileService
 	 * @return 
 	 */
 	boolean deleteSourceFileWithLocalFile(SourceFile sourceFile);
+	
+	
+	/**
+	 * 对所有新上传的SourceFile(特征为:未计算特征值)进行文件去重
+	 * 
+	 * @return 成功删除的副本数
+	 */
+	int deduplicationForNewSourceFile();
 }

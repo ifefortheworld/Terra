@@ -5,28 +5,24 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import com.ireland.dao.LocalFileDao;
+import com.ireland.dao.SourceFileDao;
 import com.ireland.model.business.SourceFile;
 import com.ireland.service.SourceFileService;
 
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations={"/mongo-config.xml","/applicationContext.xml"})
-public class SourceFileServiceTest
+public class HDFSLocalFileServiceTest
 {
 	@Autowired
-	private SourceFileService sourceFileService;
+	private LocalFileDao localFileDao;
 	
 	@Test
 	public void test()
 	{
-		SourceFile file = sourceFileService.calculateAndUpdateFileHashCode("5156b596caffc24eceb1c947");
-	}
-
-	
-	@Test
-	public void test2()
-	{
-		SourceFile file = sourceFileService.updateOrMerageSourceFile("5156b531caffc24eceb1c945");
+		localFileDao.delete("/staticfiles/0e049492-9d12-450d-87ca-b7bd4ed0d999");
 	}
 
 }

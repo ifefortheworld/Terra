@@ -6,6 +6,7 @@ import java.util.Set;
 import javax.annotation.Resource;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
 import com.ireland.dao.CommentDao;
@@ -17,6 +18,7 @@ import com.ireland.model.User;
 import com.ireland.model.business.SourceFile;
 import com.ireland.model.business.File;
 import com.ireland.service.FileService;
+import com.ireland.service.SourceFileService;
 
 
 
@@ -26,7 +28,7 @@ import com.ireland.service.FileService;
  *
  */
 
-@Service("fileServiceImpl")
+@Service("fileService")
 public class FileServiceImpl implements FileService
 {
 	@Autowired
@@ -37,6 +39,9 @@ public class FileServiceImpl implements FileService
 
 	@Autowired
 	private SourceFileDao sourceFileDao;
+	
+	@Autowired
+	private SourceFileService sourceFileService;
 	
 	/**
 	 * 删除指定ID的File,及它的所有评论,
@@ -58,22 +63,22 @@ public class FileServiceImpl implements FileService
 			
 			if(sourceFile != null)
 			{
-				Integer referenceCount = sourceFile.getFileCount();
+				Integer fileCount = sourceFile.getFileCount();
 				
-				if(referenceCount >= 2)		//更新引用计数器	
+				if(fileCount >= 2)		//更新引用计数器	
 				{
-					sourceFile.setFileCount(referenceCount-1);
+					sourceFile.setFileCount(fileCount-1);
 					
-					Set<String> referenceIds = sourceFile.getFileIds();
-					referenceIds.remove(id);
-					
-					sourceFile.setFileIds(referenceIds);
-					
-					sourceFileDao.save(sourceFile);
+					sourceFile.getFileIds().remove(id);
+										
+					sourceFileDao.update(sourceFile.getId(), 
+							new Update().set("fileCount", sourceFile.getFileCount())
+										.set("fileIds",   sourceFile.getFileIds())
+										);
 				}
-				else		//引用计数为0,可删除
+				else		//引用计数为0,可删除SourceFile和对应的本地文件
 				{
-					sourceFileDao.delete(sourceFile);
+					sourceFileService.deleteSourceFileWithLocalFile(sourceFile);
 				}
 			}
 		}
