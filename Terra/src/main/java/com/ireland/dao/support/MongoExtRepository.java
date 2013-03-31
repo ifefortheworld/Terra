@@ -6,14 +6,12 @@ import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.mongodb.core.query.BasicQuery;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.data.mongodb.core.query.Update.Position;
 import org.springframework.data.mongodb.repository.MongoRepository;
-
-import com.mongodb.BasicDBObject;
-import com.mongodb.DBObject;
 
 
 
@@ -97,6 +95,14 @@ public interface MongoExtRepository<T, ID extends Serializable> extends MongoRep
 	 */
 	List<T> findAll(String key, Object value);
 	
+
+	/**
+	 * 根据Query查询实体
+	 * @param query
+	 * @return
+	 */
+	List<T> findAll(Query query);
+	
 	
 	/**
 	 * 根据指定条件查询实体s,并根据分页要求来返回分页结果
@@ -106,6 +112,8 @@ public interface MongoExtRepository<T, ID extends Serializable> extends MongoRep
 	 * @return
 	 */
 	Page<T> findAll(Criteria criteria,Pageable pageable);
+	
+
 	
 	/**
 	 * 查找所有key != value 的对象
@@ -348,9 +356,27 @@ public interface MongoExtRepository<T, ID extends Serializable> extends MongoRep
 
 
 
+	 
+	T findAndRemove(ID id);
 
 
 
+	T findAndRemove(String key, Object value);
 
 
+	/**
+	 * Map the results of an ad-hoc query on the collection for the entity type to a single instance of an object of the
+	 * specified type. The first document that matches the query is returned and also removed from the collection in the
+	 * database.
+	 * <p/>
+	 * The object is converted from the MongoDB native representation using an instance of {@see MongoConverter}.
+	 * <p/>
+	 * The query is specified as a {@link Query} which can be created either using the {@link BasicQuery} or the more
+	 * feature rich {@link Query}.
+	 * 
+	 * @param query the query class that specifies the criteria used to find a record and also an optional fields
+	 *          specification
+	 * @return the converted object
+	 */
+	T findAndRemove(Query query);
 }

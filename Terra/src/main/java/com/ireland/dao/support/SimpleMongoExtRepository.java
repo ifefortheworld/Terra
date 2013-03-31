@@ -24,7 +24,8 @@ import static org.springframework.data.mongodb.core.query.Query.query;
 
 
 /**
- * 对SimpleMongoRepository增加额外常用Update的操作
+ * 因为一个属性值为null时,在数据库中的意义是指这个属性不存在,
+ * 以前很多地方不可以传null的参数,现在将null纳入参数范围
  * 
  * @version 2013-03-30 
  * 
@@ -43,6 +44,9 @@ public class SimpleMongoExtRepository<T, ID extends Serializable> extends Simple
 
 	private final MongoEntityInformation<T, ID> entityInformation;
 
+	private final Class<T> entityClass;
+	
+	private final String collectionName;
 	
 	public SimpleMongoExtRepository(MongoEntityInformation<T, ID> metadata, MongoOperations mongoOperations)
 	{
@@ -50,6 +54,10 @@ public class SimpleMongoExtRepository<T, ID extends Serializable> extends Simple
 
 		this.entityInformation = metadata;
 		this.mongoOperations = mongoOperations;
+		
+		this.entityClass = entityInformation.getJavaType();
+		this.collectionName = entityInformation.getCollectionName();
+		
 	}
 
 	
@@ -61,13 +69,20 @@ public class SimpleMongoExtRepository<T, ID extends Serializable> extends Simple
 		return where(entityInformation.getIdAttribute()).is(id);
 	}
 	
-	private List<T> findAll(Query query) {
+	private Query getKeyExistsQuery(String key,boolean b) {
+		return new Query(getKeyExistsCriteria(key, b));
+	}
 
-		if (query == null) {
-			return Collections.emptyList();
-		}
+	private Criteria getKeyExistsCriteria(String key,boolean b) {
+		return where(key).exists(b);
+	}
 
-		return mongoOperations.find(query, entityInformation.getJavaType(), entityInformation.getCollectionName());
+	private Query getEqualQuery(String key,Object value) {
+		return new Query(getEqualCriteria(key, value));
+	}
+
+	private Criteria getEqualCriteria(String key,Object value) {
+		return where(key).is(value);
 	}
 
 	//---------------------
@@ -78,7 +93,7 @@ public class SimpleMongoExtRepository<T, ID extends Serializable> extends Simple
 	{
 		Assert.notNull(entity, "Entity must not be null!");
 		
-		mongoOperations.insert(entity, entityInformation.getCollectionName());
+		mongoOperations.insert(entity, collectionName);
 		
 		return entity;
 	}
@@ -90,7 +105,7 @@ public class SimpleMongoExtRepository<T, ID extends Serializable> extends Simple
 		Assert.notNull(batchToInsert, "The given Collection<S> batchToInsert not be null!");
 		
 		
-		mongoOperations.insert(batchToInsert, entityInformation.getCollectionName());
+		mongoOperations.insert(batchToInsert, collectionName);
 
 		
 		return batchToInsert;
@@ -102,9 +117,15 @@ public class SimpleMongoExtRepository<T, ID extends Serializable> extends Simple
 	public T findOne(String key, Object value)
 	{
 		Assert.hasText(key, "The given key must not be empty!");
-		Assert.notNull(value, "The given value must not be null!");
 		
-		return mongoOperations.findOne(	query(where(key).is(value)).limit(1), entityInformation.getJavaType(), entityInformation.getCollectionName());
+		if(value != null)
+		{
+			return mongoOperations.findOne(	getEqualQuery(key,value).limit(1), entityClass, collectionName);
+		}
+		else	//findOne(key,null) 等价于 key: { $exists: false}
+		{
+			return mongoOperations.findOne(	getKeyExistsQuery(key,false).limit(1), entityClass, collectionName);
+		}
 	}
 
 	@Override
@@ -114,7 +135,7 @@ public class SimpleMongoExtRepository<T, ID extends Serializable> extends Simple
 		
 		query.limit(1);								//反正只要1个结果,所以limit一下,提高性能
 		
-		return mongoOperations.findOne(	query, entityInformation.getJavaType(), entityInformation.getCollectionName());
+		return mongoOperations.findOne(	query, entityClass, collectionName);
 	}
 
 
@@ -122,11 +143,27 @@ public class SimpleMongoExtRepository<T, ID extends Serializable> extends Simple
 	public List<T> findAll(String key, Object value)
 	{
 		Assert.hasText(key, "The given key must not be empty!");
-		Assert.notNull(value, "The given value must not be null!");
-		
-		return findAll( query(where(key).is(value)) );
+
+		if(value != null)
+		{
+			return findAll( getEqualQuery(key,value) );
+		}
+		else//findAll(KEY,null) 等价于 key: { $exists: false}
+		{
+			return findAll( getKeyExistsQuery(key,false) );
+		}
 	}
 
+	@Override
+	public List<T> findAll(Query query) {
+
+		if (query == null) {
+			return Collections.emptyList();
+		}
+
+		return mongoOperations.find(query, entityClass, collectionName);
+	}
+	
 	@Override
 	public Page<T> findAll(Criteria criteria, Pageable pageable)
 	{
@@ -143,7 +180,7 @@ public class SimpleMongoExtRepository<T, ID extends Serializable> extends Simple
 		Assert.hasText(key, "The given key must not be empty!");
 		Assert.notNull(value, "The given value must not be null!");
 		
-		return findAll( query(where(key).is(value).not()) );
+		return findAll( query( where(key).ne(value) ) );
 	}
 	
 	
@@ -152,15 +189,21 @@ public class SimpleMongoExtRepository<T, ID extends Serializable> extends Simple
 	public long count(String key, Object value)
 	{
 		Assert.hasText(key, "The given key must not be empty!");
-		Assert.notNull(value, "The given value must not be null!");
-
-		return mongoOperations.count(query(where(key).is(value)), entityInformation.getJavaType());
+		
+		if(value != null)
+		{
+			return mongoOperations.count(getEqualQuery(key,value), entityClass);
+		}
+		else	//count(KEY,null) 等价于 key: { $exists: false}
+		{
+			return mongoOperations.count(getKeyExistsQuery(key,false), entityClass);
+		}
 	}
 	
 	@Override
 	public long count(Criteria criteria)
 	{
-		return mongoOperations.count(query(criteria), entityInformation.getJavaType());
+		return mongoOperations.count(query(criteria), entityClass);
 	}
 
 	
@@ -194,14 +237,49 @@ public class SimpleMongoExtRepository<T, ID extends Serializable> extends Simple
 	public void delete(String key, Object value)
 	{
 		Assert.hasText(key, "The given key must not be empty!");
-		Assert.notNull(value, "The given value must not be null!");
 		
-		mongoOperations.remove( query(where(key).is(value)), entityInformation.getJavaType());
+		if(value != null)
+		{
+			mongoOperations.remove( getEqualQuery(key,value), entityClass);
+		}
+		else //delete(KEY,null) 等价于 key: { $exists: false}
+		{
+			mongoOperations.remove( getKeyExistsQuery(key,false), entityClass);
+		}
 	}
 	
 	
 	
+	@Override
+	public T findAndRemove(ID id)
+	{
+		Assert.notNull(id, "The given id must not be null!");
+		
+		return findAndRemove( getIdQuery(id) );
+	}
 	
+	@Override
+	public T findAndRemove(String key, Object value)
+	{
+		Assert.hasText(key, "The given key must not be empty!");
+		
+		if(value != null)
+		{
+			return findAndRemove( getEqualQuery(key,value) );
+		}
+		else	//KEY : null 等价于 KEY : { $exists: false}
+		{
+			return findAndRemove( getKeyExistsQuery(key,false) );
+		}
+	}
+	
+	@Override
+	public T findAndRemove(Query query)
+	{
+		Assert.notNull(query, "The given query must not be null!");
+		
+		return mongoOperations.findAndRemove(query, entityClass, collectionName);
+	}
 	
 	@Override
 	public T findAndUpdate(ID id, Update update)
@@ -217,10 +295,16 @@ public class SimpleMongoExtRepository<T, ID extends Serializable> extends Simple
 	public T findAndUpdate(String key, Object value, Update update)
 	{
 		Assert.hasText(key, "The given key must not be empty!");
-		Assert.notNull(value, "The given value must not be null!");
 		Assert.notNull(update, "The given update must not be null!");
 
-		return findAndUpdate( query(where(key).is(value)), update);
+		if(value != null)
+		{
+			return findAndUpdate( getEqualQuery(key,value), update);
+		}
+		else //KEY : null 等价于 KEY : { $exists: false}
+		{
+			return findAndUpdate( getKeyExistsQuery(key,false), update);
+		}
 	}
 
 	
@@ -237,7 +321,7 @@ public class SimpleMongoExtRepository<T, ID extends Serializable> extends Simple
 	
 	private T findAndUpdate(Query query, Update update)
 	{
-		return mongoOperations.findAndModify(query, update, entityInformation.getJavaType(), entityInformation.getCollectionName());
+		return mongoOperations.findAndModify(query, update, entityClass, collectionName);
 	}
 
 
@@ -247,7 +331,7 @@ public class SimpleMongoExtRepository<T, ID extends Serializable> extends Simple
 		Assert.notNull(id, "The given id must not be null!");
 		Assert.notNull(update, "The given update must not be null!");
 		
-		mongoOperations.updateFirst( getIdQuery(id), update, entityInformation.getJavaType());
+		mongoOperations.updateFirst( getIdQuery(id), update, entityClass);
 	}
 
 
@@ -258,7 +342,7 @@ public class SimpleMongoExtRepository<T, ID extends Serializable> extends Simple
 		Assert.notNull(value, "The given value must not be null!");
 		Assert.notNull(update, "The given update must not be null!");
 		
-		mongoOperations.updateFirst( query(where(key).is(value)), update, entityInformation.getJavaType());
+		mongoOperations.updateFirst( getEqualQuery(key,value), update, entityClass);
 	}
 
 
@@ -269,7 +353,7 @@ public class SimpleMongoExtRepository<T, ID extends Serializable> extends Simple
 		Assert.notNull(value, "The given value must not be null!");
 		Assert.notNull(update, "The given update must not be null!");
 		
-		mongoOperations.updateMulti( query(where(key).is(value)), update, entityInformation.getJavaType());
+		mongoOperations.updateMulti( getEqualQuery(key,value), update, entityClass);
 	}
 	
 	@Override
@@ -278,7 +362,7 @@ public class SimpleMongoExtRepository<T, ID extends Serializable> extends Simple
 		Assert.notNull(query, "The given query must not be null!");
 		Assert.notNull(update, "The given update must not be null!");
 		
-		mongoOperations.updateMulti( query, update, entityInformation.getJavaType());
+		mongoOperations.updateMulti( query, update, entityClass);
 	}
 
 
@@ -289,9 +373,11 @@ public class SimpleMongoExtRepository<T, ID extends Serializable> extends Simple
 	{
 		Assert.notNull(id, "The given id must not be null!");
 		Assert.hasText(key, "The given key must not be empty!");
-		Assert.notNull(value, "The given value must not be null!");
 		
-		update(id, new Update().set(key, value));
+		if(value == null)						//set(ID,key,null) 等价于 unset(ID,key)
+			unset(id,key);
+		else
+			update(id, new Update().set(key, value));
 	}
 
 
