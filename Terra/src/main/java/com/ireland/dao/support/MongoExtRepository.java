@@ -273,7 +273,7 @@ public interface MongoExtRepository<T, ID extends Serializable> extends MongoRep
 	
 	
 	/**
-	 * 使指定ID的实体的的指定属性key的值加上特定的值inc
+	 * 使指定ID的实体的的指定属性key的值加上特定的值$inc
 	 * 
 	 * @param id
 	 * @param key 属性
