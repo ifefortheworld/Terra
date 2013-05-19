@@ -14,6 +14,7 @@ import com.ireland.dao.SourceFileDao;
 import com.ireland.dao.RoleDao;
 import com.ireland.dao.FileDao;
 import com.ireland.dao.UserDao;
+import com.ireland.index.FileIndexer;
 import com.ireland.model.User;
 import com.ireland.model.business.SourceFile;
 import com.ireland.model.business.File;
@@ -35,6 +36,9 @@ public class FileServiceImpl implements FileService
 	private FileDao fileDao;
 	
 	@Autowired
+	private FileIndexer fileIndexer;
+	
+	@Autowired
 	private CommentDao commentDao;
 
 	@Autowired
@@ -44,7 +48,7 @@ public class FileServiceImpl implements FileService
 	private SourceFileService sourceFileService;
 	
 	/**
-	 * 删除指定ID的File,及它的所有评论,
+	 * 删除指定ID的File,及它的所有评论,及File的索引
 	 * 并更新或删除对应的SourceFile
 	 * @param id
 	 */
@@ -83,7 +87,8 @@ public class FileServiceImpl implements FileService
 			}
 		}
 
-		fileDao.delete(id);           //删除文件
+		fileDao.delete(id);           //删除File
+		fileIndexer.delete(id);		  //删除File的索引
 		
 		//有评论的时候才要删除
 		if(file.getComments() != null && file.getComments().size() > 0)
