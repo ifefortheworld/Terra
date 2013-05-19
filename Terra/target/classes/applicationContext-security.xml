@@ -196,7 +196,7 @@
 	<bean id="authenticationSuccessHandler" class="com.ireland.security.authentication.RestAuthenticationSuccessHandler">
 		
 		<!-- 默认为个人主页 -->
-		<property name="defaultTargetUrl" value="/myspace/file-list"/>
+		<property name="defaultTargetUrl" value="/myspace"/>
 		
 		<!-- 可使用redirect_url参数准确控制目标URL -->
 		<property name="targetUrlParameter" value="redirect_url"/>
@@ -310,6 +310,9 @@ ConcurrentSessionFilter
     	FilterSecurityInterceptor的默认的AccessDecisionManager是: AffirmativeBased(只要有一个Voter通过,就可以访问)
     
     	而 AffirmativeBased的默认的AccessDecisionVoter: RoleVoter 和  AuthenticatedVoter
+
+4通过UrlMatchLoginUrlAuthenticationEntryPoint 和 RestAuthenticationSuccessHandler 对 HTTP请求的refer头的处理
+实现了基于URL&Reffer的登录后跳回登录前页面的功能
     -->
 
 
