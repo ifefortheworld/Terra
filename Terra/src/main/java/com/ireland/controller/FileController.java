@@ -56,6 +56,7 @@ import com.ireland.dao.LocalFileDao;
 import com.ireland.dao.SourceFileDao;
 import com.ireland.dao.TagDao;
 import com.ireland.dao.FileDao;
+import com.ireland.index.FileIndexer;
 import com.ireland.model.Role;
 import com.ireland.model.User;
 
@@ -117,6 +118,9 @@ public class FileController
 	
 	@Autowired
 	private FileDao fileDao;
+	
+	@Autowired
+	private FileIndexer fileIndexer;
 	
 	@Autowired
 	private FileService fileService;
@@ -428,7 +432,11 @@ public class FileController
 				file.setSourceFileId(sourceFile.getId());
 				
 				fileDao.set(file.getId(), "sourceFileId", file.getSourceFileId());
-					
+				
+				
+				//索引这个File
+				fileIndexer.add(file);
+				
 				res.put("status", "SUCCESS");
 				res.put("Location", "/files/"+file.getId());
 				return res;
