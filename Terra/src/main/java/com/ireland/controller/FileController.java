@@ -180,31 +180,9 @@ public class FileController
 	
 	
 	/**
-	 * 查询本人的文件
-	 */
-	@Deprecated
-	@RequestMapping(value = "/files/{id}/update")
-	public String getOwnFile(@PathVariable("id") String id,Model model)
-	{
-		File file = fileDao.findOne(id);
-		
-		//查询此文件最有价值的评论(按votes倒序的第1条)
-		Page<Comment> coment = commentDao.findAll(Criteria.where("fileId").is(id), new PageRequest(0, 1, Direction.DESC, "votes"));
-		Comment valComment = coment.hasContent() ? coment.iterator().next() : null;
-		
-		//(按时间由新到旧)查询文件的前5条评论
-		Page<Comment> page = commentDao.findAll(Criteria.where("fileId").is(id), new PageRequest(0, 5, Direction.DESC, "date"));
-		
-		model.addAttribute("file",file);
-		model.addAttribute("page",page);
-		model.addAttribute("comments",page.iterator());
-		model.addAttribute("valComment",valComment);
-		
-		return "files/update";
-	}
-	
-	/**
 	 * 本人或游客浏览文件
+	 * 1:游客访问受保护的文件时,会被要求先登录
+	 * 2:用户访问他人受保护的文件时,会返回403
 	 */
 	@RequestMapping(value = "/files/{id}")
 	public String getFileDetails(@PathVariable("id") String id,Model model)
@@ -213,6 +191,29 @@ public class FileController
 		User user = SecurityContextHolder.getContext().getAuthentication().getPrincipal() instanceof User ? (User)SecurityContextHolder.getContext().getAuthentication().getPrincipal(): null;
 		
 		File file = fileDao.findOne(id);
+		
+		//处理资源受保护的情况
+		if(file.getIsShared() == false)
+		{
+			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+			
+			//如果用户未登录或来自记住密码等,重定向到登录页面
+			if(authentication == null || authenticationTrustResolver.isAnonymous(authentication) || authenticationTrustResolver.isRememberMe(authentication)
+					|| !UsernamePasswordAuthenticationToken.class.isAssignableFrom(authentication.getClass()))
+			{
+				throw new AuthenticationCredentialsNotFoundException("please login in!");
+			}
+			
+			
+			User user2 = (User) authentication.getPrincipal();
+			
+			
+			//用户已登录,处理非本人访问,返回403页面
+			if(!user2.getId().equals(file.getOwnerId()))
+			{
+				throw new AccessDeniedException(null);
+			}
+		}
 		
 //评论---------------------------------------------------------------------------------		
 		//查询此文件最有价值的评论(按votes倒序的第1条)
@@ -249,86 +250,6 @@ public class FileController
 	 * @param _tags
 	 * @return
 	 */
-	@Deprecated //文件上传到HDFS时耗时严重,长时间占用窗口的Servlet 线程,改用asyncUploadFile
-	//@RequestMapping(value = "/files/upload_",method=RequestMethod.POST,produces="application/json;charset=UTF-8")
-	@ResponseBody
-	public Map<String,String> _uploadFile(@Valid File file,@RequestParam(value="_tags",required=false)String _tags,
-																@RequestPart(value="file",required=false) Part partFile,
-																HttpServletRequest request)
-	{
-		Map<String,String> res = new HashMap<String,String>();
-		
-		User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		
-		
-		//以','拆分tag
-		String[] strs = _tags.trim().split(",");
-		
-	    List<Tag> tags = new ArrayList<Tag>(strs.length);
-	    
-	    for(String str : strs)
-	    {
-	    	
-	    	Tag tag = tagDao.findOne("name", str);
-	    	
-	    	////如果 对应的tag不存在,则新建一个
-	    	if(tag == null)
-	    	{
-	    		tag = new Tag();
-	    		tag.setName(str);
-	    		tag.setFileCnt(1);
-	    		
-	    		tagDao.save(tag);
-	    	}
-	    	else//tag 已存在,则更新
-	    	{
-		    	//更新tag的人气
-		    	tag.setFileCnt(tag.getFileCnt()+1);
-		    	
-		    	//使数据库的fileCnt 加1
-		    	tagDao.inc(tag.getId(), "fileCnt", 1);
-	    		
-	    	}
-	    	
-	    	tags.add(tag);
-	    }
-	    
-		file.setTags(tags);
-		
-		file.setUploadDate(new Date());
-		file.setOwner(user.getUsername());
-		file.setComments(new ArrayList<Comment>());
-		
-		
-		//从header中解译出上传的文件名
-		String value = partFile.getHeader("content-disposition");
-		
-		String fileName = value.substring(value.lastIndexOf("=")+2, value.length()-1);
-		
-		String uuid = UUID.randomUUID().toString();
-		String fileUrl = "/staticfiles/"+uuid+"-"+fileName;
-		
-		try
-		{
-			localFileDao.write(partFile.getInputStream(), fileUrl);
-		} catch (IOException e)
-		{
-			e.printStackTrace();
-			res.put("status", "FAIL");
-			res.put("reason", "hafs upload fail!");
-			return res;
-		}
-		
-		file.setFileOriginalName(fileName);
-		//file.setFileUrl(fileUrl);
-			
-		fileDao.insert(file);
-			
-		res.put("status", "SUCCESS");
-		res.put("Location", "/files/"+file.getId());
-		return res;
-	}
-	
 	@RequestMapping(value = "/files/upload_",method=RequestMethod.POST,produces="application/json;charset=UTF-8")
 	@ResponseBody
 	public Callable<Map<String,String>> asyncUploadFile(@Valid final File file,@RequestParam(value="_tags",required=false)String _tags,
