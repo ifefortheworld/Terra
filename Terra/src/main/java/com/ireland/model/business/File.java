@@ -137,13 +137,11 @@ public class File
 		this.name = name;
 	}
 
-	@Deprecated
 	public String getOwner()
 	{
 		return owner;
 	}
 
-	@Deprecated
 	public void setOwner(String owner)
 	{
 		this.owner = owner;
