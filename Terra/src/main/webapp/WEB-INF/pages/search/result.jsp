@@ -48,14 +48,14 @@ SimpleDateFormat f=new SimpleDateFormat("yyyy/MM/dd");
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </a>
-                <a class="brand" href="#">Terra</a>
+                <a class="brand" href="/">Terra</a>
                 <div class="nav-collapse collapse">
                     <ul class="nav">
-                        <li class="active"><a href="#"> Search </a></li>
-                        <li><a href="#"> Files</a></li>
-                        <li><a href="#"> Columns</a></li>
-                        <li><a href="#">  Pages</a></li>
-                        <li><a href="#"> Notes</a></li>
+                        <li class="active"><a href="/"> Search </a></li>
+                        <li><a href="/myspace"> Files</a></li>
+                        <li><a href="/myspace/columns"> Columns</a></li>
+                        <li><a href="/myspace/pages">  Pages</a></li>
+                        <li><a href="/myspace/notes"> Notes</a></li>
                         <!--<li><a href="#"> Upload </a></li>-->
                         <li class="dropdown">
                             <a href="#" class="dropdown-toggle"  data-toggle="dropdown">About <b class="caret"></b></a>
@@ -65,19 +65,33 @@ SimpleDateFormat f=new SimpleDateFormat("yyyy/MM/dd");
                             </ul>
                         </li>
                     </ul>
+                    
+                    <!-- 未登录 -->
+                    <sec:authorize access="notHasAuthority('index')">
                     <ul class="nav pull-right">
-                        <li class="dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown"> @Hen <b class="caret"></b></a>
+                        <li><a href="/register"> Register</a></li>
+                        <li><a href="/login"> Sign in</a></li>
+                    </ul>
+                    </sec:authorize>
+                    
+                    <!-- 已登录 -->
+                    <sec:authorize access="hasAuthority('index')">
+                    <ul class="nav pull-right">
+                        <li class="dropdown active">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown"> @<sec:authentication property="principal.username"/> <b class="caret"></b></a>
                             <ul class="dropdown-menu">
-                                <li><a href="#"><i class="icon-file"></i> Files</a></li>
-                                <li><a href="#"><i class="icon-bookmark"></i> Columns</a></li>
-                                <li><a href="#"><i class="icon-tag"></i> Pages</a></li>
-                                <li><a href="#"><i class="icon-pencil"></i> Notes</a></li>
-                                <li class="divider"></li>
-                                <li><a href="#"><i class="icon-user"></i> Log Out</a></li>
+                                <li class="nav-header">Storage</li>
+                                <li><a href="/myspace"><i class="icon-file"></i> Files</a></li>
+                                <li><a href="/myspace/columns"><i class="icon-bookmark"></i> Columns</a></li>
+                                <li><a href="/myspace/pages"><i class="icon-tag"></i> Pages</a></li>
+                                <li><a href="/myspace/notes"><i class="icon-pencil"></i> Notes</a></li>
+                                <li style="border: 1px dashed #ddd"></li>
+                                <li><a href="/j_spring_security_logout"><i class="icon-user"></i> Log Out</a></li>
                             </ul>
                         </li>
                     </ul>
+                    </sec:authorize>
+                    
                 </div><!--/.nav-collapse -->
             </div>
         </div>
@@ -159,15 +173,8 @@ SimpleDateFormat f=new SimpleDateFormat("yyyy/MM/dd");
                 <th class="table-th-downloads" style="width: 20%">Function</th>
             </tr>
         </thead>
-            <tbody id="filesTableTBody">
-
-   
-            <tr>
-
-
-                
-
-            </tr>
+        
+        <tbody id="filesTableTBody">
  
             <c:forEach var="file" items="${files}">
   
@@ -204,10 +211,10 @@ SimpleDateFormat f=new SimpleDateFormat("yyyy/MM/dd");
             
             </c:forEach> 
 
-        </tbody>
+         </tbody>
+         
          <tfoot>
-
-        </tfoot>
+         </tfoot>
         </table>
         <div class="pagination pagination-small pagination-right" >
             <c:if test="${page.totalPages > 0}">

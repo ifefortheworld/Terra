@@ -15,7 +15,7 @@ import org.springframework.core.io.Resource;
 public interface LocalFileDao
 {
 	
-	Resource read(String pathString);
+	Resource read(String path);
 	
 	
 	void write(InputStream in, String path);

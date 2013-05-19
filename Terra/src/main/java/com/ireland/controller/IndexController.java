@@ -56,40 +56,6 @@ import com.ireland.service.UserService;
 public class IndexController
 {
 
-/*	private UserDetailsManager userDetailsManager;
-
-	@Resource(name = "userDetailsManager")
-	public void setUserDetailsManager(UserDetailsManager userDetailsManager)
-	{
-		this.userDetailsManager = userDetailsManager;
-	}
-
-	private UserService userService;
-
-	@Resource(name = "userService")
-	public void setUserService(UserService userService)
-	{
-		this.userService = userService;
-	}
-
-	private AuthorityService authorityService;
-
-	@Resource(name = "authorityService")
-	public void setAuthorityService(AuthorityService authorityService)
-	{
-		this.authorityService = authorityService;
-	}
-
-	private RoleService roleService;
-
-	@Resource(name = "roleService")
-	public void setRoleService(RoleService roleService)
-	{
-		this.roleService = roleService;
-	}
-
-	
-	*/
 	
 	@Autowired
 	private TagDao tagDao;
@@ -108,7 +74,7 @@ public class IndexController
 
 	//
 
-	@RequestMapping(value = {"/","/login"})
+	@RequestMapping("/")
 	public String index(Model model)
 	{
 		Page<Tag>  page = tagDao.findAll(new PageRequest(0, 100, Direction.DESC, "fileCnt"));

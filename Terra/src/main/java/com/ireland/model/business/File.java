@@ -80,7 +80,7 @@ public class File
 	/**
 	 * 是否 分享
 	 */
-	private Boolean isShared;
+	private Boolean isShared = true;
 
 
 	/**

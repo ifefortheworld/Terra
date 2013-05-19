@@ -20,6 +20,9 @@
 	<!-- dao -->
 	<context:component-scan base-package="com.ireland.dao" />
 	
+	<!-- 索引 -->
+	<context:component-scan base-package="com.ireland.index" />
+	
 	
 	<!-- service -->
 	<context:component-scan base-package="com.ireland.service"></context:component-scan>

@@ -29,7 +29,7 @@ DataAccessException hierarchy for data access classes annoated with the @Reposit
  	
  	<!-- MongoFactoryBean 与Mongo相比,增加了ExceptionTranslator的功能-->
  	<bean id="mongo" class="org.springframework.data.mongodb.core.MongoFactoryBean">
- 		<property name="host" value="192.168.1.246"/>
+ 		<property name="host" value="localhost"/>
  		<property name="port" value="27017"/>
  	</bean>	
 	

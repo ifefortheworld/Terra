@@ -15,7 +15,7 @@ import org.springframework.util.FileCopyUtils;
 
 import com.ireland.io.HdfsInputStreamResource;
 
-@Repository("hdfsDao")
+//@Repository("hdfsDao")
 public class HdfsFileDao implements LocalFileDao
 {
 	private Configuration conf = new Configuration();

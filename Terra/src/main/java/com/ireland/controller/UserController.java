@@ -8,13 +8,18 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,8 +28,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import com.ireland.dao.TagDao;
 import com.ireland.model.Role;
 import com.ireland.model.User;
+import com.ireland.model.business.Tag;
 import com.ireland.service.AuthorityService;
 import com.ireland.service.RoleService;
 import com.ireland.service.UserService;
@@ -71,6 +78,9 @@ public class UserController
 	{
 		this.roleService = roleService;
 	}
+	
+	@Autowired
+	private TagDao tagDao;
 
 	// /Exception
 
@@ -82,8 +92,35 @@ public class UserController
 		ex.printStackTrace();
 	}
 
-	//
 
+	//
+	
+	/**
+	 * 登录页面
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping("/login")
+	public String index(Model model)
+	{
+		Page<Tag>  page = tagDao.findAll(new PageRequest(0, 100, Direction.DESC, "fileCnt"));
+
+		model.addAttribute("tags", page.iterator());
+		
+		return "user/login";
+	}
+	
+
+	/**
+	 * 用户注册
+	 * @param request
+	 * @param response
+	 * @param session
+	 * @param user
+	 * @param result
+	 * @param roleName
+	 * @return
+	 */
 	@RequestMapping(value = "/doregister", method = RequestMethod.POST, produces = "application/json")
 	@ResponseBody
 	public Map<String, String> register(

@@ -7,7 +7,6 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 <!DOCTYPE html>
 <html>
 <head>
-	<base href="<%=basePath%>">
     <meta charset="utf-8">
     <title>Upload</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -15,31 +14,19 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
     <meta name="author" content="">
     <!-- Bootstrap -->
     <!--<link href="../css/bootstrap.min.css" rel="stylesheet" media="screen">-->
-    <!-- Le styles -->
-    <link href="../css/bootstrap.css" rel="stylesheet">
+    <!--Le styles -->
+    <link href="/css/bootstrap.css" rel="stylesheet">
+    <!--<link href="../css/bootstrap-responsive.css" rel="stylesheet">-->
     <!--<link href="../css/bootstrap-responsive-min-980px.css" rel="stylesheet">-->
-    <link href="../css/docs.css" rel="stylesheet">
+    <link href="/css/docs.css" rel="stylesheet">
     <style type="text/css" rel="stylesheet">
         body{
             padding-top: 50px;
         }
         @media (min-width: 768px) and (max-width: 979px) {
             body{
-                padding-top: 0px;
+                padding-top: 40px;
             }
-        }
-
-        h2{
-            font-size: 22px;
-            margin: 0px;
-        }
-        h3{
-            font-size: 20px;
-            margin: 0px;
-        }
-        h4{
-            font-size: 18px;
-            margin: 0px;
         }
     </style>
     <link rel="apple-touch-icon-precomposed" sizes="144x144" href="#">
@@ -60,22 +47,15 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </a>
-                <a class="brand" href="#">Terra</a>
+                <a class="brand" href="/">Terra</a>
                 <div class="nav-collapse collapse">
                     <ul class="nav">
-                        <li class="active"><a href="/myspace/"> Home</a></li>
+                        <li class="active"><a href="/"> Search </a></li>
+                        <li><a href="/myspace"> Files</a></li>
+                        <li><a href="/myspace/columns"> Columns</a></li>
+                        <li><a href="/myspace/pages">  Pages</a></li>
+                        <li><a href="/myspace/notes"> Notes</a></li>
                         <!--<li><a href="#"> Upload </a></li>-->
-                        <li class="dropdown">
-                            <a href="#" class="dropdown-toggle"  data-toggle="dropdown">Platform <b class="caret"></b></a>
-                            <ul class="dropdown-menu">
-                                <li><a href="#"><i class="icon-file"></i> Files</a></li>
-                                <li><a href="#"><i class="icon-bookmark"></i> Columns</a></li>
-                                <li><a href="#"><i class="icon-tag"></i> Pages</a></li>
-                                <li><a href="#"><i class="icon-pencil"></i> Notes</a></li>
-                            </ul>
-                        </li>
-                        <li><a href="#"> Search </a></li>
-                        <li><a href="#"> Columns </a></li>
                         <li class="dropdown">
                             <a href="#" class="dropdown-toggle"  data-toggle="dropdown">About <b class="caret"></b></a>
                             <ul class="dropdown-menu">
@@ -84,22 +64,33 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
                             </ul>
                         </li>
                     </ul>
+                    
+                    <!-- 未登录 -->
+                    <sec:authorize access="notHasAuthority('index')">
                     <ul class="nav pull-right">
-                        <li><a href="/<sec:authentication property="principal.username"/>/file-list" > @<sec:authentication property="principal.username"/></a></li>
-                        <li class="dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown"> My Box <b class="caret"></b></a>
+                        <li><a href="/register"> Register</a></li>
+                        <li><a href="/login"> Sign in</a></li>
+                    </ul>
+                    </sec:authorize>
+                    
+                    <!-- 已登录 -->
+                    <sec:authorize access="hasAuthority('index')">
+                    <ul class="nav pull-right">
+                        <li class="dropdown active">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown"> @<sec:authentication property="principal.username"/> <b class="caret"></b></a>
                             <ul class="dropdown-menu">
-                                <li><a href="#"><i class="icon-user"></i> Sign in</a></li>
-                                <li class="divider"></li>
-                                <li><a href="#"><i class="icon-file"></i> Files</a></li>
-                                <li><a href="#"><i class="icon-bookmark"></i> Columns</a></li>
-                                <li><a href="#"><i class="icon-tag"></i> Pages</a></li>
-                                <li><a href="#"><i class="icon-pencil"></i> Notes</a></li>
-                                <li class="divider"></li>
-                                <li><a href="#"><i class="icon-arrow-up"></i> Upload </a></li>
+                                <li class="nav-header">Storage</li>
+                                <li><a href="/myspace"><i class="icon-file"></i> Files</a></li>
+                                <li><a href="/myspace/columns"><i class="icon-bookmark"></i> Columns</a></li>
+                                <li><a href="/myspace/pages"><i class="icon-tag"></i> Pages</a></li>
+                                <li><a href="/myspace/notes"><i class="icon-pencil"></i> Notes</a></li>
+                                <li style="border: 1px dashed #ddd"></li>
+                                <li><a href="/j_spring_security_logout"><i class="icon-user"></i> Log Out</a></li>
                             </ul>
                         </li>
                     </ul>
+                    </sec:authorize>
+                    
                 </div><!--/.nav-collapse -->
             </div>
         </div>
@@ -108,91 +99,100 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 <!--header(end)-->
 <!--container-->
 
-<div class="content container">
-    <ul class="breadcrumb">
-        <li><a href="#">Box</a> <span class="divider">/</span></li>
-        <li><a href="#">File</a> <span class="divider">/</span></li>
-        <li class="active"><a href="#">Upload</a> </li>
+<div class="container">
+    <div class="alert alert-info alert-block" style="margin-top: 10px">
+        <strong>Good News!</strong>
+        <!--<a href="#"><span class="label label-warning"></span></a>-->
+    </div>
+    <ul class="breadcrumb" style="border-bottom: none">
+        <li><a href="#">Storage</a> <span class="divider">/</span></li>
+        <li class="active"><a href="#">Share</a> </li>
     </ul>
-    <div class="well" style="margin-top: 10px; background: none">
-        <div class="row-fluid">
+    <div class="row-fluid" style="margin-top: 10px">
+        <div class="span12">
+            <div class="well" >
+                <!--<img src="img/Hen.png" class="img-rounded" style=";margin-left:20px;margin-right:10px;float:left;width: 64px;height: 64px;">-->
+                <h1 style="float: left;margin-top:25px;margin-left:10px;font-size: 50px;">Upload File</h1>
+                <div class="well" style="float: right;margin-bottom: 0px;padding:10px;border-width:2px;border-style:dotted ">
+                    <img src="/img/Hen.png" class="img-rounded" style="float: left;margin-right:20px;float:left;width: 64px;height: 64px;">
+                    <div style="float: left;padding-top: 5px">
+                        <label>By <a>@<sec:authentication property="principal.username"/></a></label>
+                        <label><%=new MyDate()%></label>
+                    </div>
+                    <div class="clearfix"></div>
+                </div>
+                <div class="clearfix"></div>
+                <div class="divider" style="border-top: 1px solid #ddd;margin-top: 10px;margin-bottom: 10px"></div>
+                <!--<div style="padding: 10px;padding-left: 30px">-->
+                    <!--<img src="img/Hen.png" class="img-rounded" data-src="holder.js/64x64" style="margin-bottom: 10px;margin-right:10px;float:left">-->
+                    <!--<div style="float: left">-->
+                        <!--<label style="font-style: normal;font-size: 18px;margin-bottom: 10px">By <em></em><a href="#">@Hen</a></em><br></label>-->
+                        <!--<label style="font-style: normal;font-size: 18px;">2013-3-17</a></label>-->
+                    <!--</div>-->
+                    <!--&lt;!&ndash;<label style="display: none">By <a>@Hen</a></label>&ndash;&gt;-->
+                    <!--&lt;!&ndash;<label>2013-3-17</label>&ndash;&gt;-->
+                    <!--<div class="well" style="float: right;width: 300px">-->
+                        <!--<label></label>-->
+                    <!--</div>-->
+                    <!--<div class="clearfix"></div>-->
+                <!--</div>-->
 
-            <div class="span10">
-                <div class="well" style="background: none">
-                    <h1>FILE DETAIL</h1>
-                    <div class="divider" style="border-top: 1px solid #fff;margin-top: 10px;margin-bottom: 10px"></div>
-                    <h2>Shared  <span class="label label-important">Important!</span></h2>
-                    <select style="width: 100%" id="isShared">
-                        <option value="true">Shared</option>
-                        <option value="false">UnShared</option>
-                    </select>
-                    <h2>File Name  <span class="label label-warning">Required!</span></h2>
-                    <input class="input-block-level" type="text" placeholder="input something...." id="name">
-                    <h2>File Type  <span class="label label-warning">Required!</span></h2>
-                    <select style="width: 100%" id="type">
-                        <option>Text</option>
-                        <option>Video</option>
-                        <option>Audio</option>
-                        <option>Image</option>
-                        <option>Bag</option>
-                        <option>Other</option>
-                    </select>
-                    <h2>Detail</h2>
+                <!--<div class="divider" style="border-top: 1px solid #ddd;margin-top: 10px;margin-bottom: 10px"></div>-->
+
+                <div style="padding: 20px;padding-top:10px ">
+                    <label style="font-weight: bold">File <span class="label label-warning">Required!</span></label>
+                    <div class="input-append ">
+                        <input class="span11" type="file" name="file" id="file">
+                    </div>
+                    <!--<div class="divider" style="border-top: 1px dashed #ddd;margin-top: 10px;margin-bottom: 10px"></div>-->
+                    <!--<img src="img/ico-260px-file.png" class="img-rounded" style="margin-bottom: 10px;margin-right:20px;float:left;width: 128px;height: 128px;opacity: 0.7">-->
+                    <!--<div style="float: left;width: 530px">-->
+                        <label style="font-weight: bold"> Name  <span class="label label-warning">Required!</span></label>
+                        <input class="input-block-level" type="text" placeholder="input something...." id="name">
+                        
+                        <label style="font-weight: bold"> Type  <span class="label label-warning">Required!</span></label>
+                        <select style="width: 100%" id="type">
+                            <option>Text</option>
+                            <option>Video</option>
+                            <option>Audio</option>
+                            <option>Image</option>
+                            <option>Bag</option>
+                            <option>Other</option>
+                        </select>
+                    <!--</div>-->
+                    <!--<div class="clearfix"></div>-->
+                    <div class="divider" style="border-top: 1px dashed #ddd;margin-top: 10px;margin-bottom: 10px"></div>
+                    
+                    <label style="font-weight: bold">Detail</label>
                     <textarea class="input-block-level" rows="6" placeholder="input something...." id="detail"></textarea>
-                    <div class="divider" style="border-top: 1px solid #e5e5e5;margin-top: 10px;margin-bottom: 10px"></div>
-                    <h2>Tag</h2>
-                    <textarea class="input-block-level" rows="2" placeholder="Tag..." id="tags"></textarea>
-                    <button class="btn" type="button" style="float: right;margin-bottom: 10px">Auto</button>
+                    <div class="divider" style="margin-top: 10px;margin-bottom: 10px"></div>
+                    <label style="font-weight: bold">Tag</label>
+                    <textarea class="input-block-level" rows="2" placeholder="Tag..."></textarea>
+                    <!--<button class="btn" type="button" style="float: right;margin-bottom: 10px">Auto</button>-->
                     <div class="clearfix"></div>
-                    <h2>File</h2>
-                    <input class="input-block-level" type="file" name="file" id="file">
-                </div>
-            </div>
-            <div class="span2">
-                <div class="well" style="background: none">
-                    <img src="img/user-avater.png" class="img-rounded" data-src="holder.js/64x64" style="margin-bottom: 10px">
-                    <h2>Owner</h2>
-                    <input class="input-block-level" type="text" value="@<sec:authentication property="principal.username"/>" disabled>
-                    <h2>Date</h2>
-                    <input class="input-block-level" type="text" value="<%=new MyDate()%>" disabled>
-                </div>
-                <div class="well" style="background: none">
-                    <h2>Sync To</h2>
-                    <!--<div class="divider" style="border-top: 1px solid #fff;margin-top: 10px;margin-bottom: 10px"></div>-->
-                    <ul style="list-style: none;margin: 0px;">
-                        <li>
-                            <label class="checkbox inline">
-                                <input type="checkbox" value="option1"> Weibo
-                            </label>
-                        </li>
-                        <li>
-                            <label class="checkbox inline">
-                                <input type="checkbox" value="option1"> Twitter
-                            </label>
-                        </li>
-                        <li>
-                            <label class="checkbox inline">
-                                <input type="checkbox" value="option1"> FaceBook
-                            </label>
-                        </li>
-                    </ul>
                     <div class="divider" style="border-top: 1px solid #ddd;margin-top: 10px;margin-bottom: 10px"></div>
-                    <!--<br>-->
-                    <a href="#" style="float: right">Setting</a>
+                    <button class="btn btn-success" style="float: left">Add More...</button>
+                    <button class="btn btn-danger" type="button" style="float:right;margin-bottom: 10px" id="uploadBtn">Upload</button>
                     <div class="clearfix"></div>
                 </div>
-                <!--<button class="btn" type="button" style="width: 100%;margin-bottom: 10px">Save</button>-->
-                <button class="btn btn-danger" type="button" style="width: 100%;margin-bottom: 10px" id="uploadBtn">Upload</button>
             </div>
 
         </div>
+        <!--<div class="span2" >-->
+        <!--</div>-->
     </div>
+    <!--<div class="progress">-->
+        <!--<div class="bar bar-info" style="width: 35%;"><i class="icon icon-file icon-white"></i> 35% File</div>-->
+        <!--&lt;!&ndash;<div class="bar bar-warning" style="width: 20%;"> 20% Page</div>&ndash;&gt;-->
+        <!--&lt;!&ndash;<div class="bar bar-danger" style="width: 10%;"> 10% Note</div>&ndash;&gt;-->
+        <!--<div class="bar" style="background:#afafaf;width: 65%;color: #ffffff"><i class="icon icon-hdd icon-white"></i> 65% Available</div>-->
+    <!--</div>-->
 </div>
 <!--container(end)-->
 <!--footer-->
 <footer>
     <div class="container">
-        <p>Designed and built with all the love in the world by <a href="#">@Mocha</a></p>
+        <p>Designed and built with all the love in the world by <a href="#">@moc.Terra</a></p>
         <ul class="footer-links">
             <li><a href="#">Blog</a></li>
             <li class="muted">·</li>
@@ -201,8 +201,8 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
     </div>
 </footer>
 <!--footer(end)-->
-<script src="js/jquery-latest.js"></script>
-<script src="js/bootstrap.min.js"></script>
+<script src="/js/jquery-latest.js"></script>
+<script src="/js/bootstrap.min.js"></script>
 <script type="text/javascript">
 	$("#uploadBtn").click(function(){XHRUpload();return false;});
 	
@@ -236,7 +236,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
    function XHRUpload()
    {   	  
    	  var formData = new FormData();
-   	  formData.append("isShared",$("#isShared").val());
+   	 /*  formData.append("isShared",$("#isShared").val()); */
    	  formData.append("name",$("#name").val());
    	  formData.append("type",$("#type").val());
    	  formData.append("detail",$("#detail").val());

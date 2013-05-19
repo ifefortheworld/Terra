@@ -119,7 +119,7 @@ public class FileSearchController
 		//查找ids里的file
 		List<File> list = (List<File>) fileDao.findAll(ids);
 		
-		Page<File> page = new PageImpl<File>(list,new PageRequest(0, list.size()),list.size());  
+		Page<File> page = new PageImpl<File>(list,new PageRequest(0, list.size()>0?list.size():1),list.size());  
 				
 		model.addAttribute("page",page);
 		model.addAttribute("files",page.iterator());
