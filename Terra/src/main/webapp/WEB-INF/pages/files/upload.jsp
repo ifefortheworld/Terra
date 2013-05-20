@@ -167,7 +167,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
                     <textarea class="input-block-level" rows="6" placeholder="input something...." id="detail"></textarea>
                     <div class="divider" style="margin-top: 10px;margin-bottom: 10px"></div>
                     <label style="font-weight: bold">Tag</label>
-                    <textarea class="input-block-level" rows="2" placeholder="Tag..."></textarea>
+                    <textarea class="input-block-level" rows="2" placeholder="Tag..." id="tags"></textarea>
                     <!--<button class="btn" type="button" style="float: right;margin-bottom: 10px">Auto</button>-->
                     <div class="clearfix"></div>
                     <div class="divider" style="border-top: 1px solid #ddd;margin-top: 10px;margin-bottom: 10px"></div>
